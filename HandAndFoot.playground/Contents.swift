@@ -6,6 +6,11 @@ enum IllegalMoveError: Error {
     case initialHandOrFootNotSizedCorrectly
 }
 
+enum IllegalSetupError: Error {
+    case tooFewPlayers
+    case tooManyPlayers
+}
+
 enum CardSuit: CaseIterable {
     case hearts
     case diamonds
@@ -140,17 +145,60 @@ class Book {
 }
 
 class Player {
+    let name: String
+
     private var hand: [Card]
     private var foot: [Card]
     private var books: [Book]
     
-    init(hand: [Card], foot: [Card]) throws {
+    init(name: String, hand: [Card], foot: [Card]) throws {
         guard hand.count == 13 && foot.count == 13 else {
             throw IllegalMoveError.initialHandOrFootNotSizedCorrectly
         }
         
+        self.name = name
         self.hand = hand
         self.foot = foot
         self.books = []
+    }
+}
+
+class Game {
+    private var deck: Deck
+    private var players: [Player]
+    
+    init(playerNames: [String]) throws {
+        guard playerNames.count >= 2 else {
+            throw IllegalSetupError.tooFewPlayers
+        }
+        
+        guard playerNames.count <= 6 else {
+            throw IllegalSetupError.tooManyPlayers
+        }
+        
+        let deckCount = playerNames.count + 1
+        self.deck = Deck(standardDeckCount: deckCount)
+        self.deck.shuffle()
+        
+        self.players = []
+        for playerName in playerNames {
+            let player = try self.setUpPlayer(name: playerName)
+            self.players.append(player)
+        }
+    }
+    
+    private func setUpPlayer(name: String) throws -> Player {
+        var hand: [Card] = []
+        var foot: [Card] = []
+        
+        for _ in 0 ..< 13 {
+            hand.append(self.deck.draw()!)
+        }
+        
+        for _ in 0 ..< 13 {
+            foot.append(self.deck.draw()!)
+        }
+        
+        return try Player(name: name, hand: hand, foot: foot)
     }
 }
