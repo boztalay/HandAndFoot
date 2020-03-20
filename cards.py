@@ -44,4 +44,7 @@ class Deck(object):
         random.shuffle(self.cards)
 
     def drawCard(self):
-        return self.cards.pop()
+        if len(self.cards) > 0:
+            return self.cards.pop()
+        else:
+            return None
