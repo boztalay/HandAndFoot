@@ -377,6 +377,10 @@ class Player {
         self.turnEnded()
         self.hasLaidDownThisRound = false
     }
+    
+    func addBonusForGoingOut() {
+        fatalError("not implemented")
+    }
 }
 
 //
@@ -509,6 +513,10 @@ class Game {
 
         player.addCardToHandFromDiscardPile(card)
         try player.startBook(with: cardsInBook)
+        
+        if player.isHandEmpty && !player.isInFoot {
+            player.pickUpFoot()
+        }
     }
     
     // Discarding (and ending turn, possibly ending round)
@@ -553,7 +561,7 @@ class Game {
         
         player.laidDown()
         
-        if player.isHandEmpty {
+        if player.isHandEmpty && !player.isInFoot {
             player.pickUpFoot()
         }
     }
@@ -562,18 +570,31 @@ class Game {
     
     func applyStartBookAction(player: Player, cards: [Card]) throws {
         try player.startBook(with: cards)
+        
+        if player.isHandEmpty && !player.isInFoot {
+            player.pickUpFoot()
+        }
     }
     
     // Adding to an existing book
     
     func applyAddCardFromHandToBookAction(player: Player, card: Card) throws {
         try player.addCardToBookFromHand(card)
+        
+        if player.isHandEmpty && !player.isInFoot {
+            player.pickUpFoot()
+        }
     }
     
     // Ending the round (and game)
     
     func endRound(withPlayerGoingOut player: Player?) {
+        for player in self.players {
+            player.roundEnded()
+        }
         
-        // Notify players
+        if let player = player {
+            player.addBonusForGoingOut()
+        }
     }
 }
