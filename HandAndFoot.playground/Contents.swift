@@ -1,3 +1,6 @@
+// TODO
+//  - Make sure all state-manipulating functions are reentrant if the action is illegal
+
 enum IllegalActionError: Error {
     case cardDoesntMatchBookRank
     case notEnoughCardsToStartBook
@@ -7,6 +10,9 @@ enum IllegalActionError: Error {
     case deckIsEmpty
     case discardPileIsEmpty
     case notEnoughPointsToLayDown
+    case playerDoesntHaveBook
+    case cardNotInHand
+    case bookAlreadyExists
 }
 
 enum IllegalSetupError: Error {
@@ -55,7 +61,7 @@ enum Action {
     case addCardFromHandToBook(Player, Card)
 }
 
-struct Card {
+struct Card: Equatable {
     let suit: CardSuit
     let rank: CardRank
     
@@ -105,7 +111,8 @@ class Deck {
 }
 
 class Book {
-    private var rank: CardRank
+    let rank: CardRank
+
     private var cards: [Card]
     
     init(initialCards: [Card]) throws {
@@ -128,7 +135,7 @@ class Book {
         
         self.cards = []
         for card in initialCards {
-            try self.addCard(card: card)
+            try self.addCard(card)
         }
     }
     
@@ -150,18 +157,17 @@ class Book {
     
     var pointValue: Int {
         fatalError("not implemented")
-        return 0
     }
     
-    func addCard(card: Card) throws {
+    func addCard(_ card: Card) throws {
         if card.isWild {
-            try self.addWildCard(card: card)
+            try self.addWildCard(card)
         } else {
-            try self.addNaturalCard(card: card)
+            try self.addNaturalCard(card)
         }
     }
     
-    private func addWildCard(card: Card) throws {
+    private func addWildCard(_ card: Card) throws {
         guard self.wildCount < (self.naturalCount - 1) else {
             throw IllegalActionError.tooManyWildsInBookToAddAnother
         }
@@ -169,7 +175,7 @@ class Book {
         self.cards.append(card)
     }
     
-    private func addNaturalCard(card: Card) throws {
+    private func addNaturalCard(_ card: Card) throws {
         guard card.rank == self.rank else {
             throw IllegalActionError.cardDoesntMatchBookRank
         }
@@ -183,7 +189,7 @@ class Player {
 
     private var hand: [Card]
     private var foot: [Card]
-    private var books: [Book]
+    private var books: [CardRank : Book]
     
     init(name: String, hand: [Card], foot: [Card]) throws {
         guard hand.count == 13 && foot.count == 13 else {
@@ -193,23 +199,42 @@ class Player {
         self.name = name
         self.hand = hand
         self.foot = foot
-        self.books = []
+        self.books = [:]
     }
     
     func addCardToHand(_ card: Card) {
         self.hand.append(card)
     }
     
+    func removeCardFromHand(_ card: Card) throws {
+        guard let cardIndex = self.hand.firstIndex(where: { $0 == card }) else {
+            throw IllegalActionError.cardNotInHand
+        }
+        
+        self.hand.remove(at: cardIndex)
+    }
+    
     func addCardToBook(_ card: Card) throws {
-        fatalError("not implemented")
+        guard let book = self.books[card.rank] else {
+            throw IllegalActionError.playerDoesntHaveBook
+        }
+        
+        try self.removeCardFromHand(card)
+        try book.addCard(card)
     }
     
     func createBook(with cards: [Card]) throws {
-        fatalError("not implemented")
-    }
-    
-    func removeCardFromHand(_ card: Card) throws {
-        fatalError("not implemented")
+        let book = try Book(initialCards: cards)
+        
+        guard !self.books.contains(where: { $0.key == book.rank }) else {
+            throw IllegalActionError.bookAlreadyExists
+        }
+        
+        for card in cards {
+            try self.removeCardFromHand(card)
+        }
+        
+        self.books[book.rank] = book
     }
 }
 
@@ -331,7 +356,6 @@ class Game {
     }
     
     func applyAddCardFromHandToBookAction(player: Player, card: Card) throws {
-        try player.removeCardFromHand(card)
         try player.addCardToBook(card)
     }
 }
