@@ -37,7 +37,7 @@ enum CardSuit: CaseIterable {
     case spades
 }
 
-enum CardRank: CaseIterable {
+enum CardRank: Int, CaseIterable {
     case two
     case three
     case four
@@ -98,7 +98,12 @@ struct PlayerIterator {
         return self.players[self.index]
     }
     
-    init(players: [Player]) {
+    init() {
+        self.players = []
+        self.index = 0
+    }
+    
+    mutating func setPlayers(_ players: [Player]) {
         self.players = players
         self.index = self.players.startIndex
     }
@@ -145,17 +150,23 @@ class Deck {
         for _ in 0 ..< standardDeckCount {
             for suit in CardSuit.allCases {
                 for rank in CardRank.allCases {
-                    self.cards.append(Card(suit: suit, rank: rank))
+                    if rank != .joker {
+                        self.cards.append(Card(suit: suit, rank: rank))
+                    }
                 }
             }
+
+            self.cards.append(Card(suit: .spades, rank: .joker))
+            self.cards.append(Card(suit: .spades, rank: .joker))
         }
-        
-        self.cards.append(Card(suit: .spades, rank: .joker))
-        self.cards.append(Card(suit: .spades, rank: .joker))
     }
     
     var isEmpty: Bool {
-        return (self.cards.count == 0)
+        return (self.cardCount == 0)
+    }
+    
+    var cardCount: Int {
+        return self.cards.count
     }
     
     func shuffle() {
@@ -203,6 +214,10 @@ class Book {
         for card in initialCards {
             try self.addCard(card)
         }
+    }
+    
+    var cardCount: Int {
+        return self.cards.count
     }
     
     var wildCount: Int {
@@ -258,9 +273,9 @@ class Book {
 class Player {
     let name: String
 
-    private var hand: [Card]
-    private var foot: [Card]
-    private var books: [CardRank : Book]
+    private(set) var hand: [Card]
+    private(set) var foot: [Card]
+    private(set) var books: [CardRank : Book]
     private var cardsDrawnFromDeck: UInt
     private var cardsDrawnFromDiscardPile: UInt
     
@@ -415,12 +430,14 @@ class Game {
         self.round = .ninety
         self.actions = []
         
-        self.playerIterator = PlayerIterator(players: self.players)
+        self.playerIterator = PlayerIterator()
         
         for playerName in playerNames {
             let player = try self.setUpPlayer(name: playerName)
             self.players.append(player)
         }
+
+        self.playerIterator.setPlayers(self.players)
     }
     
     private func setUpPlayer(name: String) throws -> Player {
@@ -597,4 +614,36 @@ class Game {
             player.addBonusForGoingOut()
         }
     }
+    
+    // Diagnostics
+    
+    func printReport() {
+        print("Game State:")
+        print("    Round: \(self.round)")
+        print("    Current Player: \(self.playerIterator.currentPlayer.name)")
+        print("    Cards in Deck: \(self.deck.cardCount)")
+        print("    Cards Discarded: \(self.discards.count)")
+        print("    Actions Taken: \(self.actions.count)")
+        
+        for player in self.players {
+            print("Player: \(player.name)")
+            print("    Cards in Hand: \(player.hand.count)")
+            print("    In Foot?: \(player.isInFoot)")
+            
+            if player.books.count > 0 {
+                print("    Books:")
+                let bookRanks = player.books.keys.sorted(by: { $0.rawValue > $1.rawValue })
+                for bookRank in bookRanks {
+                    print("        \(bookRank): \(player.books[bookRank]!.cardCount) cards")
+                }
+            }
+        }
+    }
 }
+
+//
+// Testing
+//
+
+let game = try! Game(playerNames: ["Ben", "Lynn", "Matt", "Monica"])
+game.printReport()
