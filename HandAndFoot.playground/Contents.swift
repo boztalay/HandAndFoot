@@ -408,7 +408,7 @@ class Game {
     private var players: [Player]
     private var round: Round
     private var actions: [Action]
-    private var playerIterator: PlayerIterator
+    private(set) var playerIterator: PlayerIterator
 
     // Initialization
     
@@ -502,7 +502,7 @@ class Game {
     // Drawing from the discard pile to add to an existing book
     
     func applyDrawFromDiscardAndAddToBookAction(player: Player) throws {
-        guard player.canDrawFromDiscardPile else {
+        guard player.canDrawFromDiscardPile && player.hasLaidDownThisRound else {
             throw IllegalActionError.cannotDrawFromTheDiscardPile
         }
         
@@ -515,6 +515,7 @@ class Game {
     }
     
     // Drawing from the discard pile to create a new book
+    // TODO: Drawing from the discard pile to do the initial lay down, need another action?
     
     func applyDrawFromDiscardAndCreateBookAction(player: Player, cards: [Card]) throws {
         guard player.canDrawFromDiscardPile else {
@@ -646,4 +647,10 @@ class Game {
 //
 
 let game = try! Game(playerNames: ["Ben", "Lynn", "Matt", "Monica"])
+
+let player = game.playerIterator.currentPlayer
+
+try! game.apply(action: .drawFromDeck(player))
+try! game.apply(action: .drawFromDeck(player))
+
 game.printReport()
