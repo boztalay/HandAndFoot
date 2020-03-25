@@ -23,6 +23,7 @@ enum IllegalActionError: Error {
     case notYourTurn
     case alreadyLaidDownThisRound
     case cannotGoOut
+    case cannotEndTurnYet
 }
 
 enum IllegalSetupError: Error {
@@ -297,6 +298,10 @@ class Player {
         return self.foot.isEmpty
     }
     
+    var canEndTurn: Bool {
+        return ((self.cardsDrawnFromDeck + self.cardsDrawnFromDiscardPile) == 2)
+    }
+    
     var canGoOut: Bool {
         return (self.hasNaturalBook && self.hasUnnaturalBook && self.isInFoot)
     }
@@ -540,6 +545,10 @@ class Game {
     // Discarding (and ending turn, possibly ending round)
     
     func applyDiscardCardAction(player: Player, card: Card) throws {
+        guard player.canEndTurn else {
+            throw IllegalActionError.cannotEndTurnYet
+        }
+        
         try player.removeCardFromHand(card)
         self.discards.append(card)
         
@@ -652,5 +661,6 @@ let player = game.playerIterator.currentPlayer
 
 try! game.apply(action: .drawFromDeck(player))
 try! game.apply(action: .drawFromDeck(player))
+try! game.apply(action: .discardCard(player, player.hand[0]))
 
 game.printReport()
