@@ -1,11 +1,3 @@
-// TODO
-//  - Make sure all state-manipulating functions are reentrant if the action
-//    is illegal
-//    - Do they need to be reentrant if the system design is such that this
-//      state management engine reads the ledger from scratch for every action?
-//  - Lots of the edge cases, like restrictions on discarding, going into your
-//    foot, going out, etc
-
 enum IllegalActionError: Error {
     case cardDoesntMatchBookRank
     case notEnoughCardsToStartBook
@@ -68,6 +60,7 @@ enum Action {
     case drawFromDiscardAndCreateBook(Player, [Card])
     case discardCard(Player, Card)
     case layDownInitialBooks(Player, [[Card]])
+    case drawFromDiscardAndLayDownInitialBooks(Player, [Card], [[Card]])
     case startBook(Player, [Card])
     case addCardFromHandToBook(Player, Card)
     
@@ -82,6 +75,8 @@ enum Action {
             case let .discardCard(player, _):
                 return player
             case let .layDownInitialBooks(player, _):
+                return player
+            case let .drawFromDiscardAndLayDownInitialBooks(player, _, _):
                 return player
             case let .startBook(player, _):
                 return player
@@ -478,6 +473,8 @@ class Game {
                 try self.applyDiscardCardAction(player: player, card: card)
             case let .layDownInitialBooks(player, cards):
                 try self.applyLayDownInitialBooksAction(player: player, cards: cards)
+            case let .drawFromDiscardAndLayDownInitialBooks(player, partialBookCards, cards):
+                try self.applyDrawFromDiscardAndLayDownInitialBooksAction(player: player, partialBookCards: partialBookCards, cards: cards)
             case let .startBook(player, cards):
                 try self.applyStartBookAction(player: player, cards: cards)
             case let .addCardFromHandToBook(player, card):
@@ -520,7 +517,6 @@ class Game {
     }
     
     // Drawing from the discard pile to create a new book
-    // TODO: Drawing from the discard pile to do the initial lay down, need another action?
     
     func applyDrawFromDiscardAndCreateBookAction(player: Player, cards: [Card]) throws {
         guard player.canDrawFromDiscardPile else {
@@ -576,6 +572,43 @@ class Game {
         }
         
         let books = try cards.map({ try Book(initialCards: $0) })
+        let pointsInBooks = books.reduce(0, { $0 + $1.pointValue })
+        
+        guard pointsInBooks >= self.round.rawValue else {
+            throw IllegalActionError.notEnoughPointsToLayDown
+        }
+        
+        for cardsInBook in cards {
+            try player.startBook(with: cardsInBook)
+        }
+        
+        player.laidDown()
+        
+        if player.isHandEmpty && !player.isInFoot {
+            player.pickUpFoot()
+        }
+    }
+    
+    // Laying down an initial set of books, with a card from the discard pile
+    
+    func applyDrawFromDiscardAndLayDownInitialBooksAction(player: Player, partialBookCards: [Card], cards: [[Card]]) throws {
+        guard !player.hasLaidDownThisRound else {
+            throw IllegalActionError.alreadyLaidDownThisRound
+        }
+        
+        guard player.canDrawFromDiscardPile else {
+            throw IllegalActionError.cannotDrawFromTheDiscardPile
+        }
+
+        guard self.discards.count > 0 else {
+            throw IllegalActionError.discardPileIsEmpty
+        }
+        
+        let card = self.discards.popLast()!
+        let completedPartialBook = partialBookCards + [card]
+        let initialBooksCards = cards + [completedPartialBook]
+        
+        let books = try initialBooksCards.map({ try Book(initialCards: $0) })
         let pointsInBooks = books.reduce(0, { $0 + $1.pointValue })
         
         guard pointsInBooks >= self.round.rawValue else {
