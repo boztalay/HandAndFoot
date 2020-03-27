@@ -14,7 +14,13 @@ Sample test case
         "player_3",
         "player_4"
     ],
-    "deck_shuffle_seed": 123456789,
+    "initial_deck": [
+        {
+            "suit": "hearts",
+            "rank": "two"
+        }
+        ...
+    ],
     "actions": [
         {
             "type": "action_type",
