@@ -15,49 +15,17 @@ enum Round: Int {
     case oneEighty = 180
 }
 
-enum Action {
-    case drawFromDeck(Player)
-    case drawFromDiscardAndAddToBook(Player)
-    case drawFromDiscardAndCreateBook(Player, [Card])
-    case discardCard(Player, Card)
-    case layDownInitialBooks(Player, [[Card]])
-    case drawFromDiscardAndLayDownInitialBooks(Player, [Card], [[Card]])
-    case startBook(Player, [Card])
-    case addCardFromHandToBook(Player, Card)
-    
-    var player: Player {
-        switch (self) {
-            case let .drawFromDeck(player):
-                return player
-            case let .drawFromDiscardAndAddToBook(player):
-                return player
-            case let .drawFromDiscardAndCreateBook(player, _):
-                return player
-            case let .discardCard(player, _):
-                return player
-            case let .layDownInitialBooks(player, _):
-                return player
-            case let .drawFromDiscardAndLayDownInitialBooks(player, _, _):
-                return player
-            case let .startBook(player, _):
-                return player
-            case let .addCardFromHandToBook(player, _):
-                return player
-        }
-    }
-}
-
-class Game {
+class Game: JSONEncodable {
     private var deck: Deck
-    private var discards: [Card]
+    private var discardPile: [Card]
     private var players: [Player]
     private var round: Round
     private var actions: [Action]
     private(set) var playerIterator: PlayerIterator
 
-    // Initialization
+    // MARK: - Initialization
     
-    init(playerNames: [String]) throws {
+    init(playerNames: [String], deck: Deck? = nil) throws {
         guard playerNames.count >= 2 else {
             throw IllegalSetupError.tooFewPlayers
         }
@@ -66,11 +34,15 @@ class Game {
             throw IllegalSetupError.tooManyPlayers
         }
         
-        let deckCount = playerNames.count + 1
-        self.deck = Deck(standardDeckCount: deckCount)
-        self.deck.shuffle()
+        if let deck = deck {
+            self.deck = deck
+        } else {
+            let deckCount = playerNames.count + 1
+            self.deck = Deck(standardDeckCount: deckCount)
+            self.deck.shuffle()
+        }
         
-        self.discards = []
+        self.discardPile = []
         self.players = []
         self.round = .ninety
         self.actions = []
@@ -100,31 +72,45 @@ class Game {
         return try Player(name: name, hand: hand, foot: foot)
     }
     
-    // Applying actions
+    // MARK: - Applying actions
     
     func apply(action: Action) throws {
-        guard self.playerIterator.isCurrentPlayer(action.player) else {
+        guard let player = self.getPlayer(named: action.playerName) else {
+            throw IllegalActionError.unknownPlayer
+        }
+        
+        guard self.playerIterator.isCurrentPlayer(player) else {
             throw IllegalActionError.notYourTurn
         }
         
         switch (action) {
-            case let .drawFromDeck(player):
+            case .drawFromDeck:
                 try self.applyDrawFromDeckAction(player: player)
-            case let .drawFromDiscardAndAddToBook(player):
+            case .drawFromDiscardAndAddToBook:
                 try self.applyDrawFromDiscardAndAddToBookAction(player: player)
-            case let .drawFromDiscardAndCreateBook(player, cards):
+            case let .drawFromDiscardAndCreateBook(_, cards):
                 try self.applyDrawFromDiscardAndCreateBookAction(player: player, cards: cards)
-            case let .discardCard(player, card):
+            case let .discardCard(_, card):
                 try self.applyDiscardCardAction(player: player, card: card)
-            case let .layDownInitialBooks(player, cards):
+            case let .layDownInitialBooks(_, cards):
                 try self.applyLayDownInitialBooksAction(player: player, cards: cards)
-            case let .drawFromDiscardAndLayDownInitialBooks(player, partialBookCards, cards):
+            case let .drawFromDiscardAndLayDownInitialBooks(_, partialBookCards, cards):
                 try self.applyDrawFromDiscardAndLayDownInitialBooksAction(player: player, partialBookCards: partialBookCards, cards: cards)
-            case let .startBook(player, cards):
+            case let .startBook(_, cards):
                 try self.applyStartBookAction(player: player, cards: cards)
-            case let .addCardFromHandToBook(player, card):
+            case let .addCardFromHandToBook(_, card):
                 try self.applyAddCardFromHandToBookAction(player: player, card: card)
         }
+    }
+    
+    func getPlayer(named playerName: String) -> Player? {
+        for player in self.players {
+            if player.name == playerName {
+                return player
+            }
+        }
+        
+        return nil
     }
     
     // Drawing from the deck
@@ -137,8 +123,8 @@ class Game {
         player.addCardToHandFromDeck(self.deck.draw()!)
 
         if self.deck.isEmpty {
-            self.deck.replenishCardsAndShuffle(cards: self.discards)
-            self.discards = []
+            self.deck.replenishCardsAndShuffle(cards: self.discardPile)
+            self.discardPile = []
             
             if self.deck.isEmpty {
                 self.endRound(withPlayerGoingOut: nil)
@@ -153,11 +139,11 @@ class Game {
             throw IllegalActionError.cannotDrawFromTheDiscardPile
         }
         
-        guard self.discards.count > 0 else {
+        guard self.discardPile.count > 0 else {
             throw IllegalActionError.discardPileIsEmpty
         }
 
-        let card = self.discards.popLast()!
+        let card = self.discardPile.popLast()!
         try player.addCardToBookFromDiscardPile(card)
     }
     
@@ -168,11 +154,11 @@ class Game {
             throw IllegalActionError.cannotDrawFromTheDiscardPile
         }
 
-        guard self.discards.count > 0 else {
+        guard self.discardPile.count > 0 else {
             throw IllegalActionError.discardPileIsEmpty
         }
         
-        let card = self.discards.popLast()!
+        let card = self.discardPile.popLast()!
         let cardsInBook = cards + [card]
 
         player.addCardToHandFromDiscardPile(card)
@@ -191,7 +177,7 @@ class Game {
         }
         
         try player.removeCardFromHand(card)
-        self.discards.append(card)
+        self.discardPile.append(card)
         
         if player.isHandEmpty && player.isInFoot {
             guard player.canGoOut else {
@@ -245,11 +231,11 @@ class Game {
             throw IllegalActionError.cannotDrawFromTheDiscardPile
         }
 
-        guard self.discards.count > 0 else {
+        guard self.discardPile.count > 0 else {
             throw IllegalActionError.discardPileIsEmpty
         }
         
-        let card = self.discards.popLast()!
+        let card = self.discardPile.popLast()!
         let completedPartialBook = partialBookCards + [card]
         let initialBooksCards = cards + [completedPartialBook]
         
@@ -310,7 +296,7 @@ class Game {
         print("    Round: \(self.round)")
         print("    Current Player: \(self.playerIterator.currentPlayer.name)")
         print("    Cards in Deck: \(self.deck.cardCount)")
-        print("    Cards Discarded: \(self.discards.count)")
+        print("    Cards Discarded: \(self.discardPile.count)")
         print("    Actions Taken: \(self.actions.count)")
         
         for player in self.players {
@@ -326,5 +312,19 @@ class Game {
                 }
             }
         }
+    }
+    
+    // MARK: - JSONEncodable
+    
+    enum Keys: String {
+        case discardPile
+        case players
+    }
+    
+    func toJSON() -> JSONDictionary {
+        return [
+            Keys.discardPile.rawValue : self.discardPile.map({ $0.toJSON() }),
+            Keys.players.rawValue : self.players.map({ $0.toJSON() })
+        ]
     }
 }

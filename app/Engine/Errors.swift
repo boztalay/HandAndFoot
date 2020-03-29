@@ -24,6 +24,7 @@ enum IllegalActionError: Error {
     case alreadyLaidDownThisRound
     case cannotGoOut
     case cannotEndTurnYet
+    case unknownPlayer
 }
 
 enum IllegalSetupError: Error {

@@ -14,13 +14,15 @@ Sample test case
         "player_3",
         "player_4"
     ],
-    "initial_deck": [
-        {
-            "suit": "hearts",
-            "rank": "two"
-        }
-        ...
-    ],
+    "initial_deck": {
+        "cards" : [
+            {
+                "suit": "hearts",
+                "rank": "two"
+            }
+            ...
+        ]
+    },
     "actions": [
         {
             "type": "action_type",

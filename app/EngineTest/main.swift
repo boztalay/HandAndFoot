@@ -22,13 +22,23 @@ guard let testCase = try? JSONSerialization.jsonObject(with: testCaseFileContent
 }
 
 let playerNames = testCase["players"] as! [String]
-let initialDeckJson = testCase["initial_deck"] as! [String : String]
-let actionsJson = testCase["actions"] as! [String : String]
+let initialDeckJson = testCase["initial_deck"] as! JSONDictionary
+let actionsJson = testCase["actions"] as! [JSONDictionary]
 
-// TODO
-// - JSONCodable all the things
-// - Construct the deck from the initial deck state in the JSON
-// - Construct a Game with the deck and player names
-// - Construct all of the actions from the actions in the JSON
-// - Run through all of the actions, stopping if there's a problem
-// - Print out the state of the Game in JSON
+let deck = Deck(with: initialDeckJson)
+let game = try! Game(playerNames: playerNames, deck: deck)
+
+var actions = actionsJson.map({ Action(with: $0)! })
+
+for action in actions {
+    do {
+        try game.apply(action: action)
+    } catch let actionError as IllegalActionError {
+        print("IllegalActionError: \(actionError)")
+        break
+    } catch {
+        fatalError("Unknown error")
+    }
+}
+
+print(game.toJSON())

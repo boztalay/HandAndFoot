@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FB73EB2A243042A300AEC91E /* JSONCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB73EB29243042A300AEC91E /* JSONCodable.swift */; };
+		FB73EB2B24304B5700AEC91E /* JSONCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB73EB29243042A300AEC91E /* JSONCodable.swift */; };
+		FB73EB2D24304B8900AEC91E /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB73EB2C24304B8900AEC91E /* Action.swift */; };
+		FB73EB2E24304B8900AEC91E /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB73EB2C24304B8900AEC91E /* Action.swift */; };
 		FB7CF9EA242D942400B18111 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CF9E9242D942400B18111 /* AppDelegate.swift */; };
 		FB7CF9EC242D942400B18111 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CF9EB242D942400B18111 /* SceneDelegate.swift */; };
 		FB7CF9EE242D942400B18111 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CF9ED242D942400B18111 /* ViewController.swift */; };
@@ -41,6 +45,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		FB73EB29243042A300AEC91E /* JSONCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONCodable.swift; sourceTree = "<group>"; };
+		FB73EB2C24304B8900AEC91E /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		FB7CF9E6242D942400B18111 /* HandAndFoot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HandAndFoot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB7CF9E9242D942400B18111 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FB7CF9EB242D942400B18111 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -77,12 +83,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FB73EB282430429000AEC91E /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				FB73EB29243042A300AEC91E /* JSONCodable.swift */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
 		FB7CF9DD242D942400B18111 = {
 			isa = PBXGroup;
 			children = (
 				FB7CF9E8242D942400B18111 /* App */,
 				FB7CFA08242D948C00B18111 /* Engine */,
 				FB7CFA02242D945700B18111 /* EngineTest */,
+				FB73EB282430429000AEC91E /* Utilities */,
 				FB7CF9E7242D942400B18111 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -121,12 +136,13 @@
 		FB7CFA08242D948C00B18111 /* Engine */ = {
 			isa = PBXGroup;
 			children = (
-				FB7CFA09242D94AB00B18111 /* Errors.swift */,
+				FB73EB2C24304B8900AEC91E /* Action.swift */,
+				FB7CFA11242D952600B18111 /* Book.swift */,
 				FB7CFA0B242D94C100B18111 /* Card.swift */,
 				FB7CFA0D242D94DD00B18111 /* Deck.swift */,
-				FB7CFA0F242D94FD00B18111 /* Player.swift */,
-				FB7CFA11242D952600B18111 /* Book.swift */,
+				FB7CFA09242D94AB00B18111 /* Errors.swift */,
 				FB7CFA13242D954500B18111 /* Game.swift */,
+				FB7CFA0F242D94FD00B18111 /* Player.swift */,
 			);
 			path = Engine;
 			sourceTree = "<group>";
@@ -223,6 +239,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB73EB2A243042A300AEC91E /* JSONCodable.swift in Sources */,
+				FB73EB2D24304B8900AEC91E /* Action.swift in Sources */,
 				FB7CFA12242D952600B18111 /* Book.swift in Sources */,
 				FB7CFA14242D954500B18111 /* Game.swift in Sources */,
 				FB7CFA0E242D94DD00B18111 /* Deck.swift in Sources */,
@@ -239,6 +257,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FB73EB2B24304B5700AEC91E /* JSONCodable.swift in Sources */,
+				FB73EB2E24304B8900AEC91E /* Action.swift in Sources */,
 				FB7CFA17242D956A00B18111 /* Deck.swift in Sources */,
 				FB7CFA15242D956A00B18111 /* Errors.swift in Sources */,
 				FB7CFA1A242D956A00B18111 /* Game.swift in Sources */,
@@ -390,7 +410,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = HandAndFoot/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -407,7 +427,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = HandAndFoot/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

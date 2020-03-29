@@ -9,7 +9,10 @@
 import Foundation
 
 class Deck {
+
     private var cards: [Card]
+    
+    // MARK: - Initialization
     
     init(standardDeckCount: Int) {
         self.cards = []
@@ -28,6 +31,8 @@ class Deck {
         }
     }
     
+    // MARK: - Computed Properties
+    
     var isEmpty: Bool {
         return (self.cardCount == 0)
     }
@@ -35,6 +40,8 @@ class Deck {
     var cardCount: Int {
         return self.cards.count
     }
+    
+    // MARK: - Modifying the Deck
     
     // TODO: Take a seed?
     func shuffle() {
@@ -48,5 +55,33 @@ class Deck {
     func replenishCardsAndShuffle(cards: [Card]) {
         self.cards = cards
         self.shuffle()
+    }
+    
+    // MARK: - JSONCodable
+    
+    enum Keys: String {
+        case cards
+    }
+    
+    init?(with json: JSONDictionary) {
+        guard let cardsJson = json[Keys.cards.rawValue] as? [JSONDictionary] else {
+            return nil
+        }
+        
+        self.cards = []
+        
+        for cardJson in cardsJson {
+            guard let card = Card(with: cardJson) else {
+                return nil
+            }
+            
+            self.cards.append(card)
+        }
+    }
+    
+    func toJSON() -> JSONDictionary {
+        return [
+            Keys.cards.rawValue : self.cards.map({ $0.toJSON() })
+        ]
     }
 }

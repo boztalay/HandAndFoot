@@ -38,7 +38,7 @@ struct PlayerIterator {
     }
 }
 
-class Player {
+class Player: JSONEncodable {
     let name: String
 
     private(set) var hand: [Card]
@@ -167,5 +167,24 @@ class Player {
     
     func addBonusForGoingOut() {
         fatalError("not implemented")
+    }
+    
+    // MARK: - JSONEncodable
+    
+    //
+    // TODO
+    //
+    
+    enum Keys: String {
+        case name
+        case points
+        case hand
+        case foot
+        case books
+    }
+    
+    func toJSON() -> JSONDictionary {
+        // TODO
+        return [:]
     }
 }

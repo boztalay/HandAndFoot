@@ -8,14 +8,14 @@
 
 import Foundation
 
-enum CardSuit: CaseIterable {
+enum CardSuit: String, CaseIterable {
     case hearts
     case diamonds
     case clubs
     case spades
 }
 
-enum CardRank: Int, CaseIterable {
+enum CardRank: String, CaseIterable {
     case two
     case three
     case four
@@ -32,9 +32,19 @@ enum CardRank: Int, CaseIterable {
     case joker
 }
 
-struct Card: Equatable {
+struct Card: Equatable, JSONCodable {
+    
     let suit: CardSuit
     let rank: CardRank
+    
+    // MARK: - Initialization
+    
+    init(suit: CardSuit, rank: CardRank) {
+        self.suit = suit
+        self.rank = rank
+    }
+    
+    // MARK: - Computed Properties
     
     var isWild: Bool {
         return (self.rank == .two) || (self.rank == .joker)
@@ -42,5 +52,36 @@ struct Card: Equatable {
     
     var canStartBook: Bool {
         return (!self.isWild) && (self.rank != .three)
+    }
+    
+    // MARK: - JSONCodable
+    
+    enum Keys: String {
+        case suit
+        case rank
+    }
+    
+    init?(with json: JSONDictionary) {
+        guard let suitJson = json[Keys.suit.rawValue] as? String,
+            let rankJson = json[Keys.rank.rawValue] as? String
+        else {
+                return nil
+        }
+        
+        guard let suit = CardSuit.init(rawValue: suitJson),
+            let rank = CardRank.init(rawValue: rankJson)
+        else {
+            return nil
+        }
+
+        self.suit = suit
+        self.rank = rank
+    }
+    
+    func toJSON() -> JSONDictionary {
+        return [
+            Keys.suit.rawValue : self.suit.rawValue,
+            Keys.rank.rawValue : self.rank.rawValue
+        ]
     }
 }
