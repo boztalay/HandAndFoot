@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Book {
+class Book: JSONEncodable {
     let rank: CardRank
 
     private var cards: [Card]
@@ -84,5 +84,19 @@ class Book {
         }
         
         self.cards.append(card)
+    }
+    
+    // MARK: - JSONEncodable
+    
+    enum Keys: String {
+        case rank
+        case cards
+    }
+    
+    func toJSON() -> JSONDictionary {
+        return [
+            Keys.rank.rawValue : self.rank.rawValue,
+            Keys.cards.rawValue : self.cards.map({ $0.toJSON() })
+        ]
     }
 }

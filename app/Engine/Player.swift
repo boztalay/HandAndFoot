@@ -8,6 +8,36 @@
 
 import Foundation
 
+struct Points: JSONEncodable {
+    var inHand: Int
+    var inFoot: Int
+    var inBooks: Int
+    var laidDown: Int
+    
+    init() {
+        self.inHand = 0
+        self.inFoot = 0
+        self.inBooks = 0
+        self.laidDown = 0
+    }
+    
+    enum Keys: String {
+        case inHand
+        case inFoot
+        case inBooks
+        case laidDown
+    }
+    
+    func toJSON() -> JSONDictionary {
+        return [
+            Keys.inHand.rawValue : self.inHand,
+            Keys.inFoot.rawValue : self.inFoot,
+            Keys.inBooks.rawValue : self.inBooks,
+            Keys.laidDown.rawValue : self.laidDown
+        ]
+    }
+}
+
 struct PlayerIterator {
     private var players: [Player]
     private var index: Int
@@ -44,6 +74,7 @@ class Player: JSONEncodable {
     private(set) var hand: [Card]
     private(set) var foot: [Card]
     private(set) var books: [CardRank : Book]
+    private(set) var points: [Round : Points]
     private var cardsDrawnFromDeck: UInt
     private var cardsDrawnFromDiscardPile: UInt
     
@@ -90,6 +121,12 @@ class Player: JSONEncodable {
         self.hand = hand
         self.foot = foot
         self.books = [:]
+        self.points = [
+            .ninety : Points(),
+            .oneTwenty : Points(),
+            .oneFifty : Points(),
+            .oneEighty : Points()
+        ]
         
         self.cardsDrawnFromDeck = 0
         self.cardsDrawnFromDiscardPile = 0
@@ -171,20 +208,26 @@ class Player: JSONEncodable {
     
     // MARK: - JSONEncodable
     
-    //
-    // TODO
-    //
-    
     enum Keys: String {
         case name
-        case points
         case hand
         case foot
         case books
+        case points
     }
     
     func toJSON() -> JSONDictionary {
-        // TODO
-        return [:]
+        return [
+            Keys.name.rawValue : self.name,
+            Keys.hand.rawValue : self.hand.map({ $0.toJSON() }),
+            Keys.foot.rawValue : self.foot.map({ $0.toJSON() }),
+            Keys.books.rawValue : self.books.values.map({ $0.toJSON() }),
+            Keys.points.rawValue : [
+                Round.ninety.rawValue : self.points[.ninety]!.toJSON(),
+                Round.oneTwenty.rawValue : self.points[.oneTwenty]!.toJSON(),
+                Round.oneFifty.rawValue : self.points[.oneFifty]!.toJSON(),
+                Round.oneEighty.rawValue : self.points[.oneEighty]!.toJSON()
+            ]
+        ]
     }
 }
