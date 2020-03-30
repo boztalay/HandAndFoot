@@ -14,7 +14,7 @@ Sample test case
         "player_3",
         "player_4"
     ],
-    "initial_deck": {
+    "initialDeck": {
         "cards" : [
             {
                 "suit": "hearts",
@@ -30,8 +30,8 @@ Sample test case
         }
         ...
     ],
-    "final_state": {
-        "discard_pile": [
+    "finalState": {
+        "discardPile": [
             {
                 "suit": "hearts",
                 "rank": "two"
@@ -43,11 +43,12 @@ Sample test case
                 "name": "player_1",
                 "points": {
                     "ninety": {
-                        "in_hand": 50,
-                        "in_foot": 0,
-                        "books": 500,
-                        "laid_down": 300
-                    }
+                        "inHand": 50,
+                        "inFoot": 0,
+                        "inBooks": 500,
+                        "laidDown": 300
+                    },
+                    ...
                 },
                 "hand": [
                     {

@@ -33,7 +33,7 @@ guard let testCase = try? JSONSerialization.jsonObject(with: testCaseFileContent
 }
 
 let playerNames = testCase["players"] as! [String]
-let initialDeckJson = testCase["initial_deck"] as! JSONDictionary
+let initialDeckJson = testCase["initialDeck"] as! JSONDictionary
 let actionsJson = testCase["actions"] as! [JSONDictionary]
 
 let deck = Deck(with: initialDeckJson)
