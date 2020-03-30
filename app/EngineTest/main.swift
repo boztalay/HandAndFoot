@@ -8,6 +8,17 @@
 
 import Foundation
 
+import func Darwin.fputs
+import var Darwin.stderr
+
+struct StderrOutputStream: TextOutputStream {
+    mutating func write(_ string: String) {
+        fputs(string, stderr)
+    }
+}
+
+var standardError = StderrOutputStream()
+
 guard CommandLine.arguments.count != 2 else {
     fatalError("Exactly one argument expected, the path to the test case to run")
 }
@@ -34,10 +45,10 @@ for action in actions {
     do {
         try game.apply(action: action)
     } catch let actionError as IllegalActionError {
-        print("IllegalActionError: \(actionError)")
+        print("IllegalActionError: \(actionError)", to: &standardError)
         break
     } catch {
-        fatalError("Unknown error")
+        fatalError("Unknown error applying an action")
     }
 }
 
