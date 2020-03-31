@@ -26,13 +26,18 @@ class Book: JSONEncodable {
         for card in initialCards {
             if card.canStartBook {
                 bookRank = card.rank
+                break
             }
         }
         
         self.rank = bookRank!
-        
         self.cards = []
-        for card in initialCards {
+
+        for card in initialCards.filter({ !$0.isWild }) {
+            try self.addCard(card)
+        }
+
+        for card in initialCards.filter({ $0.isWild }) {
             try self.addCard(card)
         }
     }
