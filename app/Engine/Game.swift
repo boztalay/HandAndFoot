@@ -8,11 +8,24 @@
 
 import Foundation
 
-enum Round: Int {
-    case ninety = 90
-    case oneTwenty = 120
-    case oneFifty = 150
-    case oneEighty = 180
+enum Round: String {
+    case ninety
+    case oneTwenty
+    case oneFifty
+    case oneEighty
+    
+    var pointsNeeded: Int {
+        switch (self) {
+            case .ninety:
+                return 90
+            case .oneTwenty:
+                return 120
+            case .oneFifty:
+                return 150
+            case .oneEighty:
+                return 180
+        }
+    }
 }
 
 class Game: JSONEncodable {
@@ -205,7 +218,7 @@ class Game: JSONEncodable {
         let books = try cards.map({ try Book(initialCards: $0) })
         let pointsInBooks = books.reduce(0, { $0 + $1.pointValue })
         
-        guard pointsInBooks >= self.round.rawValue else {
+        guard pointsInBooks >= self.round.pointsNeeded else {
             throw IllegalActionError.notEnoughPointsToLayDown
         }
         
@@ -242,7 +255,7 @@ class Game: JSONEncodable {
         let books = try initialBooksCards.map({ try Book(initialCards: $0) })
         let pointsInBooks = books.reduce(0, { $0 + $1.pointValue })
         
-        guard pointsInBooks >= self.round.rawValue else {
+        guard pointsInBooks >= self.round.pointsNeeded else {
             throw IllegalActionError.notEnoughPointsToLayDown
         }
         

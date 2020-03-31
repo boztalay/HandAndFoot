@@ -19,7 +19,7 @@ struct StderrOutputStream: TextOutputStream {
 
 var standardError = StderrOutputStream()
 
-guard CommandLine.arguments.count != 2 else {
+guard CommandLine.arguments.count == 2 else {
     fatalError("Exactly one argument expected, the path to the test case to run")
 }
 
@@ -52,4 +52,5 @@ for action in actions {
     }
 }
 
-print(game.toJSON())
+let jsonData = try JSONSerialization.data(withJSONObject: game.toJSON(), options: [.prettyPrinted])
+print(String(data: jsonData, encoding: .utf8)!)
