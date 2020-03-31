@@ -52,7 +52,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/boztalay/Desktop/Folders/Github/boztalay/HandAndFoot/tests/smoke_test.json"
+            argument = "/Users/boztalay/Desktop/Folders/Github/boztalay/HandAndFoot/tests/smoke_test_2.json"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>

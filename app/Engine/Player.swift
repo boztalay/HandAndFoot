@@ -217,17 +217,18 @@ class Player: JSONEncodable {
     }
     
     func toJSON() -> JSONDictionary {
+        var booksJson: JSONDictionary = [:]
+        self.books.forEach({ booksJson[$0.key.rawValue] = $0.value.toJSON() })
+
+        var pointsJson: JSONDictionary = [:]
+        self.points.forEach({ pointsJson[$0.key.rawValue] = $0.value.toJSON() })
+        
         return [
             Keys.name.rawValue : self.name,
             Keys.hand.rawValue : self.hand.map({ $0.toJSON() }),
             Keys.foot.rawValue : self.foot.map({ $0.toJSON() }),
-            Keys.books.rawValue : self.books.values.map({ $0.toJSON() }),
-            Keys.points.rawValue : [
-                Round.ninety.rawValue : self.points[.ninety]!.toJSON(),
-                Round.oneTwenty.rawValue : self.points[.oneTwenty]!.toJSON(),
-                Round.oneFifty.rawValue : self.points[.oneFifty]!.toJSON(),
-                Round.oneEighty.rawValue : self.points[.oneEighty]!.toJSON()
-            ]
+            Keys.books.rawValue : booksJson,
+            Keys.points.rawValue : pointsJson
         ]
     }
 }
