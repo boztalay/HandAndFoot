@@ -7,204 +7,28 @@
     "initialDeck": {
         "cards" : [
             {
-                "suit": "hearts",
-                "rank": "ten"
+                "suit": "diamonds",
+                "rank": "six"
             },
             {
                 "suit": "spades",
-                "rank": "ten"
+                "rank": "seven"
             },
             {
                 "suit": "diamonds",
-                "rank": "two"
+                "rank": "queen"
             },
             {
                 "suit": "spades",
+                "rank": "two"
+            },
+            {
+                "suit": "diamonds",
+                "rank": "three"
+            },
+            {
+                "suit": "clubs",
                 "rank": "four"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "nine"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "jack"
-            },
-            {
-                "suit": "clubs",
-                "rank": "ten"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "king"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "ace"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "six"
-            },
-            {
-                "suit": "clubs",
-                "rank": "six"
-            },
-            {
-                "suit": "clubs",
-                "rank": "king"
-            },
-            {
-                "suit": "spades",
-                "rank": "two"
-            },
-            {
-                "suit": "hearts",
-                "rank": "queen"
-            },
-            {
-                "suit": "spades",
-                "rank": "king"
-            },
-            {
-                "suit": "hearts",
-                "rank": "four"
-            },
-            {
-                "suit": "hearts",
-                "rank": "eight"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "three"
-            },
-            {
-                "suit": "spades",
-                "rank": "jack"
-            },
-            {
-                "suit": "clubs",
-                "rank": "five"
-            },
-            {
-                "suit": "hearts",
-                "rank": "five"
-            },
-            {
-                "suit": "spades",
-                "rank": "ace"
-            },
-            {
-                "suit": "hearts",
-                "rank": "seven"
-            },
-            {
-                "suit": "clubs",
-                "rank": "two"
-            },
-            {
-                "suit": "hearts",
-                "rank": "three"
-            },
-            {
-                "suit": "clubs",
-                "rank": "three"
-            },
-            {
-                "suit": "clubs",
-                "rank": "eight"
-            },
-            {
-                "suit": "spades",
-                "rank": "eight"
-            },
-            {
-                "suit": "clubs",
-                "rank": "seven"
-            },
-            {
-                "suit": "clubs",
-                "rank": "ace"
-            },
-            {
-                "suit": "hearts",
-                "rank": "two"
-            },
-            {
-                "suit": "spades",
-                "rank": "joker"
-            },
-            {
-                "suit": "spades",
-                "rank": "three"
-            },
-            {
-                "suit": "clubs",
-                "rank": "jack"
-            },
-            {
-                "suit": "spades",
-                "rank": "six"
-            },
-            {
-                "suit": "spades",
-                "rank": "queen"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "seven"
-            },
-            {
-                "suit": "clubs",
-                "rank": "queen"
-            },
-            {
-                "suit": "hearts",
-                "rank": "six"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "queen"
-            },
-            {
-                "suit": "hearts",
-                "rank": "jack"
-            },
-            {
-                "suit": "spades",
-                "rank": "nine"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "eight"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "five"
-            },
-            {
-                "suit": "hearts",
-                "rank": "nine"
-            },
-            {
-                "suit": "spades",
-                "rank": "five"
-            },
-            {
-                "suit": "hearts",
-                "rank": "ace"
-            },
-            {
-                "suit": "hearts",
-                "rank": "king"
-            },
-            {
-                "suit": "spades",
-                "rank": "joker"
-            },
-            {
-                "suit": "spades",
-                "rank": "seven"
             },
             {
                 "suit": "diamonds",
@@ -215,40 +39,12 @@
                 "rank": "nine"
             },
             {
-                "suit": "clubs",
-                "rank": "four"
+                "suit": "diamonds",
+                "rank": "two"
             },
             {
                 "suit": "diamonds",
-                "rank": "four"
-            },
-            {
-                "suit": "clubs",
-                "rank": "ten"
-            },
-            {
-                "suit": "hearts",
-                "rank": "ten"
-            },
-            {
-                "suit": "hearts",
-                "rank": "seven"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "six"
-            },
-            {
-                "suit": "clubs",
-                "rank": "three"
-            },
-            {
-                "suit": "spades",
-                "rank": "joker"
-            },
-            {
-                "suit": "clubs",
-                "rank": "eight"
+                "rank": "jack"
             },
             {
                 "suit": "diamonds",
@@ -259,135 +55,7 @@
                 "rank": "nine"
             },
             {
-                "suit": "hearts",
-                "rank": "two"
-            },
-            {
                 "suit": "spades",
-                "rank": "jack"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "ace"
-            },
-            {
-                "suit": "clubs",
-                "rank": "six"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "nine"
-            },
-            {
-                "suit": "clubs",
-                "rank": "queen"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "three"
-            },
-            {
-                "suit": "spades",
-                "rank": "five"
-            },
-            {
-                "suit": "spades",
-                "rank": "two"
-            },
-            {
-                "suit": "clubs",
-                "rank": "four"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "four"
-            },
-            {
-                "suit": "spades",
-                "rank": "eight"
-            },
-            {
-                "suit": "spades",
-                "rank": "four"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "queen"
-            },
-            {
-                "suit": "hearts",
-                "rank": "six"
-            },
-            {
-                "suit": "spades",
-                "rank": "six"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "jack"
-            },
-            {
-                "suit": "hearts",
-                "rank": "jack"
-            },
-            {
-                "suit": "hearts",
-                "rank": "four"
-            },
-            {
-                "suit": "spades",
-                "rank": "joker"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "five"
-            },
-            {
-                "suit": "spades",
-                "rank": "seven"
-            },
-            {
-                "suit": "clubs",
-                "rank": "king"
-            },
-            {
-                "suit": "spades",
-                "rank": "queen"
-            },
-            {
-                "suit": "hearts",
-                "rank": "king"
-            },
-            {
-                "suit": "hearts",
-                "rank": "ace"
-            },
-            {
-                "suit": "hearts",
-                "rank": "nine"
-            },
-            {
-                "suit": "spades",
-                "rank": "three"
-            },
-            {
-                "suit": "clubs",
-                "rank": "seven"
-            },
-            {
-                "suit": "diamonds",
-                "rank": "two"
-            },
-            {
-                "suit": "spades",
-                "rank": "ten"
-            },
-            {
-                "suit": "hearts",
-                "rank": "queen"
-            },
-            {
-                "suit": "clubs",
                 "rank": "five"
             },
             {
@@ -395,28 +63,16 @@
                 "rank": "ten"
             },
             {
-                "suit": "diamonds",
-                "rank": "seven"
-            },
-            {
                 "suit": "clubs",
-                "rank": "ace"
+                "rank": "two"
             },
             {
-                "suit": "spades",
-                "rank": "nine"
-            },
-            {
-                "suit": "spades",
-                "rank": "king"
-            },
-            {
-                "suit": "clubs",
-                "rank": "jack"
+                "suit": "hearts",
+                "rank": "two"
             },
             {
                 "suit": "diamonds",
-                "rank": "eight"
+                "rank": "two"
             },
             {
                 "suit": "clubs",
@@ -424,19 +80,207 @@
             },
             {
                 "suit": "spades",
-                "rank": "ace"
+                "rank": "three"
             },
             {
                 "suit": "hearts",
+                "rank": "king"
+            },
+            {
+                "suit": "clubs",
+                "rank": "three"
+            },
+            {
+                "suit": "spades",
+                "rank": "jack"
+            },
+            {
+                "suit": "hearts",
+                "rank": "nine"
+            },
+            {
+                "suit": "diamonds",
+                "rank": "jack"
+            },
+            {
+                "suit": "spades",
+                "rank": "ace"
+            },
+            {
+                "suit": "clubs",
+                "rank": "king"
+            },
+            {
+                "suit": "spades",
+                "rank": "five"
+            },
+            {
+                "suit": "spades",
                 "rank": "eight"
+            },
+            {
+                "suit": "hearts",
+                "rank": "ace"
+            },
+            {
+                "suit": "spades",
+                "rank": "king"
+            },
+            {
+                "suit": "diamonds",
+                "rank": "eight"
+            },
+            {
+                "suit": "spades",
+                "rank": "nine"
+            },
+            {
+                "suit": "spades",
+                "rank": "ace"
             },
             {
                 "suit": "hearts",
                 "rank": "three"
             },
             {
+                "suit": "clubs",
+                "rank": "queen"
+            },
+            {
+                "suit": "spades",
+                "rank": "four"
+            },
+            {
+                "suit": "hearts",
+                "rank": "queen"
+            },
+            {
+                "suit": "hearts",
+                "rank": "four"
+            },
+            {
+                "suit": "hearts",
+                "rank": "ace"
+            },
+            {
+                "suit": "hearts",
+                "rank": "jack"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ace"
+            },
+            {
+                "suit": "diamonds",
+                "rank": "ace"
+            },
+            {
+                "suit": "diamonds",
+                "rank": "four"
+            },
+            {
+                "suit": "diamonds",
+                "rank": "five"
+            },
+            {
+                "suit": "spades",
+                "rank": "queen"
+            },
+            {
+                "suit": "hearts",
+                "rank": "seven"
+            },
+            {
+                "suit": "clubs",
+                "rank": "three"
+            },
+            {
+                "suit": "diamonds",
+                "rank": "seven"
+            },
+            {
+                "suit": "hearts",
+                "rank": "six"
+            },
+            {
+                "suit": "hearts",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "six"
+            },
+            {
+                "suit": "clubs",
+                "rank": "four"
+            },
+            {
+                "suit": "clubs",
+                "rank": "king"
+            },
+            {
+                "suit": "diamonds",
+                "rank": "five"
+            },
+            {
+                "suit": "spades",
+                "rank": "nine"
+            },
+            {
+                "suit": "diamonds",
+                "rank": "king"
+            },
+            {
+                "suit": "spades",
+                "rank": "four"
+            },
+            {
+                "suit": "hearts",
+                "rank": "queen"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "diamonds",
+                "rank": "four"
+            },
+            {
+                "suit": "diamonds",
+                "rank": "three"
+            },
+            {
+                "suit": "diamonds",
+                "rank": "nine"
+            },
+            {
                 "suit": "hearts",
                 "rank": "five"
+            },
+            {
+                "suit": "clubs",
+                "rank": "eight"
+            },
+            {
+                "suit": "spades",
+                "rank": "seven"
+            },
+            {
+                "suit": "clubs",
+                "rank": "queen"
+            },
+            {
+                "suit": "clubs",
+                "rank": "six"
+            },
+            {
+                "suit": "hearts",
+                "rank": "king"
+            },
+            {
+                "suit": "clubs",
+                "rank": "eight"
             }
         ]
     },
@@ -453,28 +297,28 @@
             "type": "discardCard",
             "player": "player_1",
             "card": {
-                "suit": "hearts",
-                "rank": "three"
-            }
-        },
-        {
-            "type": "drawFromDeck",
-            "player": "player_2"
-        },
-        {
-            "type": "drawFromDeck",
-            "player": "player_2"
-        },
-        {
-            "type": "discardCard",
-            "player": "player_2",
-            "card": {
                 "suit": "diamonds",
                 "rank": "three"
             }
         },
         {
             "type": "drawFromDeck",
+            "player": "player_2"
+        },
+        {
+            "type": "drawFromDeck",
+            "player": "player_2"
+        },
+        {
+            "type": "discardCard",
+            "player": "player_2",
+            "card": {
+                "suit": "hearts",
+                "rank": "three"
+            }
+        },
+        {
+            "type": "drawFromDeck",
             "player": "player_1"
         },
         {
@@ -482,59 +326,11 @@
             "player": "player_1"
         },
         {
-            "type": "layDownInitialBooks",
-            "player": "player_1",
-            "books": [
-                [
-                    {
-                        "suit": "diamonds",
-                        "rank": "two"
-                    },
-                    {
-                        "suit": "clubs",
-                        "rank": "five"
-                    },
-                    {
-                        "suit": "hearts",
-                        "rank": "five"
-                    }
-                ],
-                [
-                    {
-                        "suit": "clubs",
-                        "rank": "two"
-                    },
-                    {
-                        "suit": "diamonds",
-                        "rank": "eight"
-                    },
-                    {
-                        "suit": "hearts",
-                        "rank": "eight"
-                    }
-                ],
-                [
-                    {
-                        "suit": "clubs",
-                        "rank": "ten"
-                    },
-                    {
-                        "suit": "hearts",
-                        "rank": "ten"
-                    },
-                    {
-                        "suit": "diamonds",
-                        "rank": "ten"
-                    }
-                ]
-            ]
-        },
-        {
             "type": "discardCard",
             "player": "player_1",
             "card": {
-                "suit": "spades",
-                "rank": "four"
+                "suit": "clubs",
+                "rank": "six"
             }
         },
         {
@@ -551,48 +347,34 @@
             "books": [
                 [
                     {
+                        "suit": "hearts",
+                        "rank": "ace"
+                    },
+                    {
+                        "suit": "spades",
+                        "rank": "ace"
+                    },
+                    {
+                        "suit": "diamonds",
+                        "rank": "ace"
+                    },
+                    {
                         "suit": "clubs",
-                        "rank": "four"
-                    },
-                    {
-                        "suit": "diamonds",
-                        "rank": "four"
-                    },
-                    {
-                        "suit": "spades",
-                        "rank": "four"
-                    },
-                    {
-                        "suit": "hearts",
-                        "rank": "four"
-                    }
-                ],
-                [
-                    {
-                        "suit": "spades",
-                        "rank": "two"
-                    },
-                    {
-                        "suit": "spades",
-                        "rank": "ten"
-                    },
-                    {
-                        "suit": "hearts",
-                        "rank": "ten"
+                        "rank": "ace"
                     }
                 ],
                 [
                     {
                         "suit": "diamonds",
-                        "rank": "jack"
-                    },
-                    {
-                        "suit": "diamonds",
-                        "rank": "jack"
+                        "rank": "four"
                     },
                     {
                         "suit": "hearts",
-                        "rank": "jack"
+                        "rank": "four"
+                    },
+                    {
+                        "suit": "spades",
+                        "rank": "four"
                     }
                 ]
             ]
@@ -601,28 +383,96 @@
             "type": "discardCard",
             "player": "player_2",
             "card": {
-                "suit": "spades",
+                "suit": "diamonds",
                 "rank": "eight"
+            }
+        },
+        {
+            "type": "drawFromDeck",
+            "player": "player_1"
+        },
+        {
+            "type": "drawFromDeck",
+            "player": "player_1"
+        },
+        {
+            "type": "layDownInitialBooks",
+            "player": "player_1",
+            "books": [
+                [
+                    {
+                        "suit": "spades",
+                        "rank": "five"
+                    },
+                    {
+                        "suit": "hearts",
+                        "rank": "five"
+                    },
+                    {
+                        "suit": "hearts",
+                        "rank": "two"
+                    }
+                ],
+                [
+                    {
+                        "suit": "diamonds",
+                        "rank": "nine"
+                    },
+                    {
+                        "suit": "clubs",
+                        "rank": "nine"
+                    },
+                    {
+                        "suit": "clubs",
+                        "rank": "nine"
+                    }
+                ],
+                [
+                    {
+                        "suit": "hearts",
+                        "rank": "queen"
+                    },
+                    {
+                        "suit": "clubs",
+                        "rank": "queen"
+                    },
+                    {
+                        "suit": "diamonds",
+                        "rank": "two"
+                    }
+                ]
+            ]
+        },
+        {
+            "type": "discardCard",
+            "player": "player_1",
+            "card": {
+                "suit": "spades",
+                "rank": "seven"
             }
         }
     ],
     "finalState": {
         "discardPile": [
             {
-                "suit": "hearts",
-                "rank": "three"
-            },
-            {
                 "suit": "diamonds",
                 "rank": "three"
             },
             {
-                "suit": "spades",
-                "rank": "four"
+                "suit": "hearts",
+                "rank": "three"
+            },
+            {
+                "suit": "clubs",
+                "rank": "six"
+            },
+            {
+                "suit": "diamonds",
+                "rank": "eight"
             },
             {
                 "suit": "spades",
-                "rank": "eight"
+                "rank": "seven"
             }
         ],
         "players": [
@@ -656,90 +506,94 @@
                 },
                 "hand": [
                     {
-                        "suit": "spades",
-                        "rank": "ace"
-                    },
-                    {
                         "suit": "clubs",
-                        "rank": "jack"
+                        "rank": "eight"
                     },
                     {
-                        "suit": "spades",
+                        "suit": "hearts",
                         "rank": "king"
                     },
                     {
-                        "suit": "spades",
-                        "rank": "nine"
-                    },
-                    {
                         "suit": "clubs",
-                        "rank": "ace"
+                        "rank": "eight"
                     },
                     {
                         "suit": "diamonds",
-                        "rank": "seven"
-                    }
-                ],
-                "foot": [
+                        "rank": "four"
+                    },
                     {
-                        "suit": "hearts",
-                        "rank": "queen"
+                        "suit": "clubs",
+                        "rank": "ten"
                     },
                     {
                         "suit": "spades",
-                        "rank": "ten"
+                        "rank": "four"
                     },
                     {
                         "suit": "diamonds",
                         "rank": "two"
-                    },
+                    }
+                ],
+                "foot": [
                     {
-                        "suit": "clubs",
-                        "rank": "seven"
+                        "suit": "diamonds",
+                        "rank": "king"
                     },
                     {
                         "suit": "spades",
-                        "rank": "three"
-                    },
-                    {
-                        "suit": "hearts",
                         "rank": "nine"
-                    },
-                    {
-                        "suit": "hearts",
-                        "rank": "ace"
-                    },
-                    {
-                        "suit": "hearts",
-                        "rank": "king"
-                    },
-                    {
-                        "suit": "spades",
-                        "rank": "queen"
-                    },
-                    {
-                        "suit": "clubs",
-                        "rank": "king"
-                    },
-                    {
-                        "suit": "spades",
-                        "rank": "seven"
                     },
                     {
                         "suit": "diamonds",
                         "rank": "five"
                     },
                     {
+                        "suit": "clubs",
+                        "rank": "king"
+                    },
+                    {
+                        "suit": "clubs",
+                        "rank": "four"
+                    },
+                    {
+                        "suit": "clubs",
+                        "rank": "six"
+                    },
+                    {
+                        "suit": "hearts",
+                        "rank": "ten"
+                    },
+                    {
+                        "suit": "hearts",
+                        "rank": "six"
+                    },
+                    {
+                        "suit": "diamonds",
+                        "rank": "seven"
+                    },
+                    {
+                        "suit": "clubs",
+                        "rank": "three"
+                    },
+                    {
+                        "suit": "hearts",
+                        "rank": "seven"
+                    },
+                    {
                         "suit": "spades",
-                        "rank": "joker"
+                        "rank": "queen"
+                    },
+                    {
+                        "suit": "diamonds",
+                        "rank": "five"
                     }
                 ],
-                "books": [
-                    {
+                "books": {
+                    "five": {
                         "rank": "five",
                         "cards": [
                             {
-                                "suit": "clubs",
+                                "suit": "spades",
                                 "rank": "five"
                             },
                             {
@@ -747,46 +601,46 @@
                                 "rank": "five"
                             },
                             {
-                                "suit": "diamonds",
+                                "suit": "hearts",
                                 "rank": "two"
                             }
                         ]
                     },
-                    {
-                        "rank": "eight",
+                    "nine": {
+                        "rank": "nine",
                         "cards": [
                             {
-                                "suit": "diamonds",
-                                "rank": "eight"
-                            },
-                            {
-                                "suit": "hearts",
-                                "rank": "eight"
+                                "suit": "clubs",
+                                "rank": "nine"
                             },
                             {
                                 "suit": "clubs",
-                                "rank": "two"
+                                "rank": "nine"
+                            },
+                            {
+                                "suit": "diamonds",
+                                "rank": "nine"
                             }
                         ]
                     },
-                    {
-                        "rank": "ten",
+                    "queen": {
+                        "rank": "queen",
                         "cards": [
                             {
-                                "suit": "clubs",
-                                "rank": "ten"
+                                "suit": "hearts",
+                                "rank": "queen"
                             },
                             {
-                                "suit": "hearts",
-                                "rank": "ten"
+                                "suit": "clubs",
+                                "rank": "queen"
                             },
                             {
                                 "suit": "diamonds",
-                                "rank": "ten"
+                                "rank": "two"
                             }
                         ]
                     }
-                ]
+                }
             },
             {
                 "name": "player_2",
@@ -818,137 +672,132 @@
                 },
                 "hand": [
                     {
-                        "suit": "spades",
-                        "rank": "six"
-                    },
-                    {
                         "suit": "hearts",
-                        "rank": "six"
-                    },
-                    {
-                        "suit": "diamonds",
-                        "rank": "queen"
-                    },
-                    {
-                        "suit": "spades",
-                        "rank": "five"
-                    },
-                    {
-                        "suit": "diamonds",
-                        "rank": "nine"
-                    }
-                ],
-                "foot": [
-                    {
-                        "suit": "clubs",
-                        "rank": "queen"
-                    },
-                    {
-                        "suit": "diamonds",
-                        "rank": "nine"
-                    },
-                    {
-                        "suit": "clubs",
-                        "rank": "six"
-                    },
-                    {
-                        "suit": "diamonds",
-                        "rank": "ace"
-                    },
-                    {
-                        "suit": "spades",
                         "rank": "jack"
                     },
                     {
                         "suit": "hearts",
-                        "rank": "two"
+                        "rank": "queen"
                     },
                     {
                         "suit": "clubs",
+                        "rank": "queen"
+                    },
+                    {
+                        "suit": "spades",
                         "rank": "nine"
+                    },
+                    {
+                        "suit": "clubs",
+                        "rank": "two"
+                    },
+                    {
+                        "suit": "diamonds",
+                        "rank": "ten"
                     },
                     {
                         "suit": "diamonds",
                         "rank": "king"
                     },
                     {
-                        "suit": "clubs",
+                        "suit": "diamonds",
+                        "rank": "jack"
+                    }
+                ],
+                "foot": [
+                    {
+                        "suit": "spades",
+                        "rank": "king"
+                    },
+                    {
+                        "suit": "hearts",
+                        "rank": "ace"
+                    },
+                    {
+                        "suit": "spades",
                         "rank": "eight"
                     },
                     {
                         "suit": "spades",
-                        "rank": "joker"
+                        "rank": "five"
+                    },
+                    {
+                        "suit": "clubs",
+                        "rank": "king"
+                    },
+                    {
+                        "suit": "spades",
+                        "rank": "ace"
+                    },
+                    {
+                        "suit": "diamonds",
+                        "rank": "jack"
+                    },
+                    {
+                        "suit": "hearts",
+                        "rank": "nine"
+                    },
+                    {
+                        "suit": "spades",
+                        "rank": "jack"
                     },
                     {
                         "suit": "clubs",
                         "rank": "three"
                     },
                     {
-                        "suit": "diamonds",
-                        "rank": "six"
+                        "suit": "hearts",
+                        "rank": "king"
                     },
                     {
-                        "suit": "hearts",
-                        "rank": "seven"
+                        "suit": "spades",
+                        "rank": "three"
+                    },
+                    {
+                        "suit": "clubs",
+                        "rank": "two"
                     }
                 ],
-                "books": [
-                    {
+                "books": {
+                    "ace": {
+                        "rank": "ace",
+                        "cards": [
+                            {
+                                "suit": "hearts",
+                                "rank": "ace"
+                            },
+                            {
+                                "suit": "spades",
+                                "rank": "ace"
+                            },
+                            {
+                                "suit": "diamonds",
+                                "rank": "ace"
+                            },
+                            {
+                                "suit": "clubs",
+                                "rank": "ace"
+                            }
+                        ]
+                    },
+                    "four": {
                         "rank": "four",
                         "cards": [
                             {
-                                "suit": "clubs",
-                                "rank": "four"
-                            },
-                            {
                                 "suit": "diamonds",
-                                "rank": "four"
-                            },
-                            {
-                                "suit": "spades",
                                 "rank": "four"
                             },
                             {
                                 "suit": "hearts",
                                 "rank": "four"
-                            }
-                        ]
-                    },
-                    {
-                        "rank": "ten",
-                        "cards": [
-                            {
-                                "suit": "spades",
-                                "rank": "ten"
-                            },
-                            {
-                                "suit": "hearts",
-                                "rank": "ten"
                             },
                             {
                                 "suit": "spades",
-                                "rank": "two"
-                            }
-                        ]
-                    },
-                    {
-                        "rank": "jack",
-                        "cards": [
-                            {
-                                "suit": "diamonds",
-                                "rank": "jack"
-                            },
-                            {
-                                "suit": "diamonds",
-                                "rank": "jack"
-                            },
-                            {
-                                "suit": "hearts",
-                                "rank": "jack"
+                                "rank": "four"
                             }
                         ]
                     }
-                ]
+                }
             }
         ]
     }
