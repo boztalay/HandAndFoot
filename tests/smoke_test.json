@@ -480,28 +480,32 @@
                 "name": "player_1",
                 "points": {
                     "ninety": {
-                        "inHand": 0,
-                        "inFoot": 0,
+                        "inHand": -60,
+                        "inFoot": -85,
                         "inBooks": 0,
-                        "laidDown": 0
+                        "laidDown": 100,
+                        "forGoingOut": 0
                     },
                     "oneTwenty": {
                         "inHand": 0,
                         "inFoot": 0,
                         "inBooks": 0,
-                        "laidDown": 0
+                        "laidDown": 0,
+                        "forGoingOut": 0
                     },
                     "oneFifty": {
                         "inHand": 0,
                         "inFoot": 0,
                         "inBooks": 0,
-                        "laidDown": 0
+                        "laidDown": 0,
+                        "forGoingOut": 0
                     },
                     "oneEighty": {
                         "inHand": 0,
                         "inFoot": 0,
                         "inBooks": 0,
-                        "laidDown": 0
+                        "laidDown": 0,
+                        "forGoingOut": 0
                     }
                 },
                 "hand": [
@@ -646,28 +650,32 @@
                 "name": "player_2",
                 "points": {
                     "ninety": {
-                        "inHand": 0,
-                        "inFoot": 0,
+                        "inHand": -90,
+                        "inFoot": -130,
                         "inBooks": 0,
-                        "laidDown": 0
+                        "laidDown": 95,
+                        "forGoingOut": 0
                     },
                     "oneTwenty": {
                         "inHand": 0,
                         "inFoot": 0,
                         "inBooks": 0,
-                        "laidDown": 0
+                        "laidDown": 0,
+                        "forGoingOut": 0
                     },
                     "oneFifty": {
                         "inHand": 0,
                         "inFoot": 0,
                         "inBooks": 0,
-                        "laidDown": 0
+                        "laidDown": 0,
+                        "forGoingOut": 0
                     },
                     "oneEighty": {
                         "inHand": 0,
                         "inFoot": 0,
                         "inBooks": 0,
-                        "laidDown": 0
+                        "laidDown": 0,
+                        "forGoingOut": 0
                     }
                 },
                 "hand": [

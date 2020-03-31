@@ -114,6 +114,8 @@ class Game: JSONEncodable {
             case let .addCardFromHandToBook(_, card):
                 try self.applyAddCardFromHandToBookAction(player: player, card: card)
         }
+        
+        player.calculatePoints(in: self.round)
     }
     
     func getPlayer(named playerName: String) -> Player? {
@@ -216,7 +218,7 @@ class Game: JSONEncodable {
         }
         
         let books = try cards.map({ try Book(initialCards: $0) })
-        let pointsInBooks = books.reduce(0, { $0 + $1.pointValue })
+        let pointsInBooks = books.reduce(0, { $0 + $1.cardsValue })
         
         guard pointsInBooks >= self.round.pointsNeeded else {
             throw IllegalActionError.notEnoughPointsToLayDown
@@ -253,7 +255,7 @@ class Game: JSONEncodable {
         let initialBooksCards = cards + [completedPartialBook]
         
         let books = try initialBooksCards.map({ try Book(initialCards: $0) })
-        let pointsInBooks = books.reduce(0, { $0 + $1.pointValue })
+        let pointsInBooks = books.reduce(0, { $0 + $1.cardsValue })
         
         guard pointsInBooks >= self.round.pointsNeeded else {
             throw IllegalActionError.notEnoughPointsToLayDown
@@ -298,8 +300,12 @@ class Game: JSONEncodable {
         }
         
         if let player = player {
-            player.addBonusForGoingOut()
+            player.addBonusForGoingOut(in: self.round)
         }
+        
+        //
+        // TODO: Advance the round or end the game
+        //
     }
     
     // Diagnostics

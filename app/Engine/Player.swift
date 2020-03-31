@@ -13,12 +13,14 @@ struct Points: JSONEncodable {
     var inFoot: Int
     var inBooks: Int
     var laidDown: Int
+    var forGoingOut: Int
     
     init() {
         self.inHand = 0
         self.inFoot = 0
         self.inBooks = 0
         self.laidDown = 0
+        self.forGoingOut = 0
     }
     
     enum Keys: String {
@@ -26,6 +28,7 @@ struct Points: JSONEncodable {
         case inFoot
         case inBooks
         case laidDown
+        case forGoingOut
     }
     
     func toJSON() -> JSONDictionary {
@@ -33,7 +36,8 @@ struct Points: JSONEncodable {
             Keys.inHand.rawValue : self.inHand,
             Keys.inFoot.rawValue : self.inFoot,
             Keys.inBooks.rawValue : self.inBooks,
-            Keys.laidDown.rawValue : self.laidDown
+            Keys.laidDown.rawValue : self.laidDown,
+            Keys.forGoingOut.rawValue : self.forGoingOut
         ]
     }
 }
@@ -202,8 +206,15 @@ class Player: JSONEncodable {
         self.hasLaidDownThisRound = false
     }
     
-    func addBonusForGoingOut() {
-        fatalError("not implemented")
+    func calculatePoints(in round: Round) {
+        self.points[round]!.inHand = self.hand.reduce(0, { $0 + ($1.pointValue > 0 ? -$1.pointValue : $1.pointValue) })
+        self.points[round]!.inFoot = self.foot.reduce(0, { $0 + ($1.pointValue > 0 ? -$1.pointValue : $1.pointValue) })
+        self.points[round]!.inBooks = self.books.reduce(0, { $0 + $1.value.bookValue })
+        self.points[round]!.laidDown = self.books.reduce(0, { $0 + $1.value.cardsValue })
+    }
+    
+    func addBonusForGoingOut(in round: Round) {
+        self.points[round]!.forGoingOut = 100
     }
     
     // MARK: - JSONEncodable

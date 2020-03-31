@@ -62,7 +62,7 @@ class Book: JSONEncodable {
         return (self.cards.count >= 7)
     }
     
-    var pointValue: Int {
+    var cardsValue: Int {
         return self.cards.reduce(0, { $0 + $1.pointValue })
     }
     
