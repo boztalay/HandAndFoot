@@ -13,6 +13,10 @@ enum CardSuit: String, CaseIterable {
     case diamonds
     case clubs
     case spades
+    
+    var isRed: Bool {
+        return ((self == .hearts) || (self == .diamonds))
+    }
 }
 
 enum CardRank: String, CaseIterable {
@@ -52,6 +56,27 @@ struct Card: Equatable, JSONCodable {
     
     var canStartBook: Bool {
         return (!self.isWild) && (self.rank != .three)
+    }
+    
+    var pointValue: Int {
+        switch (self.rank) {
+            case .two:
+                return 20
+            case .three:
+                if self.suit.isRed {
+                    return -100
+                } else {
+                    return 0
+                }
+            case .four, .five, .six, .seven, .eight:
+                    return 5
+            case .nine, .ten, .jack, .queen, .king:
+                    return 10
+            case .ace:
+                return 20
+            case .joker:
+                return 50
+        }
     }
     
     // MARK: - JSONCodable

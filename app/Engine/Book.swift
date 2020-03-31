@@ -59,12 +59,23 @@ class Book: JSONEncodable {
     }
     
     var isComplete: Bool {
-        return (self.cards.count == 7)
+        return (self.cards.count >= 7)
     }
     
     var pointValue: Int {
-        // TODO
-        fatalError("not implemented")
+        return self.cards.reduce(0, { $0 + $1.pointValue })
+    }
+    
+    var bookValue: Int {
+        guard self.isComplete else {
+            return 0
+        }
+        
+        if self.isNatural {
+            return 500
+        } else {
+            return 300
+        }
     }
     
     func addCard(_ card: Card) throws {
