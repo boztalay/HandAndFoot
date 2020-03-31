@@ -739,16 +739,16 @@
                         "rank": "five",
                         "cards": [
                             {
-                                "suit": "diamonds",
-                                "rank": "two"
-                            },
-                            {
                                 "suit": "clubs",
                                 "rank": "five"
                             },
                             {
                                 "suit": "hearts",
                                 "rank": "five"
+                            },
+                            {
+                                "suit": "diamonds",
+                                "rank": "two"
                             }
                         ]
                     },
@@ -756,16 +756,16 @@
                         "rank": "eight",
                         "cards": [
                             {
-                                "suit": "clubs",
-                                "rank": "two"
-                            },
-                            {
                                 "suit": "diamonds",
                                 "rank": "eight"
                             },
                             {
                                 "suit": "hearts",
                                 "rank": "eight"
+                            },
+                            {
+                                "suit": "clubs",
+                                "rank": "two"
                             }
                         ]
                     },
@@ -919,15 +919,15 @@
                         "cards": [
                             {
                                 "suit": "spades",
-                                "rank": "two"
-                            },
-                            {
-                                "suit": "spades",
                                 "rank": "ten"
                             },
                             {
                                 "suit": "hearts",
                                 "rank": "ten"
+                            },
+                            {
+                                "suit": "spades",
+                                "rank": "two"
                             }
                         ]
                     },
