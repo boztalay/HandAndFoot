@@ -1,3 +1,6 @@
+# Xcode user settings
+xcuserdata/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
