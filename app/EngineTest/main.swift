@@ -36,7 +36,7 @@ let playerNames = testCase["players"] as! [String]
 let initialDeckJson = testCase["initialDeck"] as! JSONDictionary
 let actionsJson = testCase["actions"] as! [JSONDictionary]
 
-let deck = Deck(with: initialDeckJson)
+let deck = Deck(with: initialDeckJson)!
 let game = try! Game(playerNames: playerNames, deck: deck)
 
 var actions = actionsJson.map({ Action(with: $0)! })
