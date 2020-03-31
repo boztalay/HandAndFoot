@@ -94,9 +94,10 @@ def main(enginePath, testCasePaths):
     print("Failed %d of %d test%s" % (len(failedTests), len(results), plural))
 
     if len(failedTests) > 0:
+        print()
         print("Failing tests:")
         for failedTest in failedTests:
-            print(failedTest[0])
+            print("\t" + failedTest[0])
 
 def runTestCasesInDir(enginePath, testCaseDir):
     results = []
@@ -112,8 +113,14 @@ def runTestCase(enginePath, testCasePath):
     actualFinalStateString = subprocess.check_output("%s %s" % (enginePath, testCasePath), shell=True)
     actualFinalState = json.loads(actualFinalStateString)
 
-    testCase = json.load(testCasePath)
-    expectedFinalState = testCase["final_state"]
+    try:
+        testCaseFile = open(testCasePath, "r")
+    except IOError as e:
+        print("Couldn't open test case file: " + str(e))
+        sys.exit(1)
+
+    testCase = json.load(testCaseFile)
+    expectedFinalState = testCase["finalState"]
 
     passed = (actualFinalState == expectedFinalState)
 
