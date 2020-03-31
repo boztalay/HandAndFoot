@@ -415,15 +415,15 @@
                 ],
                 [
                     {
+                        "suit": "clubs",
+                        "rank": "nine"
+                    },
+                    {
+                        "suit": "clubs",
+                        "rank": "nine"
+                    },
+                    {
                         "suit": "diamonds",
-                        "rank": "nine"
-                    },
-                    {
-                        "suit": "clubs",
-                        "rank": "nine"
-                    },
-                    {
-                        "suit": "clubs",
                         "rank": "nine"
                     }
                 ],
