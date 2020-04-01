@@ -29,6 +29,7 @@ enum Round: String {
 }
 
 class Game: JSONEncodable {
+
     private var deck: Deck
     private var discardPile: [Card]
     private var players: [Player]
@@ -36,7 +37,7 @@ class Game: JSONEncodable {
     private var actions: [Action]
     private(set) var playerIterator: PlayerIterator
 
-    // MARK: - Initialization
+    // MARK: Initialization
     
     init(playerNames: [String], deck: Deck? = nil) throws {
         guard playerNames.count >= 2 else {
@@ -85,7 +86,7 @@ class Game: JSONEncodable {
         return try Player(name: name, hand: hand, foot: foot)
     }
     
-    // MARK: - Applying actions
+    // MARK: Applying actions
     
     func apply(action: Action) throws {
         guard let player = self.getPlayer(named: action.playerName) else {
@@ -333,7 +334,7 @@ class Game: JSONEncodable {
         }
     }
     
-    // MARK: - JSONEncodable
+    // MARK: JSONEncodable
     
     enum Keys: String {
         case discardPile

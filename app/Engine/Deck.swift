@@ -12,7 +12,7 @@ class Deck {
 
     private var cards: [Card]
     
-    // MARK: - Initialization
+    // MARK: Initialization
     
     init(standardDeckCount: Int) {
         self.cards = []
@@ -31,7 +31,7 @@ class Deck {
         }
     }
     
-    // MARK: - Computed Properties
+    // MARK: Computed properties
     
     var isEmpty: Bool {
         return (self.cardCount == 0)
@@ -41,9 +41,8 @@ class Deck {
         return self.cards.count
     }
     
-    // MARK: - Modifying the Deck
-    
-    // TODO: Take a seed?
+    // MARK: Modifying the deck
+
     func shuffle() {
         self.cards.shuffle()
     }
@@ -57,7 +56,7 @@ class Deck {
         self.shuffle()
     }
     
-    // MARK: - JSONCodable
+    // MARK: JSONCodable
     
     enum Keys: String {
         case cards

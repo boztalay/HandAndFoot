@@ -41,14 +41,14 @@ struct Card: Equatable, JSONCodable {
     let suit: CardSuit
     let rank: CardRank
     
-    // MARK: - Initialization
+    // MARK: Initialization
     
     init(suit: CardSuit, rank: CardRank) {
         self.suit = suit
         self.rank = rank
     }
     
-    // MARK: - Computed Properties
+    // MARK: Computed properties
     
     var isWild: Bool {
         return (self.rank == .two) || (self.rank == .joker)

@@ -9,9 +9,12 @@
 import Foundation
 
 class Book: JSONEncodable {
+
     let rank: CardRank
 
     private var cards: [Card]
+    
+    // MARK: Initialization
     
     init(initialCards: [Card]) throws {
         if initialCards.count < 3 {
@@ -42,6 +45,10 @@ class Book: JSONEncodable {
         }
     }
     
+    // MARK: Computed properties
+    
+    // Cards
+    
     var cardCount: Int {
         return self.cards.count
     }
@@ -62,6 +69,8 @@ class Book: JSONEncodable {
         return (self.cards.count >= 7)
     }
     
+    // Points
+    
     var cardsValue: Int {
         return self.cards.reduce(0, { $0 + $1.pointValue })
     }
@@ -77,6 +86,8 @@ class Book: JSONEncodable {
             return 300
         }
     }
+    
+    // MARK: Adding cards
     
     func addCard(_ card: Card) throws {
         if card.isWild {
@@ -102,7 +113,7 @@ class Book: JSONEncodable {
         self.cards.append(card)
     }
     
-    // MARK: - JSONEncodable
+    // MARK: JSONEncodable
     
     enum Keys: String {
         case rank

@@ -9,6 +9,7 @@
 import Foundation
 
 enum Action: JSONDecodable {
+
     case drawFromDeck(String)
     case drawFromDiscardAndAddToBook(String)
     case drawFromDiscardAndCreateBook(String, [Card])
@@ -17,6 +18,8 @@ enum Action: JSONDecodable {
     case drawFromDiscardAndLayDownInitialBooks(String, [Card], [[Card]])
     case startBook(String, [Card])
     case addCardFromHandToBook(String, Card)
+    
+    // MARK: Computed properties
     
     var playerName: String {
         switch (self) {
@@ -39,7 +42,7 @@ enum Action: JSONDecodable {
         }
     }
     
-    // MARK: - JSONDecodable
+    // MARK: JSONDecodable
     
     enum Keys: String {
         case type
