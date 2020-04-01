@@ -26,6 +26,19 @@ enum Round: String {
                 return 180
         }
     }
+    
+    var nextRound: Round? {
+        switch (self) {
+        case .ninety:
+            return .oneTwenty
+        case .oneTwenty:
+            return .oneFifty
+        case .oneFifty:
+            return .oneEighty
+        case .oneEighty:
+            return nil
+        }
+    }
 }
 
 class Game: JSONEncodable {
@@ -33,9 +46,9 @@ class Game: JSONEncodable {
     private var deck: Deck
     private var discardPile: [Card]
     private var players: [Player]
-    private var round: Round
+    private var round: Round?
     private var actions: [Action]
-    private(set) var playerIterator: PlayerIterator
+    private var playerIterator: PlayerIterator
 
     // MARK: Initialization
     
@@ -89,6 +102,10 @@ class Game: JSONEncodable {
     // MARK: Applying actions
     
     func apply(action: Action) throws {
+        guard let round = self.round else {
+            throw IllegalActionError.gameIsOver
+        }
+        
         guard let player = self.getPlayer(named: action.playerName) else {
             throw IllegalActionError.unknownPlayer
         }
@@ -116,7 +133,7 @@ class Game: JSONEncodable {
                 try self.applyAddCardFromHandToBookAction(player: player, card: card)
         }
         
-        player.calculatePoints(in: self.round)
+        player.calculatePoints(in: round)
     }
     
     func getPlayer(named playerName: String) -> Player? {
@@ -221,7 +238,7 @@ class Game: JSONEncodable {
         let books = try cards.map({ try Book(initialCards: $0) })
         let pointsInBooks = books.reduce(0, { $0 + $1.cardsValue })
         
-        guard pointsInBooks >= self.round.pointsNeeded else {
+        guard pointsInBooks >= self.round!.pointsNeeded else {
             throw IllegalActionError.notEnoughPointsToLayDown
         }
         
@@ -258,7 +275,7 @@ class Game: JSONEncodable {
         let books = try initialBooksCards.map({ try Book(initialCards: $0) })
         let pointsInBooks = books.reduce(0, { $0 + $1.cardsValue })
         
-        guard pointsInBooks >= self.round.pointsNeeded else {
+        guard pointsInBooks >= self.round!.pointsNeeded else {
             throw IllegalActionError.notEnoughPointsToLayDown
         }
         
@@ -301,37 +318,11 @@ class Game: JSONEncodable {
         }
         
         if let player = player {
-            player.addBonusForGoingOut(in: self.round)
+            player.addBonusForGoingOut(in: self.round!)
         }
         
-        //
-        // TODO: Advance the round or end the game
-        //
-    }
-    
-    // Diagnostics
-    
-    func printReport() {
-        print("Game State:")
-        print("    Round: \(self.round)")
-        print("    Current Player: \(self.playerIterator.currentPlayer.name)")
-        print("    Cards in Deck: \(self.deck.cardCount)")
-        print("    Cards Discarded: \(self.discardPile.count)")
-        print("    Actions Taken: \(self.actions.count)")
         
-        for player in self.players {
-            print("Player: \(player.name)")
-            print("    Cards in Hand: \(player.hand.count)")
-            print("    In Foot?: \(player.isInFoot)")
-            
-            if player.books.count > 0 {
-                print("    Books:")
-                let bookRanks = player.books.keys.sorted(by: { $0.rawValue > $1.rawValue })
-                for bookRank in bookRanks {
-                    print("        \(bookRank): \(player.books[bookRank]!.cardCount) cards")
-                }
-            }
-        }
+        self.round = self.round?.nextRound
     }
     
     // MARK: JSONEncodable
