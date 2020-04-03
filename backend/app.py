@@ -9,6 +9,7 @@ from peewee import MySQLDatabase
 import yaml
 
 from models import db
+from models import UserRole
 from models import User
 from models import Game
 from models import UserGame
@@ -167,10 +168,10 @@ def create_game(current_user):
             users.append(user)
 
     game = Game.create()
+    UserGame.create(current_user, game, UserRole.OWNER)
 
-    users.append(current_user)
     for user in users:
-        usergame = UserGame.create(user=user, game=game)
+        UserGame.create(user, game, UserRole.PLAYER)
 
     return (jsonify({'success': True, 'game_id': game.id}), 200)
 

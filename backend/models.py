@@ -1,6 +1,7 @@
 from datetime import datetime
-import yaml
+import enum
 import json
+import yaml
 
 from flask_login import UserMixin
 from flask_login import LoginManager, login_user, logout_user, login_required
@@ -28,6 +29,10 @@ db = MySQLDatabase(
     passwd=db_password,
     charset='utf8mb4' # Enable unicode
 )
+
+class UserRole(enum.Enum):
+    OWNER = "owner"
+    PLAYER = "player"
 
 class BaseModel(Model):
     class Meta:
@@ -97,7 +102,18 @@ class Game(BaseModel):
 class UserGame(BaseModel):
     user = ForeignKeyField(User, backref="usergames")
     game = ForeignKeyField(Game, backref="usergames")
+    role = CharField()
     user_accepted = BooleanField(default=False)
+
+    @staticmethod
+    def create(user, game, role):
+        usergame = UserGame(user=user, game=game, role=role.value)
+
+        if role == UserRole.OWNER:
+            usergame.user_accepted = True
+
+        usergame.save()
+        return user
 
 class Action(BaseModel):
     action_type = CharField()
