@@ -12,13 +12,11 @@ from models import User
 
 app = Flask(__name__)
 
-# Used for signing cookies
 secrets = yaml.load(open('./secrets.yaml'))
 app_secrets = secrets['app']
 app.secret_key = app_secrets['secret_key']
 
 CORS(app)
-
 
 # Flask-login
 
@@ -31,7 +29,6 @@ def load_user(user_id):
     # May return None if no user exists.
     return User.get(User.email == user_id)
 
-
 # Database lifecycle
 
 @app.before_request
@@ -43,7 +40,6 @@ def _db_connect():
 def _db_close(exc):
     if not db.is_closed():
         db.close()
-
 
 # Testing
 
@@ -109,7 +105,6 @@ def test_login():
         abort(403)
 
     return jsonify({'status': 'logged_in', 'user': current_user.to_dict()}), 200
-
 
 @login_required
 @app.route('/api/user', methods=['GET'])

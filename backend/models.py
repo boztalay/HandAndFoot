@@ -8,7 +8,6 @@ from flask_login import LoginManager, login_user, logout_user, login_required
 from peewee import *
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
 secrets = yaml.load(open('./secrets.yaml'))
 db_secrets = secrets['database']
 
@@ -16,7 +15,6 @@ db_name = db_secrets['name']
 db_host = db_secrets['host']
 db_user = db_secrets['user']
 db_password = db_secrets['password']
-
 
 db = MySQLDatabase(
     db_name,
@@ -26,11 +24,9 @@ db = MySQLDatabase(
     charset='utf8mb4' # Enable unicode
 )
 
-
 class BaseModel(Model):
     class Meta:
         database = db
-
 
 class User(BaseModel, UserMixin):
     name = CharField()
@@ -48,9 +44,9 @@ class User(BaseModel, UserMixin):
     @staticmethod
     def login(email, password):
         try:
-            u = User.get(User.email == email)
-            if u.check_password(password):
-                return u
+            user = User.get(User.email == email)
+            if user.check_password(password):
+                return user
             else:
                 return None
         except Exception as e:
@@ -60,9 +56,9 @@ class User(BaseModel, UserMixin):
     @staticmethod
     def create(email, name, password):
         password_hash = generate_password_hash(password)
-        u = User(email=email, name=name, password_hash=password_hash)
-        u.save()
-        return u
+        user = User(email=email, name=name, password_hash=password_hash)
+        user.save()
+        return user
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
@@ -82,4 +78,3 @@ class User(BaseModel, UserMixin):
     def is_anonymous(self):
         # Don't support anonymous users
         return False
-
