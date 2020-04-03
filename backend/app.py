@@ -36,7 +36,7 @@ login_manager.login_view = 'login'
 @login_manager.user_loader
 def load_user(user_id):
     # May return None if no user exists.
-    return User.get(User.email == user_id)
+    return User.get_or_none(User.email == user_id)
 
 #
 # Database Lifecycle
@@ -152,10 +152,11 @@ def create_game():
 
     users = []
     for user_email in user_emails:
-        try:
-            user = Users.get(User.email == user_email)
-        except DoesNotExist:
+        user = Users.get_or_none(User.email == user_email)
+        if user is None:
             abort(400)
+        else:
+            users.append(user)
 
     game = Game.create()
 
@@ -185,7 +186,7 @@ def accept_game_invite():
     usergame.user_accepted = True
     usergame.save()
 
-    return return Response(status=200)
+    return Response(status=200)
 
 @login_required
 @app.route('/api/game/add_action', methods=['POST'])
