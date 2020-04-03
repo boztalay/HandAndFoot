@@ -9,6 +9,9 @@ import yaml
 
 from models import db
 from models import User
+from models import Game
+from models import UserGame
+from models import Action
 
 app = Flask(__name__)
 
@@ -45,7 +48,7 @@ def _db_close(exc):
 
 def create_tables():
     # Create tables based on the following User models if they don't already exist.
-    db.create_tables([User], safe=True)
+    db.create_tables([User, Game, UserGame, Action], safe=True)
 
 # Frontend routes
 

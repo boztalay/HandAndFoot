@@ -78,3 +78,17 @@ class User(BaseModel, UserMixin):
     def is_anonymous(self):
         # Don't support anonymous users
         return False
+
+class Game(BaseModel):
+    created = DateTimeField(default=datetime.now)
+    last_updated = DateTimeField(default=datetime.now)
+
+class UserGame(BaseModel):
+    user = ForeignKeyField(User, backref="usergames")
+    game = ForeignKeyField(Game, backref="usergames")
+
+class Action(BaseModel):
+    action_type = CharField()
+    content = CharField()
+    game = ForeignKeyField(Game, backref="actions")
+    created = DateTimeField(default=datetime.now)
