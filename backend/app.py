@@ -149,6 +149,8 @@ def create_game():
         abort(400)
 
     user_emails = user_emails.split(';')
+    if len(user_emails) < 1 or len(user_emails) > 5:
+        abort(400)
 
     users = []
     for user_email in user_emails:
