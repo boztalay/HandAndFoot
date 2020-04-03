@@ -37,7 +37,6 @@ login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(user_id):
-    # May return None if no user exists.
     return User.get_or_none(User.email == user_id)
 
 #
