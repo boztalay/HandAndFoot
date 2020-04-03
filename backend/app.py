@@ -13,6 +13,10 @@ from models import Game
 from models import UserGame
 from models import Action
 
+#
+# Setup
+#
+
 app = Flask(__name__)
 
 secrets = yaml.load(open('./secrets.yaml'))
@@ -21,7 +25,9 @@ app.secret_key = app_secrets['secret_key']
 
 CORS(app)
 
+#
 # Flask-login
+#
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -32,7 +38,9 @@ def load_user(user_id):
     # May return None if no user exists.
     return User.get(User.email == user_id)
 
-# Database lifecycle
+#
+# Database Lifecycle
+#
 
 @app.before_request
 def _db_connect():
@@ -44,13 +52,19 @@ def _db_close(exc):
     if not db.is_closed():
         db.close()
 
+#
 # Testing
+#
 
 def create_tables():
     # Create tables based on the following User models if they don't already exist.
     db.create_tables([User, Game, UserGame, Action], safe=True)
 
-# Frontend routes
+#
+# Frontend Routes
+#
+
+# Home Page
 
 @app.route('/')
 def index():
@@ -59,21 +73,7 @@ def index():
 
     return "We're logged in, show whatever html you want."
 
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    if request.method == 'GET':
-        return render_template('login.html')
-
-    email = request.form['email']
-    password = request.form['password']
-
-    user = User.login(email=email, password=password)
-
-    if user:
-        login_user(user)
-        return redirect('/')
-    else:
-        return redirect('/login')
+# Account Management
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -96,27 +96,67 @@ def signup():
     else:
         return redirect('/signup')
 
-@app.route('/logout')
-def logout():
-    logout_user()
-    return redirect('/login')
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+
+    email = request.form['email']
+    password = request.form['password']
+
+    user = User.login(email=email, password=password)
+
+    if user:
+        login_user(user)
+        return redirect('/')
+    else:
+        return redirect('/login')
 
 @login_required
-@app.route('/api/test', methods=['GET'])
-def test_login():
-    if not current_user.is_authenticated:
-        abort(403)
-
-    return jsonify({'status': 'logged_in', 'user': current_user.to_dict()}), 200
-
-@login_required
-@app.route('/api/user', methods=['GET'])
+@app.route('/profile', methods=['GET'])
 def get_user_data():
     if not current_user.is_authenticated:
         abort(403)
 
     print("Getting user data for {}".format(current_user.name))
     return jsonify(current_user.to_dict())
+
+@app.route('/logout')
+def logout():
+    logout_user()
+    return redirect('/login')
+
+# Synchronization
+
+@login_required
+@app.route('/api/sync', methods=['GET'])
+def get_user_data():
+    if not current_user.is_authenticated:
+        abort(403)
+
+    return "TODO"
+
+# Game Management
+
+@login_required
+@app.route('/api/game/create', methods=['POST'])
+def get_user_data():
+    if not current_user.is_authenticated:
+        abort(403)
+
+    return "TODO"
+
+@login_required
+@app.route('/api/game/add_action', methods=['POST'])
+def get_user_data():
+    if not current_user.is_authenticated:
+        abort(403)
+
+    return "TODO"
+
+#
+# Main
+#
 
 if __name__ == '__main__':
     app.run(debug=True)

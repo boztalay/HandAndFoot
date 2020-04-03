@@ -87,6 +87,7 @@ class Game(BaseModel):
 class UserGame(BaseModel):
     user = ForeignKeyField(User, backref="usergames")
     game = ForeignKeyField(Game, backref="usergames")
+    user_accepted = BooleanField(default=False)
 
 class Action(BaseModel):
     action_type = CharField()
