@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import *
 from flask_cors import CORS
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from itsdangerous import Signer
 
 from peewee import MySQLDatabase
 import yaml
@@ -26,7 +27,7 @@ app.secret_key = app_secrets['secret_key']
 CORS(app)
 
 #
-# Flask-login
+# Flask-Login
 #
 
 login_manager = LoginManager()
@@ -37,6 +38,35 @@ login_manager.login_view = 'login'
 def load_user(user_id):
     # May return None if no user exists.
     return User.get_or_none(User.email == user_id)
+
+#
+# Token Authentication
+#
+
+def token_required(function):
+    def wrapper(*args, **kwargs):
+        api_token = request.headers.get('X-App-Token')
+
+        if not api_token:
+            return (jsonify({'success': False, 'message': 'No API token found in request'}), 400)
+
+        try:
+            from models import TOKEN_SIGNING_KEY
+            s = Signer(TOKEN_SIGNING_KEY)
+            email = s.unsign(api_token).decode('utf-8')
+
+            user = User.get(User.email == email)
+
+            kwargs['current_user'] = user
+            login_user(user)
+        except Exception as e:
+            print(e)
+            return (jsonify({'success': False, 'message': 'Invalid request.'}), 400)
+
+        return function(*args, **kwargs)
+
+    wrapper.__name__ = function.__name__
+    return wrapper
 
 #
 # Database Lifecycle
@@ -64,43 +94,28 @@ def create_tables():
 # Frontend Routes
 #
 
-# Home Page
-
-@app.route('/')
-def index():
-    if not current_user.is_authenticated:
-        return redirect('/login')
-
-    return "We're logged in, show whatever html you want."
-
 # Account Management
 
-@app.route('/signup', methods=['GET', 'POST'])
+@app.route('/api/signup', methods=['POST'])
 def signup():
-    if request.method == 'GET':
-        return render_template('signup.html')
-
     name = request.form['name']
     email = request.form['email']
     password = request.form['password']
 
     existing_user = User.get_or_none(User.email == email)
     if existing_user:
-        return "This user already exists."
+        return (jsonify({'success': False, 'message': "User already exists"}), 403)
 
     new_user = User.create(email, name, password)
 
     if new_user:
         login_user(new_user)
-        return redirect('/')
+        return (jsonify({'success': True, 'token': new_user.token()}), 200)
     else:
-        return redirect('/signup')
+        abort(403)
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
-    if request.method == 'GET':
-        return render_template('login.html')
-
     email = request.form['email']
     password = request.form['password']
 
@@ -108,29 +123,20 @@ def login():
 
     if user:
         login_user(user)
-        return redirect('/')
+        return (jsonify({'success': True, 'token': user.token()}), 200)
     else:
-        return redirect('/login')
-
-@login_required
-@app.route('/profile', methods=['GET'])
-def get_user_profile():
-    if not current_user.is_authenticated:
         abort(403)
 
-    print("Getting user data for {}".format(current_user.name))
-    return jsonify(current_user.to_dict())
-
-@app.route('/logout')
+@app.route('/api/logout')
 def logout():
     logout_user()
-    return redirect('/login')
+    return (jsonify({'success': True}), 200)
 
 # Synchronization
 
-@login_required
-@app.route('/api/sync', methods=['GET'])
-def sync_user():
+@app.route('/api/sync', methods=['POST'])
+@token_required
+def sync_user(current_user):
     if not current_user.is_authenticated:
         abort(403)
 
@@ -138,13 +144,13 @@ def sync_user():
 
 # Game Management
 
-@login_required
 @app.route('/api/game/create', methods=['POST'])
-def create_game():
+@token_required
+def create_game(current_user):
     if not current_user.is_authenticated:
         abort(403)
 
-    user_emails = request.args.get('users')
+    user_emails = request.form.get('users')
     if user_emails is None:
         abort(400)
 
@@ -154,7 +160,7 @@ def create_game():
 
     users = []
     for user_email in user_emails:
-        user = Users.get_or_none(User.email == user_email)
+        user = User.get_or_none(User.email == user_email)
         if user is None:
             abort(400)
         else:
@@ -162,18 +168,19 @@ def create_game():
 
     game = Game.create()
 
+    users.append(current_user)
     for user in users:
-        usergame = UserGame.create(user, game)
+        usergame = UserGame.create(user=user, game=game)
 
-    return Response(status=201)
+    return (jsonify({'success': True, 'game_id': game.id}), 200)
 
-@login_required
 @app.route('/api/game/accept', methods=['POST'])
-def accept_game_invite():
+@token_required
+def accept_game_invite(current_user):
     if not current_user.is_authenticated:
         abort(403)
 
-    game_id = request.args.get('game')
+    game_id = request.form.get('game')
     if game_id is None:
         abort(400)
 
@@ -188,11 +195,11 @@ def accept_game_invite():
     usergame.user_accepted = True
     usergame.save()
 
-    return Response(status=200)
+    return (jsonify({'success': True}), 200)
 
-@login_required
 @app.route('/api/game/add_action', methods=['POST'])
-def add_action_to_game():
+@token_required
+def add_action_to_game(current_user):
     if not current_user.is_authenticated:
         abort(403)
 

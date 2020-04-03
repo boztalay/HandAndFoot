@@ -6,11 +6,16 @@ from flask_login import UserMixin
 from flask_login import LoginManager, login_user, logout_user, login_required
 
 from peewee import *
+
+from itsdangerous import Signer
 from werkzeug.security import generate_password_hash, check_password_hash
 
 secrets = yaml.load(open('./secrets.yaml'))
-db_secrets = secrets['database']
 
+app_secrets = secrets['app']
+TOKEN_SIGNING_KEY = app_secrets['token_signing_key']
+
+db_secrets = secrets['database']
 db_name = db_secrets['name']
 db_host = db_secrets['host']
 db_user = db_secrets['user']
@@ -79,6 +84,11 @@ class User(BaseModel, UserMixin):
     def is_anonymous(self):
         # Don't support anonymous users
         return False
+
+    def token(self):
+        s = Signer(TOKEN_SIGNING_KEY)
+        token = s.sign(self.email)
+        return token.decode('utf-8')
 
 class Game(BaseModel):
     created = DateTimeField(default=datetime.now)
