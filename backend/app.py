@@ -114,7 +114,7 @@ def login():
 
 @login_required
 @app.route('/profile', methods=['GET'])
-def get_user_data():
+def get_user_profile():
     if not current_user.is_authenticated:
         abort(403)
 
@@ -130,7 +130,7 @@ def logout():
 
 @login_required
 @app.route('/api/sync', methods=['GET'])
-def get_user_data():
+def sync_user():
     if not current_user.is_authenticated:
         abort(403)
 
@@ -140,15 +140,56 @@ def get_user_data():
 
 @login_required
 @app.route('/api/game/create', methods=['POST'])
-def get_user_data():
+def create_game():
     if not current_user.is_authenticated:
         abort(403)
 
-    return "TODO"
+    user_emails = request.args.get('users')
+    if user_emails is None:
+        abort(400)
+
+    user_emails = user_emails.split(';')
+
+    users = []
+    for user_email in user_emails:
+        try:
+            user = Users.get(User.email == user_email)
+        except DoesNotExist:
+            abort(400)
+
+    game = Game.create()
+
+    for user in users:
+        usergame = UserGame.create(user, game)
+
+    return Response(status=201)
+
+@login_required
+@app.route('/api/game/accept', methods=['POST'])
+def accept_game_invite():
+    if not current_user.is_authenticated:
+        abort(403)
+
+    game_id = request.args.get('game')
+    if game_id is None:
+        abort(400)
+
+    game = Game.get_or_none(Game.id == game_id)
+    if game is None:
+        abort(400)
+
+    usergame = UserGame.get_or_none(UserGame.user == current_user, UserGame.game == game)
+    if usergame is None:
+        abort(400)
+
+    usergame.user_accepted = True
+    usergame.save()
+
+    return return Response(status=200)
 
 @login_required
 @app.route('/api/game/add_action', methods=['POST'])
-def get_user_data():
+def add_action_to_game():
     if not current_user.is_authenticated:
         abort(403)
 
