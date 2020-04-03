@@ -1,4 +1,6 @@
-# requirements.txt
-Flask==0.12.2
-PyMySQL
+flask
 peewee
+PyMySQL
+pyyaml
+Flask-Cors
+flask-login
