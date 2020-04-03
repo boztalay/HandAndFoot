@@ -43,37 +43,6 @@ struct Points: JSONEncodable {
     }
 }
 
-struct PlayerIterator {
-
-    private var players: [Player]
-    private var index: Int
-    
-    var currentPlayer: Player {
-        return self.players[self.index]
-    }
-    
-    init() {
-        self.players = []
-        self.index = 0
-    }
-    
-    mutating func setPlayers(_ players: [Player]) {
-        self.players = players
-        self.index = self.players.startIndex
-    }
-    
-    mutating func goToNextPlayer() {
-        self.index = self.players.index(after: self.index)
-        if self.index == self.players.endIndex {
-            self.index = self.players.startIndex
-        }
-    }
-    
-    func isCurrentPlayer(_ player: Player) -> Bool {
-        return (player === self.currentPlayer)
-    }
-}
-
 class Player: JSONEncodable {
 
     let name: String
@@ -91,7 +60,7 @@ class Player: JSONEncodable {
     
     init(name: String, hand: [Card], foot: [Card]) throws {
         guard hand.count == 13 && foot.count == 13 else {
-            throw IllegalActionError.initialHandOrFootNotSizedCorrectly
+            throw IllegalSetupError.initialHandOrFootNotSizedCorrectly
         }
         
         self.name = name
@@ -113,7 +82,7 @@ class Player: JSONEncodable {
     // MARK: Computed properties
     
     var canDrawFromDeck: Bool {
-        return ((self.cardsDrawnFromDeck + cardsDrawnFromDiscardPile) < 2)
+        return ((self.cardsDrawnFromDeck + self.cardsDrawnFromDiscardPile) < 2)
     }
     
     var canDrawFromDiscardPile: Bool {

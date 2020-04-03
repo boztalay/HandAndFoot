@@ -11,7 +11,6 @@ enum IllegalActionError: Error {
     case notEnoughCardsToStartBook
     case cannotStartBookWithGivenCards
     case tooManyWildsInBookToAddAnother
-    case initialHandOrFootNotSizedCorrectly
     case deckIsEmpty
     case discardPileIsEmpty
     case notEnoughPointsToLayDown
@@ -31,4 +30,5 @@ enum IllegalActionError: Error {
 enum IllegalSetupError: Error {
     case tooFewPlayers
     case tooManyPlayers
+    case initialHandOrFootNotSizedCorrectly
 }

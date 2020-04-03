@@ -41,6 +41,37 @@ enum Round: String {
     }
 }
 
+struct PlayerIterator {
+
+    private var players: [Player]
+    private var index: Int
+    
+    var currentPlayer: Player {
+        return self.players[self.index]
+    }
+    
+    init() {
+        self.players = []
+        self.index = 0
+    }
+    
+    mutating func setPlayers(_ players: [Player]) {
+        self.players = players
+        self.index = self.players.startIndex
+    }
+    
+    mutating func goToNextPlayer() {
+        self.index = self.players.index(after: self.index)
+        if self.index == self.players.endIndex {
+            self.index = self.players.startIndex
+        }
+    }
+    
+    func isCurrentPlayer(_ player: Player) -> Bool {
+        return (player === self.currentPlayer)
+    }
+}
+
 class Game: JSONEncodable {
 
     private var deck: Deck
