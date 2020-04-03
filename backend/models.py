@@ -33,6 +33,7 @@ class User(BaseModel, UserMixin):
     email = CharField(unique=True)
     password_hash = CharField()
     created = DateTimeField(default=datetime.now)
+    last_updated = DateTimeField(default=datetime.now)
 
     def to_dict(self):    
         return {
