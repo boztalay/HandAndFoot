@@ -45,6 +45,11 @@ class CardRank(enum.Enum):
     JOKER = "joker"
 
 class Card(object):
+
+    @staticmethod
+    def from_json(card_json):
+        return Card(CardSuit(card_json["suit"]), CardRank(card_json["rank"]))
+
     def __init__(self, suit, rank):
         self.suit = suit
         self.rank = rank
@@ -82,17 +87,25 @@ class Card(object):
 
 class Deck(object):
 
-    def __init__(self, standard_deck_count):
+    @staticmethod
+    def from_json(deck_json):
+        deck = Deck()
+
+        for card_json in deck_json:
+            deck.cards.append(Card.from_json(card_json))
+
+    def __init__(self, standard_deck_count=None):
         self.cards = []
 
-        for _ in range(0, standard_deck_count):
-            for suit in CardSuit:
-                for rank in CardRank:
-                    if rank != CardRank.JOKER:
-                        self.cards.append(Card(suit, rank))
+        if standard_deck_count is not None:
+            for _ in range(0, standard_deck_count):
+                for suit in CardSuit:
+                    for rank in CardRank:
+                        if rank != CardRank.JOKER:
+                            self.cards.append(Card(suit, rank))
 
-            self.cards.append(Card(CardSuit.SPADES, CardRank.JOKER))
-            self.cards.append(Card(CardSuit.SPADES, CardRank.JOKER))
+                self.cards.append(Card(CardSuit.SPADES, CardRank.JOKER))
+                self.cards.append(Card(CardSuit.SPADES, CardRank.JOKER))
 
     @property
     def is_empty(self):
@@ -362,6 +375,35 @@ class Player(object):
 #
 
 class Action(abc.ABC):
+
+    @staticmethod
+    def from_json(action_json):
+        action_type = action_json["type"]
+
+        if action_type == "draw_from_deck":
+            return DrawFromDeckAction(action_json["player"])
+        elif action_type == "draw_from_discard_and_add_to_book":
+            return DrawFromDiscardAndAddToBookAction(action_json["player"])
+        elif action_type == "draw_from_discard_and_create_book":
+            cards = [Card.from_json(card_json) for card_json in action_json["cards"]]
+            return DrawFromDiscardAndCreateBookAction(action_json["player"], cards)
+        elif action_type == "dicard_card":
+            card = Card.from_json(action_json["card"])
+            return DiscardCardAction(action_json["player"], card)
+        elif action_type == "lay_down_initial_books":
+            books = [[Card.from_json(card_json) for card_json in cards_json] for cards_json in action_json["books"]]
+            return LayDownInitialBooksAction(action_json["player"], books)
+        elif action_type == "draw_from_discard_and_lay_down_initial_books":
+            partial_book = [Card.from_json(card_json) for card_json in action_json["partial_book"]]
+            books = [[Card.from_json(card_json) for card_json in cards_json] for cards_json in action_json["books"]]
+            return DrawFromDiscardAndLayDownInitialBooksAction(action_json["player"], partial_book, books)
+        elif action_type == "start_book":
+            cards = [Card.from_json(card_json) for card_json in action_json["cards"]]
+            return StartBookAction(action_json["player"], cards)
+        elif action_type == "add_card_from_hand_to_book":
+            card = Card.from_json(action_json["card"])
+            return AddCardFromHandToBookAction(action_json["player"], card)
+
     def __init__(self, player_name):
         self.player_name = player_name
 
