@@ -78,7 +78,6 @@ class Game: JSONEncodable {
     private var discardPile: [Card]
     private var players: [Player]
     private var round: Round?
-    private var actions: [Action]
     private var playerIterator: PlayerIterator
 
     // MARK: Initialization
@@ -103,10 +102,9 @@ class Game: JSONEncodable {
         self.discardPile = []
         self.players = []
         self.round = .ninety
-        self.actions = []
         
         self.playerIterator = PlayerIterator()
-        
+
         for playerName in playerNames {
             let player = try self.setUpPlayer(name: playerName)
             self.players.append(player)

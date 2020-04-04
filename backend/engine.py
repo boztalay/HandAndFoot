@@ -383,8 +383,129 @@ class AddCardFromHandToBookAction(Action):
 # Game
 #
 
+class PlayerIterator(object):
+
+    def __init__(self, players):
+        self.players = players
+        self.index = 0
+
+    @property
+    def current_player(self):
+        return self.players[self.index]
+
+    def go_to_next_player(self):
+        self.index = (self.index + 1) % len(self.players)
+
+    def is_current_player(self, player):
+        return (player is self.current_player)
+
 class Game(object):
-    pass
+
+    def __init__(self, player_names, deck=None):
+        if len(player_names) < 2:
+            raise IllegalSetupError("Not enough players")
+
+        if len(player_names) > 6:
+            raise IllegalSetupError("Too many players")
+
+        if deck is not None:
+            self.deck = deck
+        else:
+            deck_count = len(player_names) + 1
+            self.deck = Deck(deck_count)
+            self.deck.shuffle()
+
+        self.discard_pile = []
+        self.round = Round.NINETY
+
+        self.players = [] 
+        for player_name in player_names:
+            player = self.set_up_player(player_name)
+            self.players.append(player)
+
+        self.player_iterator = PlayerIterator(self.players)
+
+    def set_up_player(self, player_name):
+        hand = []
+        for _in range(0, 13):
+            hand.append(self.deck.draw())
+
+        foot = []
+        for _in range(0, 13):
+            foot.append(self.deck.draw())
+
+        return Player(player_name, hand, foot)
+
+    def apply_action(self, action):
+        if self.round is None:
+            raise IllegalActionError("Game is over")
+
+        player = self.get_player_named(action.player_name)
+        if player is None:
+            raise IllegalActionError("Unknown player")
+
+        if not self.player_iterator.is_current_player(player):
+            raise IllegalActionError("Not your turn")
+
+        if type(action) is DrawFromDeckAction:
+            self.apply_draw_from_deck_action(player)
+        elif type(action) is DrawFromDiscardAndAddToBookAction:
+            self.apply_draw_from_discard_and_add_to_book_action(player)
+        elif type(action) is DrawFromDiscardAndCreateBookAction:
+            self.apply_draw_from_discard_and_create_book_action(player, action.cards)
+        elif type(action) is DiscardCardAction:
+            self.apply_discard_card_action(player, action.card)
+        elif type(action) is LayDownInitialBooksAction:
+            self.apply_laydown_initial_books_action(player, action.cards)
+        elif type(action) is DrawFromDiscardAndLayDownInitialBooksAction:
+            self.apply_draw_from_discard_and_laydown_initial_books_action(player, action.partial_book, action.cards)
+        elif type(action) is StartBookAction:
+            self.apply_start_book_action(player, action.cards)
+        elif type(action) is AddCardFromHandToBookAction:
+            self.apply_add_card_from_hand_to_book_action(player, action.card)
+        else:
+            raise ValueError("Unknown action type")
+
+        player.calculate_points(self.round)
+
+    def get_player_named(self, player_name):
+        for player in self.players:
+            if player.name == player_name:
+                return player
+
+        return None
+
+    def apply_draw_from_deck_action(self, player):
+        # TODO
+        pass
+
+    def apply_draw_from_discard_and_add_to_book_action(self, player):
+        # TODO
+        pass
+
+    def apply_draw_from_discard_and_create_book_action(self, player, cards):
+        # TODO
+        pass
+
+    def apply_discard_card_action(self, player, card):
+        # TODO
+        pass
+
+    def apply_laydown_initial_books_action(self, player, cards):
+        # TODO
+        pass
+
+    def apply_draw_from_discard_and_laydown_initial_books_action(self, player, partial_book, cards):
+        # TODO
+        pass
+
+    def apply_start_book_action(self, player, cards):
+        # TODO
+        pass
+
+    def apply_add_card_from_hand_to_book_action(self, player, card):
+        # TODO
+        pass
 
 #
 # Testing Support
