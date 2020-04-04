@@ -1,3 +1,4 @@
+import abc
 import enum
 import random
 import sys
@@ -330,6 +331,53 @@ class Player(object):
 
     def add_bonus_for_going_out(self, current_round):
         self.points[current_round].for_going_out = 100
+
+#
+# Actions
+#
+
+class Action(abc.ABC):
+    def __init__(self, player_name):
+        self.player_name = player_name
+
+class DrawFromDeckAction(Action):
+    def __init__(self, player_name):
+        super().__init__(player_name)
+
+class DrawFromDiscardAndAddToBookAction(Action):
+    def __init__(self, player_name):
+        super().__init__(player_name)
+
+class DrawFromDiscardAndCreateBookAction(Action):
+    def __init__(self, player_name, cards):
+        super().__init__(player_name)
+        self.cards = cards
+
+class DiscardCardAction(Action):
+    def __init__(self, player_name, card):
+        super().__init__(player_name)
+        self.card = card
+
+class LayDownInitialBooksAction(Action):
+    def __init__(self, player_name, books):
+        super().__init__(player_name)
+        self.books = books
+
+class DrawFromDiscardAndLayDownInitialBooksAction(Action):
+    def __init__(self, player_name, partial_book, books):
+        super().__init__(player_name)
+        self.partial_book = partial_book
+        self.books = books
+
+class StartBookAction(Action):
+    def __init__(self, player_name, cards):
+        super().__init__(player_name)
+        self.cards = cards
+
+class AddCardFromHandToBookAction(Action):
+    def __init__(self, player_name, card):
+        super().__init__(player_name)
+        self.card = card
 
 #
 # Game
