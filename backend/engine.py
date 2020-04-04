@@ -279,14 +279,18 @@ class Points(object):
 
 class Player(object):
 
-    def __init__(self, name, hand, foot):
-        if len(hand) != 13 or len(foot) != 13:
-            raise IllegalSetupError("Initial hand or foot not sized correctly")
-
+    def __init__(self, name):
         self.name = name
-        self.hand = hand
-        self.foot = foot
-        self.books = {}
+        self.hand = []
+        self.foot = []
+
+        self.books = {
+            Round.NINETY: {},
+            Round.ONE_TWENTY: {},
+            Round.ONE_FIFTY: {},
+            Round.ONE_EIGHTY: {}
+        }
+
         self.points = {
             Round.NINETY: Points(),
             Round.ONE_TWENTY: Points(),
@@ -297,6 +301,13 @@ class Player(object):
         self.cards_drawn_from_deck = 0
         self.cards_drawn_from_discard_pile = 0
         self.has_laid_down_this_round = False
+
+    def set_hand_and_foot(self, hand, foot):
+        if len(hand) != 13 or len(foot) != 13:
+            raise IllegalSetupError("Initial hand or foot not sized correctly")
+
+        self.hand = hand
+        self.foot = foot
 
     @property
     def can_draw_from_deck(self):
@@ -319,16 +330,16 @@ class Player(object):
         return ((self.cards_drawn_from_deck + self.cards_drawn_from_discard_pile) == 2)
 
     @property
-    def can_go_out(self):
-        return (self.has_natural_book and self.has_unnatural_book and self.is_in_foot)
+    def can_go_out(self, current_round):
+        return (self.has_natural_book(current_round) and self.has_unnatural_book(current_round) and self.is_in_foot)
 
     @property
-    def has_natural_book(self):
-        return (len([book for book in self.books if book.is_natural]) > 0)
+    def has_natural_book(self, current_round):
+        return (len([book for book in self.books[current_round] if book.is_natural]) > 0)
 
     @property
-    def has_unnatural_book(self):
-        return (len([book for book in self.books if not book.is_natural]) > 0)
+    def has_unnatural_book(self, current_round):
+        return (len([book for book in self.books[current_round] if not book.is_natural]) > 0)
 
     def add_card_to_hand_from_deck(self, card):
         self.hand.append(card)
@@ -344,30 +355,30 @@ class Player(object):
         except ValueError:
             raise IllegalActionError("Card not in hand")
 
-    def add_card_to_book_from_hand(self, card):
-        if card.rank not in self.books:
+    def add_card_to_book_from_hand(self, card, current_round):
+        if card.rank not in self.books[current_round]:
             raise IllegalActionError("Player doesn't have a book for the given card")
 
         self.remove_card_from_hand(card)
-        self.books[card.rank].add_card(card)
+        self.books[current_round][card.rank].add_card(card)
 
-    def add_card_to_book_from_discard_pile(self, card):
-        if card.rank not in self.books:
+    def add_card_to_book_from_discard_pile(self, card, current_round):
+        if card.rank not in self.books[current_round]:
             raise IllegalActionError("Player doesn't have a book for the given card")
 
-        self.books[card.rank].add_card(card)
+        self.books[current_round][card.rank].add_card(card)
         self.cards_drawn_from_discard_pile += 1
 
-    def start_book(self, cards):
+    def start_book(self, cards, current_round):
         book = Book(cards)
 
-        if book.rank in self.books:
+        if book.rank in self.books[current_round]:
             raise IllegalActionError("Player already has a book of the given rank")
 
         for card in cards:
             self.remove_card_from_hand(card)
 
-        self.books[book.rank] = book
+        self.books[current_round][book.rank] = book
 
     def laid_down(self):
         self.has_laid_down_this_round = True
@@ -387,16 +398,18 @@ class Player(object):
     def calculate_points(self, current_round):
         self.points[current_round].in_hand = sum([(-card.point_value if card.point_value > 0 else card.point_value) for card in self.hand])
         self.points[current_round].in_foot = sum([(-card.point_value if card.point_value > 0 else card.point_value) for card in self.foot])
-        self.points[current_round].in_books = sum([book.book_value for book in self.books.values()])
-        self.points[current_round].laid_down = sum([book.cards_value for book in self.books.values()])
+        self.points[current_round].in_books = sum([book.book_value for book in self.books[current_round].values()])
+        self.points[current_round].laid_down = sum([book.cards_value for book in self.books[current_round].values()])
 
     def add_bonus_for_going_out(self, current_round):
         self.points[current_round].for_going_out = 100
 
     def to_json(self):
         books_json = {}
-        for (rank, book) in self.books.items():
-            books_json[rank.value] = book.to_json()
+        for (current_round, round_books) in self.books.items():
+            books_json[current_round.value] = {}
+            for (rank, book) in round_books.items():
+                books_json[current_round.value][rank.value] = book.to_json()
 
         points_json = {}
         for (points_round, points) in self.points.items():
@@ -510,31 +523,31 @@ class PlayerIterator(object):
 
 class Game(object):
 
-    def __init__(self, player_names, deck=None):
+    @property
+    def deck(self):
+        return self.decks[self.round]
+
+    def __init__(self, player_names, decks):
         if len(player_names) < 2:
             raise IllegalSetupError("Not enough players")
 
         if len(player_names) > 6:
             raise IllegalSetupError("Too many players")
 
-        if deck is not None:
-            self.deck = deck
-        else:
-            deck_count = len(player_names) + 1
-            self.deck = Deck(deck_count)
-            self.deck.shuffle()
-
+        self.decks = decks
         self.discard_pile = []
         self.round = Round.NINETY
 
         self.players = [] 
         for player_name in player_names:
-            player = self.set_up_player(player_name)
-            self.players.append(player)
+            self.players.append(Player(player_name))
 
         self.player_iterator = PlayerIterator(self.players)
 
-    def set_up_player(self, player_name):
+        for player in self.players:
+            self.deal_cards_to_player(player)
+
+    def deal_cards_to_player(self, player):
         hand = []
         for _ in range(0, 13):
             hand.append(self.deck.draw())
@@ -543,7 +556,7 @@ class Game(object):
         for _ in range(0, 13):
             foot.append(self.deck.draw())
 
-        return Player(player_name, hand, foot)
+        player.set_hand_and_foot(hand, foot)
 
     def apply_action(self, action):
         if self.round is None:
@@ -605,7 +618,7 @@ class Game(object):
             raise IllegalActionError("Discard pile is empty")
 
         card = self.discard_pile.pop()
-        player.add_card_to_book_from_discard_pile(card)
+        player.add_card_to_book_from_discard_pile(card, self.round)
 
     def apply_draw_from_discard_pile_and_create_book_action(self, player, cards):
         if not player.can_draw_from_discard_pile:
@@ -618,7 +631,7 @@ class Game(object):
         cards.append(card)
 
         player.add_card_to_hand_from_discard_pile(card)
-        player.start_book(cards)
+        player.start_book(cards, self.round)
 
         if player.is_hand_empty and not player.is_in_foot:
             player.pick_up_foot()
@@ -631,7 +644,7 @@ class Game(object):
         self.discard_pile.append(card)
 
         if player.is_hand_empty and player.is_in_foot:
-            if not player.can_go_out:
+            if not player.can_go_out(self.round):
                 raise IllegalActionError("Cannot go out")
 
             self.end_round_with_player_going_out(player)
@@ -653,7 +666,7 @@ class Game(object):
             raise IllegalActionError("Not enough points to lay down")
 
         for book_cards in books_cards:
-            player.start_book(book_cards)
+            player.start_book(book_cards, self.round)
 
         player.laid_down()
 
@@ -681,7 +694,7 @@ class Game(object):
             raise IllegalActionError("Not enough points to lay down")
 
         for book_cards in books_cards:
-            player.start_book(book_cards)
+            player.start_book(book_cards, self.round)
 
         player.laid_down()
 
@@ -689,25 +702,31 @@ class Game(object):
             player.pick_up_foot()
 
     def apply_start_book_action(self, player, cards):
-        player.start_book(cards)
+        player.start_book(cards, self.round)
 
         if player.is_hand_empty and not player.is_in_foot:
             player.pick_up_foot()
 
     def apply_add_card_from_hand_to_book_action(self, player, card):
-        player.add_card_to_book_from_hand(card)
+        player.add_card_to_book_from_hand(card, self.round)
 
         if player.is_hand_empty and not player.is_in_foot:
             player.pick_up_foot()
 
     def end_round_with_player_going_out(self, player):
-        for player in self.players:
-            player.round_ended()
-
         if player is not None:
             player.add_bonus_for_going_out(self.round)
 
+        for player in self.players:
+            player.calculate_points(self.round)
+            player.round_ended()
+
+        self.discard_pile = []
         self.round = self.round.next_round
+
+        if self.round is not None:
+            for player in self.players:
+                self.deal_cards_to_player(player)
 
     def to_json(self):
         return {
@@ -721,12 +740,16 @@ class Game(object):
 
 def main(test_case):
     player_names = test_case["players"]
-    initial_deck_json = test_case["initial_deck"]
     actions_json = test_case["actions"]
 
-    deck = Deck.from_json(initial_deck_json)
-    game = Game(player_names, deck)
+    decks = {
+        Round.NINETY: Deck.from_json(test_case["ninety_deck"]),
+        Round.ONE_TWENTY: Deck.from_json(test_case["one_twenty_deck"]),
+        Round.ONE_FIFTY: Deck.from_json(test_case["one_fifty_deck"]),
+        Round.ONE_EIGHTY: Deck.from_json(test_case["one_eighty_deck"]),
+    }
 
+    game = Game(player_names, decks)
     actions = [Action.from_json(action_json) for action_json in actions_json]
 
     for i, action in enumerate(actions):
