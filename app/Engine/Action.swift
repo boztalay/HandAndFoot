@@ -11,11 +11,11 @@ import Foundation
 enum Action: JSONDecodable {
 
     case drawFromDeck(String)
-    case drawFromDiscardAndAddToBook(String)
-    case drawFromDiscardAndCreateBook(String, [Card])
+    case drawFromDiscardPileAndAddToBook(String)
+    case drawFromDiscardPileAndCreateBook(String, [Card])
     case discardCard(String, Card)
     case layDownInitialBooks(String, [[Card]])
-    case drawFromDiscardAndLayDownInitialBooks(String, [Card], [[Card]])
+    case drawFromDiscardPileAndLayDownInitialBooks(String, [Card], [[Card]])
     case startBook(String, [Card])
     case addCardFromHandToBook(String, Card)
     
@@ -25,15 +25,15 @@ enum Action: JSONDecodable {
         switch (self) {
             case let .drawFromDeck(playerName):
                 return playerName
-            case let .drawFromDiscardAndAddToBook(playerName):
+            case let .drawFromDiscardPileAndAddToBook(playerName):
                 return playerName
-            case let .drawFromDiscardAndCreateBook(playerName, _):
+            case let .drawFromDiscardPileAndCreateBook(playerName, _):
                 return playerName
             case let .discardCard(playerName, _):
                 return playerName
             case let .layDownInitialBooks(playerName, _):
                 return playerName
-            case let .drawFromDiscardAndLayDownInitialBooks(playerName, _, _):
+            case let .drawFromDiscardPileAndLayDownInitialBooks(playerName, _, _):
                 return playerName
             case let .startBook(playerName, _):
                 return playerName
@@ -62,14 +62,14 @@ enum Action: JSONDecodable {
             case "draw_from_deck":
                 self = .drawFromDeck(playerName)
 
-            case "draw_from_discard_and_add_to_book":
-                self = .drawFromDiscardAndAddToBook(playerName)
+            case "draw_from_discard_pile_and_add_to_book":
+                self = .drawFromDiscardPileAndAddToBook(playerName)
 
-            case "draw_from_discard_and_create_book":
+            case "draw_from_discard_pile_and_create_book":
                 guard let cards = cards else {
                     return nil
                 }
-                self = .drawFromDiscardAndCreateBook(playerName, cards)
+                self = .drawFromDiscardPileAndCreateBook(playerName, cards)
 
             case "discard_card":
                 guard let card = card else {
@@ -83,11 +83,11 @@ enum Action: JSONDecodable {
                 }
                 self = .layDownInitialBooks(playerName, books)
             
-            case "draw_from_discard_and_lay_down_initial_books":
+            case "draw_from_discard_pile_and_lay_down_initial_books":
                 guard let partialBook = partialBook, let books = books else {
                     return nil
                 }
-                self = .drawFromDiscardAndLayDownInitialBooks(playerName, partialBook, books)
+                self = .drawFromDiscardPileAndLayDownInitialBooks(playerName, partialBook, books)
 
             case "start_book":
                 guard let cards = cards else {

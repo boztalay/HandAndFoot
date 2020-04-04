@@ -422,21 +422,21 @@ class Action(abc.ABC):
 
         if action_type == "draw_from_deck":
             return DrawFromDeckAction(action_json["player"])
-        elif action_type == "draw_from_discard_and_add_to_book":
-            return DrawFromDiscardAndAddToBookAction(action_json["player"])
-        elif action_type == "draw_from_discard_and_create_book":
+        elif action_type == "draw_from_discard_pile_and_add_to_book":
+            return DrawFromDiscardPileAndAddToBookAction(action_json["player"])
+        elif action_type == "draw_from_discard_pile_and_create_book":
             cards = [Card.from_json(card_json) for card_json in action_json["cards"]]
-            return DrawFromDiscardAndCreateBookAction(action_json["player"], cards)
+            return DrawFromDiscardPileAndCreateBookAction(action_json["player"], cards)
         elif action_type == "discard_card":
             card = Card.from_json(action_json["card"])
             return DiscardCardAction(action_json["player"], card)
         elif action_type == "lay_down_initial_books":
             books = [[Card.from_json(card_json) for card_json in cards_json] for cards_json in action_json["books"]]
             return LayDownInitialBooksAction(action_json["player"], books)
-        elif action_type == "draw_from_discard_and_lay_down_initial_books":
+        elif action_type == "draw_from_discard_pile_and_lay_down_initial_books":
             partial_book = [Card.from_json(card_json) for card_json in action_json["partial_book"]]
             books = [[Card.from_json(card_json) for card_json in cards_json] for cards_json in action_json["books"]]
-            return DrawFromDiscardAndLayDownInitialBooksAction(action_json["player"], partial_book, books)
+            return DrawFromDiscardPileAndLayDownInitialBooksAction(action_json["player"], partial_book, books)
         elif action_type == "start_book":
             cards = [Card.from_json(card_json) for card_json in action_json["cards"]]
             return StartBookAction(action_json["player"], cards)
@@ -453,11 +453,11 @@ class DrawFromDeckAction(Action):
     def __init__(self, player_name):
         super().__init__(player_name)
 
-class DrawFromDiscardAndAddToBookAction(Action):
+class DrawFromDiscardPileAndAddToBookAction(Action):
     def __init__(self, player_name):
         super().__init__(player_name)
 
-class DrawFromDiscardAndCreateBookAction(Action):
+class DrawFromDiscardPileAndCreateBookAction(Action):
     def __init__(self, player_name, cards):
         super().__init__(player_name)
         self.cards = cards
@@ -472,7 +472,7 @@ class LayDownInitialBooksAction(Action):
         super().__init__(player_name)
         self.books = books
 
-class DrawFromDiscardAndLayDownInitialBooksAction(Action):
+class DrawFromDiscardPileAndLayDownInitialBooksAction(Action):
     def __init__(self, player_name, partial_book, books):
         super().__init__(player_name)
         self.partial_book = partial_book
@@ -558,16 +558,16 @@ class Game(object):
 
         if type(action) is DrawFromDeckAction:
             self.apply_draw_from_deck_action(player)
-        elif type(action) is DrawFromDiscardAndAddToBookAction:
-            self.apply_draw_from_discard_and_add_to_book_action(player)
-        elif type(action) is DrawFromDiscardAndCreateBookAction:
-            self.apply_draw_from_discard_and_create_book_action(player, action.cards)
+        elif type(action) is DrawFromDiscardPileAndAddToBookAction:
+            self.apply_draw_from_discard_pile_and_add_to_book_action(player)
+        elif type(action) is DrawFromDiscardPileAndCreateBookAction:
+            self.apply_draw_from_discard_pile_and_create_book_action(player, action.cards)
         elif type(action) is DiscardCardAction:
             self.apply_discard_card_action(player, action.card)
         elif type(action) is LayDownInitialBooksAction:
             self.apply_lay_down_initial_books_action(player, action.books)
-        elif type(action) is DrawFromDiscardAndLayDownInitialBooksAction:
-            self.apply_draw_from_discard_and_lay_down_initial_books_action(player, action.partial_book, action.books)
+        elif type(action) is DrawFromDiscardPileAndLayDownInitialBooksAction:
+            self.apply_draw_from_discard_pile_and_lay_down_initial_books_action(player, action.partial_book, action.books)
         elif type(action) is StartBookAction:
             self.apply_start_book_action(player, action.cards)
         elif type(action) is AddCardFromHandToBookAction:
@@ -597,7 +597,7 @@ class Game(object):
             if self.deck.is_empty:
                 self.end_round_with_player_going_out(None)
 
-    def apply_draw_from_discard_and_add_to_book_action(self, player):
+    def apply_draw_from_discard_pile_and_add_to_book_action(self, player):
         if not player.can_draw_from_discard_pile or not player.has_laid_down_this_round:
             raise IllegalActionError("Cannot draw from the discard pile")
 
@@ -607,7 +607,7 @@ class Game(object):
         card = self.discard_pile.pop()
         player.add_card_to_book_from_discard_pile(card)
 
-    def apply_draw_from_discard_and_create_book_action(self, player, cards):
+    def apply_draw_from_discard_pile_and_create_book_action(self, player, cards):
         if not player.can_draw_from_discard_pile:
             raise IllegalActionError("Cannot draw from the discard pile")
 
@@ -660,7 +660,7 @@ class Game(object):
         if player.is_hand_empty and not player.is_in_foot:
             player.pick_up_foot()
 
-    def apply_draw_from_discard_and_lay_down_initial_books_action(self, player, partial_book_cards, books_cards):
+    def apply_draw_from_discard_pile_and_lay_down_initial_books_action(self, player, partial_book_cards, books_cards):
         if player.has_laid_down_this_round:
             raise IllegalActionError("Already laid down this round")
 

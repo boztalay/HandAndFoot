@@ -146,16 +146,16 @@ class Game: JSONEncodable {
         switch (action) {
             case .drawFromDeck:
                 try self.applyDrawFromDeckAction(player: player)
-            case .drawFromDiscardAndAddToBook:
-                try self.applyDrawFromDiscardAndAddToBookAction(player: player)
-            case let .drawFromDiscardAndCreateBook(_, cards):
-                try self.applyDrawFromDiscardAndCreateBookAction(player: player, cards: cards)
+            case .drawFromDiscardPileAndAddToBook:
+                try self.applyDrawFromDiscardPileAndAddToBookAction(player: player)
+            case let .drawFromDiscardPileAndCreateBook(_, cards):
+                try self.applyDrawFromDiscardPileAndCreateBookAction(player: player, cards: cards)
             case let .discardCard(_, card):
                 try self.applyDiscardCardAction(player: player, card: card)
             case let .layDownInitialBooks(_, cards):
                 try self.applyLayDownInitialBooksAction(player: player, cards: cards)
-            case let .drawFromDiscardAndLayDownInitialBooks(_, partialBookCards, cards):
-                try self.applyDrawFromDiscardAndLayDownInitialBooksAction(player: player, partialBookCards: partialBookCards, cards: cards)
+            case let .drawFromDiscardPileAndLayDownInitialBooks(_, partialBookCards, cards):
+                try self.applyDrawFromDiscardPileAndLayDownInitialBooksAction(player: player, partialBookCards: partialBookCards, cards: cards)
             case let .startBook(_, cards):
                 try self.applyStartBookAction(player: player, cards: cards)
             case let .addCardFromHandToBook(_, card):
@@ -196,7 +196,7 @@ class Game: JSONEncodable {
     
     // Drawing from the discard pile to add to an existing book
     
-    func applyDrawFromDiscardAndAddToBookAction(player: Player) throws {
+    func applyDrawFromDiscardPileAndAddToBookAction(player: Player) throws {
         guard player.canDrawFromDiscardPile && player.hasLaidDownThisRound else {
             throw IllegalActionError.cannotDrawFromTheDiscardPile
         }
@@ -211,7 +211,7 @@ class Game: JSONEncodable {
     
     // Drawing from the discard pile to create a new book
     
-    func applyDrawFromDiscardAndCreateBookAction(player: Player, cards: [Card]) throws {
+    func applyDrawFromDiscardPileAndCreateBookAction(player: Player, cards: [Card]) throws {
         guard player.canDrawFromDiscardPile else {
             throw IllegalActionError.cannotDrawFromTheDiscardPile
         }
@@ -284,7 +284,7 @@ class Game: JSONEncodable {
     
     // Laying down an initial set of books, with a card from the discard pile
     
-    func applyDrawFromDiscardAndLayDownInitialBooksAction(player: Player, partialBookCards: [Card], cards: [[Card]]) throws {
+    func applyDrawFromDiscardPileAndLayDownInitialBooksAction(player: Player, partialBookCards: [Card], cards: [[Card]]) throws {
         guard !player.hasLaidDownThisRound else {
             throw IllegalActionError.alreadyLaidDownThisRound
         }
