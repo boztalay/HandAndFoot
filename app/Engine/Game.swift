@@ -182,7 +182,7 @@ class Game: JSONEncodable {
             self.discardPile = []
             
             if self.deck.isEmpty {
-                self.endRound(withPlayerGoingOut: nil)
+                try self.endRound(withPlayerGoingOut: nil)
             }
         }
     }
@@ -239,7 +239,7 @@ class Game: JSONEncodable {
                 throw IllegalActionError.cannotGoOut
             }
             
-            self.endRound(withPlayerGoingOut: player)
+            try self.endRound(withPlayerGoingOut: player)
         } else {
             if player.isHandEmpty {
                 player.pickUpFoot()
@@ -334,7 +334,7 @@ class Game: JSONEncodable {
     
     // Ending the round (and game)
     
-    func endRound(withPlayerGoingOut player: Player?) {
+    func endRound(withPlayerGoingOut player: Player?) throws {
         if let player = player {
             player.addBonusForGoingOut(in: self.round!)
         }
@@ -346,6 +346,14 @@ class Game: JSONEncodable {
         
         self.discardPile = []
         self.round = self.round?.nextRound
+        
+        if let nextRound = self.round?.nextRound {
+            self.round = nextRound
+
+            for player in self.players {
+                try self.dealCards(to: player)
+            }
+        }
     }
     
     // MARK: JSONEncodable
