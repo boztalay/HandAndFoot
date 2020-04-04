@@ -49,6 +49,7 @@ for action in actions {
         break
     } catch {
         fatalError("Unknown error applying an action")
+        break
     }
 }
 

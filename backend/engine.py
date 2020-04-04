@@ -1,5 +1,6 @@
 import abc
 import enum
+import json
 import random
 import sys
 
@@ -628,8 +629,42 @@ class Game(object):
 # Testing Support
 #
 
-def main():
-    pass
+def main(test_case):
+    player_names = test_case["players"]
+    initial_deck_json = test_case["initial_deck"]
+    actions_json = test_case["actions"]
+
+    deck = Deck.from_json(initial_deck_json)
+    game = Game(player_names, deck)
+
+    actions = [Action.from_json(action_json) for action_json in actions_json]
+
+    for action in actions:
+        try:
+            game.apply_action(action)
+        except IllegalActionError as e:
+            sys.stderr.write("IllegalActionError: %s\n" % (e))
+            break
+        except Exception as e:
+            sys.stderr.write("Unknown error applying an action: %s\n" % (e))
+            break
+
+    final_state_json = game.to_json()
+    print(json.dumps(final_state_json), indent=4)
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) != 2:
+        print("Gimme a test case to run!")
+        sys.exit(1)
+
+    test_case_file_path = sys.argv[1]
+
+    try:
+        test_case_file = open(test_case_file_path, "r")
+        test_case = json.load(test_case_file)
+    except IOError as e:
+        print("Couldn't open the given test case file: " + str(e))
+    except ValueError as e:
+        print("Couldn't read the given test case file as JSON: " + str(e))
+
+    main(test_case)
