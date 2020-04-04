@@ -3,8 +3,6 @@ import enum
 import random
 import sys
 
-from models import Action
-
 #
 # Errors
 #
@@ -350,8 +348,8 @@ class Player(object):
         self.has_laid_down_this_round = False
 
     def calculate_points(self, current_round):
-        self.points[current_round].in_hand = sum([-card.point_value for card in self.hand if card.point_value > 0 else card.point_value])
-        self.points[current_round].in_foot = sum([-card.point_value for card in self.foot if card.point_value > 0 else card.point_value])
+        self.points[current_round].in_hand = sum([(-card.point_value if card.point_value > 0 else card.point_value) for card in self.hand])
+        self.points[current_round].in_foot = sum([(-card.point_value if card.point_value > 0 else card.point_value) for card in self.foot])
         self.points[current_round].in_books = sum([book.book_value for book in self.books])
         self.points[current_round].laid_down = sum([book.cards_value for book in self.books])
 
@@ -453,11 +451,11 @@ class Game(object):
 
     def set_up_player(self, player_name):
         hand = []
-        for _in range(0, 13):
+        for _ in range(0, 13):
             hand.append(self.deck.draw())
 
         foot = []
-        for _in range(0, 13):
+        for _ in range(0, 13):
             foot.append(self.deck.draw())
 
         return Player(player_name, hand, foot)
