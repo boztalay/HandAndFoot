@@ -100,6 +100,8 @@ class Deck(object):
         for card_json in deck_json["cards"]:
             deck.cards.append(Card.from_json(card_json))
 
+        return deck
+
     def __init__(self, standard_deck_count=None):
         self.cards = []
 
@@ -385,8 +387,8 @@ class Player(object):
     def calculate_points(self, current_round):
         self.points[current_round].in_hand = sum([(-card.point_value if card.point_value > 0 else card.point_value) for card in self.hand])
         self.points[current_round].in_foot = sum([(-card.point_value if card.point_value > 0 else card.point_value) for card in self.foot])
-        self.points[current_round].in_books = sum([book.book_value for book in self.books])
-        self.points[current_round].laid_down = sum([book.cards_value for book in self.books])
+        self.points[current_round].in_books = sum([book.book_value for book in self.books.values()])
+        self.points[current_round].laid_down = sum([book.cards_value for book in self.books.values()])
 
     def add_bonus_for_going_out(self, current_round):
         self.points[current_round].for_going_out = 100
@@ -563,9 +565,9 @@ class Game(object):
         elif type(action) is DiscardCardAction:
             self.apply_discard_card_action(player, action.card)
         elif type(action) is LayDownInitialBooksAction:
-            self.apply_lay_down_initial_books_action(player, action.cards)
+            self.apply_lay_down_initial_books_action(player, action.books)
         elif type(action) is DrawFromDiscardAndLayDownInitialBooksAction:
-            self.apply_draw_from_discard_and_lay_down_initial_books_action(player, action.partial_book, action.cards)
+            self.apply_draw_from_discard_and_lay_down_initial_books_action(player, action.partial_book, action.books)
         elif type(action) is StartBookAction:
             self.apply_start_book_action(player, action.cards)
         elif type(action) is AddCardFromHandToBookAction:
@@ -640,25 +642,25 @@ class Game(object):
             player.turn_ended()
             self.player_iterator.go_to_next_player()
 
-    def apply_lay_down_initial_books_action(self, player, cards):
+    def apply_lay_down_initial_books_action(self, player, books_cards):
         if player.has_laid_down_this_round:
             raise IllegalActionError("Already laid down this round")
 
-        books = [Book(cards_in_book) for cards_in_book in cards]
+        books = [Book(book_cards) for book_cards in books_cards]
         points_in_books = sum([book.cards_value for book in books])
 
         if points_in_books < self.round.points_needed:
             raise IllegalActionError("Not enough points to lay down")
 
-        for cards_in_book in cards:
-            player.start_book(cards_in_book)
+        for book_cards in books_cards:
+            player.start_book(book_cards)
 
         player.laid_down()
 
         if player.is_hand_empty and not player.is_in_foot:
             player.pick_up_foot()
 
-    def apply_draw_from_discard_and_lay_down_initial_books_action(self, player, partial_book, cards):
+    def apply_draw_from_discard_and_lay_down_initial_books_action(self, player, partial_book_cards, books_cards):
         if player.has_laid_down_this_round:
             raise IllegalActionError("Already laid down this round")
 
@@ -669,17 +671,17 @@ class Game(object):
             raise IllegalActionError("Discard pile is empty")
 
         card = self.deck.draw()
-        complete_partial_book = partial_book + [card]
-        initial_books_cards = cards + [complete_partial_book]
+        complete_partial_book = partial_book_cards + [card]
+        initial_books_cards = books_cards + [complete_partial_book]
 
-        books = [Book(cards_in_book) for cards_in_book in cards]
+        books = [Book(book_cards) for book_cards in initial_books_cards]
         points_in_books = sum([book.cards_value for book in books])
 
         if points_in_books < self.round.points_needed:
             raise IllegalActionError("Not enough points to lay down")
 
-        for cards_in_book in cards:
-            player.start_book(cards_in_book)
+        for book_cards in books_cards:
+            player.start_book(book_cards)
 
         player.laid_down()
 
@@ -727,11 +729,11 @@ def main(test_case):
 
     actions = [Action.from_json(action_json) for action_json in actions_json]
 
-    for action in actions:
+    for i, action in enumerate(actions):
         try:
             game.apply_action(action)
         except IllegalActionError as e:
-            sys.stderr.write("IllegalActionError: %s\n" % (e))
+            sys.stderr.write("IllegalActionError at action %d: %s\n" % (i, e))
             break
         except Exception as e:
             sys.stderr.write("Unknown error applying an action: %s\n" % (e))
