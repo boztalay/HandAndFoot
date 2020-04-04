@@ -33,14 +33,18 @@ guard let testCase = try? JSONSerialization.jsonObject(with: testCaseFileContent
 }
 
 let playerNames = testCase["players"] as! [String]
-let initialDeckJson = testCase["initial_deck"] as! JSONDictionary
 let actionsJson = testCase["actions"] as! [JSONDictionary]
 
-let deck = Deck(with: initialDeckJson)!
-let game = try! Game(playerNames: playerNames, deck: deck)
+let decks: [Round : Deck] = [
+    .ninety : Deck(with: testCase["ninety_deck"] as! JSONDictionary)!,
+    .oneTwenty : Deck(with: testCase["one_twenty_deck"] as! JSONDictionary)!,
+    .oneFifty : Deck(with: testCase["one_fifty_deck"] as! JSONDictionary)!,
+    .oneEighty : Deck(with: testCase["one_eighty_deck"] as! JSONDictionary)!
+]
+
+let game = try! Game(playerNames: playerNames, decks: decks)
 
 var actions = actionsJson.map({ Action(with: $0)! })
-
 for action in actions {
     do {
         try game.apply(action: action)

@@ -43,19 +43,14 @@ enum Round: String {
 
 struct PlayerIterator {
 
-    private var players: [Player]
+    private let players: [Player]
     private var index: Int
     
     var currentPlayer: Player {
         return self.players[self.index]
     }
     
-    init() {
-        self.players = []
-        self.index = 0
-    }
-    
-    mutating func setPlayers(_ players: [Player]) {
+    init(players: [Player]) {
         self.players = players
         self.index = self.players.startIndex
     }
@@ -73,16 +68,20 @@ struct PlayerIterator {
 }
 
 class Game: JSONEncodable {
-
-    private var deck: Deck
+    
+    private var decks: [Round : Deck]
     private var discardPile: [Card]
     private var players: [Player]
     private var round: Round?
     private var playerIterator: PlayerIterator
+    
+    var deck: Deck {
+        return self.decks[self.round!]!
+    }
 
     // MARK: Initialization
     
-    init(playerNames: [String], deck: Deck? = nil) throws {
+    init(playerNames: [String], decks: [Round : Deck]) throws {
         guard playerNames.count >= 2 else {
             throw IllegalSetupError.tooFewPlayers
         }
@@ -91,29 +90,23 @@ class Game: JSONEncodable {
             throw IllegalSetupError.tooManyPlayers
         }
         
-        if let deck = deck {
-            self.deck = deck
-        } else {
-            let deckCount = playerNames.count + 1
-            self.deck = Deck(standardDeckCount: deckCount)
-            self.deck.shuffle()
-        }
-        
+        self.decks = decks
         self.discardPile = []
-        self.players = []
         self.round = .ninety
         
-        self.playerIterator = PlayerIterator()
-
+        self.players = []
         for playerName in playerNames {
-            let player = try self.setUpPlayer(name: playerName)
-            self.players.append(player)
+            self.players.append(Player(name: playerName))
         }
 
-        self.playerIterator.setPlayers(self.players)
+        self.playerIterator = PlayerIterator(players: self.players)
+        
+        for player in self.players {
+            try self.dealCards(to: player)
+        }
     }
     
-    private func setUpPlayer(name: String) throws -> Player {
+    private func dealCards(to player: Player) throws {
         var hand: [Card] = []
         var foot: [Card] = []
         
@@ -125,7 +118,7 @@ class Game: JSONEncodable {
             foot.append(self.deck.draw()!)
         }
         
-        return try Player(name: name, hand: hand, foot: foot)
+        try player.setHandAndFoot(hand: hand, foot: foot)
     }
     
     // MARK: Applying actions
@@ -206,7 +199,7 @@ class Game: JSONEncodable {
         }
 
         let card = self.discardPile.popLast()!
-        try player.addCardToBookFromDiscardPile(card)
+        try player.addCardToBookFromDiscardPile(card, in: self.round!)
     }
     
     // Drawing from the discard pile to create a new book
@@ -224,7 +217,7 @@ class Game: JSONEncodable {
         let cardsInBook = cards + [card]
 
         player.addCardToHandFromDiscardPile(card)
-        try player.startBook(with: cardsInBook)
+        try player.startBook(with: cardsInBook, in: self.round!)
         
         if player.isHandEmpty && !player.isInFoot {
             player.pickUpFoot()
@@ -242,7 +235,7 @@ class Game: JSONEncodable {
         self.discardPile.append(card)
         
         if player.isHandEmpty && player.isInFoot {
-            guard player.canGoOut else {
+            guard player.canGoOut(in: self.round!) else {
                 throw IllegalActionError.cannotGoOut
             }
             
@@ -272,7 +265,7 @@ class Game: JSONEncodable {
         }
         
         for cardsInBook in cards {
-            try player.startBook(with: cardsInBook)
+            try player.startBook(with: cardsInBook, in: self.round!)
         }
         
         player.laidDown()
@@ -309,7 +302,7 @@ class Game: JSONEncodable {
         }
         
         for cardsInBook in cards {
-            try player.startBook(with: cardsInBook)
+            try player.startBook(with: cardsInBook, in: self.round!)
         }
         
         player.laidDown()
@@ -322,7 +315,7 @@ class Game: JSONEncodable {
     // Starting a new book
     
     func applyStartBookAction(player: Player, cards: [Card]) throws {
-        try player.startBook(with: cards)
+        try player.startBook(with: cards, in: self.round!)
         
         if player.isHandEmpty && !player.isInFoot {
             player.pickUpFoot()
@@ -332,7 +325,7 @@ class Game: JSONEncodable {
     // Adding to an existing book
     
     func applyAddCardFromHandToBookAction(player: Player, card: Card) throws {
-        try player.addCardToBookFromHand(card)
+        try player.addCardToBookFromHand(card, in: self.round!)
         
         if player.isHandEmpty && !player.isInFoot {
             player.pickUpFoot()
@@ -342,15 +335,16 @@ class Game: JSONEncodable {
     // Ending the round (and game)
     
     func endRound(withPlayerGoingOut player: Player?) {
-        for player in self.players {
-            player.roundEnded()
-        }
-        
         if let player = player {
             player.addBonusForGoingOut(in: self.round!)
         }
+
+        for player in self.players {
+            player.calculatePoints(in: self.round!)
+            player.roundEnded()
+        }
         
-        
+        self.discardPile = []
         self.round = self.round?.nextRound
     }
     

@@ -1,0 +1,137 @@
+{
+    "description": "Quick testing infrastructure smoke test",
+    "players": [
+        "player_1",
+        "player_2",
+        "player_3"
+    ],
+    "initial_deck": {
+        "cards" : [
+        ]
+    },
+    "actions": [
+    ],
+    "final_state": {
+        "discard_pile": [
+        ],
+        "players": [
+            {
+                "name": "player_1",
+                "points": {
+                    "ninety": {
+                        "in_hand": 0,
+                        "in_foot": 5,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
+                    },
+                    "one_twenty": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
+                    },
+                    "one_fifty": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
+                    },
+                    "one_eighty": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
+                    }
+                },
+                "hand": [
+                ],
+                "foot": [
+                ],
+                "books": {
+                }
+            },
+            {
+                "name": "player_2",
+                "points": {
+                    "ninety": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
+                    },
+                    "one_twenty": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
+                    },
+                    "one_fifty": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
+                    },
+                    "one_eighty": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
+                    }
+                },
+                "hand": [
+                ],
+                "foot": [
+                ],
+                "books": {
+                }
+            },
+            {
+                "name": "player_3",
+                "points": {
+                    "ninety": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
+                    },
+                    "one_twenty": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
+                    },
+                    "one_fifty": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
+                    },
+                    "one_eighty": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
+                    }
+                },
+                "hand": [
+                ],
+                "foot": [
+                ],
+                "books": {
+                }
+            }
+        ]
+    }
+}

@@ -41,7 +41,7 @@ class Player: JSONEncodable {
 
     private var hand: [Card]
     private var foot: [Card]
-    private var books: [CardRank : Book]
+    private var books: [Round : [CardRank : Book]]
     private var points: [Round : Points]
     private var cardsDrawnFromDeck: UInt
     private var cardsDrawnFromDiscardPile: UInt
@@ -50,15 +50,18 @@ class Player: JSONEncodable {
     
     // MARK: Initialization
     
-    init(name: String, hand: [Card], foot: [Card]) throws {
-        guard hand.count == 13 && foot.count == 13 else {
-            throw IllegalSetupError.initialHandOrFootNotSizedCorrectly
-        }
-        
+    init(name: String) {
         self.name = name
-        self.hand = hand
-        self.foot = foot
-        self.books = [:]
+        self.hand = []
+        self.foot = []
+
+        self.books = [
+            .ninety : [:],
+            .oneTwenty : [:],
+            .oneFifty : [:],
+            .oneEighty : [:]
+        ]
+        
         self.points = [
             .ninety : Points(),
             .oneTwenty : Points(),
@@ -69,6 +72,15 @@ class Player: JSONEncodable {
         self.cardsDrawnFromDeck = 0
         self.cardsDrawnFromDiscardPile = 0
         self.hasLaidDownThisRound = false
+    }
+    
+    func setHandAndFoot(hand: [Card], foot: [Card]) throws {
+        guard hand.count == 13 && foot.count == 13 else {
+            throw IllegalSetupError.initialHandOrFootNotSizedCorrectly
+        }
+        
+        self.hand = hand
+        self.foot = foot
     }
     
     // MARK: Computed properties
@@ -93,16 +105,18 @@ class Player: JSONEncodable {
         return ((self.cardsDrawnFromDeck + self.cardsDrawnFromDiscardPile) == 2)
     }
     
-    var canGoOut: Bool {
-        return (self.hasNaturalBook && self.hasUnnaturalBook && self.isInFoot)
+    // MARK: Determining status
+    
+    func canGoOut(in round: Round) -> Bool {
+        return (self.hasNaturalBook(in: round) && self.hasUnnaturalBook(in: round) && self.isInFoot)
     }
     
-    var hasNaturalBook: Bool {
-        return (self.books.first(where: { $0.value.isComplete && $0.value.isNatural }) != nil)
+    func hasNaturalBook(in round: Round) -> Bool {
+        return (self.books[round]!.first(where: { $0.value.isComplete && $0.value.isNatural }) != nil)
     }
     
-    var hasUnnaturalBook: Bool {
-        return (self.books.first(where: { $0.value.isComplete && !$0.value.isNatural }) != nil)
+    func hasUnnaturalBook(in round: Round) -> Bool {
+        return (self.books[round]!.first(where: { $0.value.isComplete && !$0.value.isNatural }) != nil)
     }
     
     // MARK: Picking up and playing cards
@@ -125,8 +139,8 @@ class Player: JSONEncodable {
         self.hand.remove(at: cardIndex)
     }
     
-    func addCardToBookFromHand(_ card: Card) throws {
-        guard let book = self.books[card.rank] else {
+    func addCardToBookFromHand(_ card: Card, in round: Round) throws {
+        guard let book = self.books[round]![card.rank] else {
             throw IllegalActionError.playerDoesntHaveBook
         }
         
@@ -134,8 +148,8 @@ class Player: JSONEncodable {
         try book.addCard(card)
     }
     
-    func addCardToBookFromDiscardPile(_ card: Card) throws {
-        guard let book = self.books[card.rank] else {
+    func addCardToBookFromDiscardPile(_ card: Card, in round: Round) throws {
+        guard let book = self.books[round]![card.rank] else {
             throw IllegalActionError.playerDoesntHaveBook
         }
 
@@ -143,10 +157,10 @@ class Player: JSONEncodable {
         self.cardsDrawnFromDiscardPile += 1
     }
     
-    func startBook(with cards: [Card]) throws {
+    func startBook(with cards: [Card], in round: Round) throws {
         let book = try Book(initialCards: cards)
         
-        guard !self.books.contains(where: { $0.key == book.rank }) else {
+        guard !self.books[round]!.contains(where: { $0.key == book.rank }) else {
             throw IllegalActionError.bookAlreadyExists
         }
         
@@ -154,7 +168,7 @@ class Player: JSONEncodable {
             try self.removeCardFromHand(card)
         }
         
-        self.books[book.rank] = book
+        self.books[round]![book.rank] = book
     }
     
     // MARK: Game state change notifications
@@ -183,8 +197,8 @@ class Player: JSONEncodable {
     func calculatePoints(in round: Round) {
         self.points[round]!.inHand = self.hand.reduce(0, { $0 + ($1.pointValue > 0 ? -$1.pointValue : $1.pointValue) })
         self.points[round]!.inFoot = self.foot.reduce(0, { $0 + ($1.pointValue > 0 ? -$1.pointValue : $1.pointValue) })
-        self.points[round]!.inBooks = self.books.reduce(0, { $0 + $1.value.bookValue })
-        self.points[round]!.laidDown = self.books.reduce(0, { $0 + $1.value.cardsValue })
+        self.points[round]!.inBooks = self.books[round]!.reduce(0, { $0 + $1.value.bookValue })
+        self.points[round]!.laidDown = self.books[round]!.reduce(0, { $0 + $1.value.cardsValue })
     }
     
     func addBonusForGoingOut(in round: Round) {
@@ -195,7 +209,11 @@ class Player: JSONEncodable {
     
     func toJSON() -> JSONDictionary {
         var booksJson: JSONDictionary = [:]
-        self.books.forEach({ booksJson[$0.key.rawValue] = $0.value.toJSON() })
+        for (round, roundBooks) in self.books {
+            var roundBooksJson: JSONDictionary = [:]
+            roundBooks.forEach({ roundBooksJson[$0.key.rawValue] = $0.value.toJSON() })
+            booksJson[round.rawValue] = roundBooksJson
+        }
 
         var pointsJson: JSONDictionary = [:]
         self.points.forEach({ pointsJson[$0.key.rawValue] = $0.value.toJSON() })

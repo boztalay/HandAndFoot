@@ -14,21 +14,8 @@ class Deck {
     
     // MARK: Initialization
     
-    init(standardDeckCount: Int) {
+    init() {
         self.cards = []
-        
-        for _ in 0 ..< standardDeckCount {
-            for suit in CardSuit.allCases {
-                for rank in CardRank.allCases {
-                    if rank != .joker {
-                        self.cards.append(Card(suit: suit, rank: rank))
-                    }
-                }
-            }
-
-            self.cards.append(Card(suit: .spades, rank: .joker))
-            self.cards.append(Card(suit: .spades, rank: .joker))
-        }
     }
     
     // MARK: Computed properties
