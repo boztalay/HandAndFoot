@@ -85,13 +85,19 @@ class Card(object):
     def __eq__(self, other):
         return ((self.suit == other.suit) and (self.rank == other.rank))
 
+    def to_json(self):
+        return {
+            "suit": self.suit.value,
+            "rank": self.rank.value
+        }
+
 class Deck(object):
 
     @staticmethod
     def from_json(deck_json):
         deck = Deck()
 
-        for card_json in deck_json:
+        for card_json in deck_json["cards"]:
             deck.cards.append(Card.from_json(card_json))
 
     def __init__(self, standard_deck_count=None):
@@ -205,6 +211,12 @@ class Book(object):
             raise IllegalActionError("Card doesn't match book rank")
 
         self.cards.append(card)
+
+    def to_json(self):
+        return {
+            "rank": self.rank.value,
+            "cards": [card.to_json() for card in self.cards]
+        }
 #
 # Round
 #
@@ -253,6 +265,15 @@ class Points(object):
         self.in_books = 0
         self.laid_down = 0
         self.for_going_out = 0
+
+    def to_json(self):
+        return {
+            "in_hand": self.in_hand,
+            "in_foot": self.in_foot,
+            "in_books": self.in_books,
+            "laid_down": self.laid_down,
+            "for_going_out": self.for_going_out
+        }
 
 class Player(object):
 
@@ -370,6 +391,23 @@ class Player(object):
     def add_bonus_for_going_out(self, current_round):
         self.points[current_round].for_going_out = 100
 
+    def to_json(self):
+        books_json = {}
+        for (rank, book) in self.books.items():
+            books_json[rank.value] = book.to_json()
+
+        points_json = {}
+        for (points_round, points) in self.points.items():
+            points_json[points_round.value] = points.to_json()
+
+        return {
+            "name": self.name,
+            "hand": [card.to_json() for card in self.hand],
+            "foot": [card.to_json() for card in self.foot],
+            "books": books_json,
+            "points": points_json
+        }
+
 #
 # Actions
 #
@@ -387,7 +425,7 @@ class Action(abc.ABC):
         elif action_type == "draw_from_discard_and_create_book":
             cards = [Card.from_json(card_json) for card_json in action_json["cards"]]
             return DrawFromDiscardAndCreateBookAction(action_json["player"], cards)
-        elif action_type == "dicard_card":
+        elif action_type == "discard_card":
             card = Card.from_json(action_json["card"])
             return DiscardCardAction(action_json["player"], card)
         elif action_type == "lay_down_initial_books":
@@ -403,6 +441,8 @@ class Action(abc.ABC):
         elif action_type == "add_card_from_hand_to_book":
             card = Card.from_json(action_json["card"])
             return AddCardFromHandToBookAction(action_json["player"], card)
+        else:
+            raise ValueError("Unknown action type: " + action_type)
 
     def __init__(self, player_name):
         self.player_name = player_name
@@ -667,6 +707,12 @@ class Game(object):
 
         self.round = self.round.next_round
 
+    def to_json(self):
+        return {
+            "discard_pile": [card.to_json() for card in self.discard_pile],
+            "players": [player.to_json() for player in self.players]
+        }
+
 #
 # Testing Support
 #
@@ -692,7 +738,7 @@ def main(test_case):
             break
 
     final_state_json = game.to_json()
-    print(json.dumps(final_state_json), indent=4)
+    print(json.dumps(final_state_json, indent=4))
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
