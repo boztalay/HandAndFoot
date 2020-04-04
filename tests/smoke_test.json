@@ -4,7 +4,7 @@
         "player_1",
         "player_2"
     ],
-    "initialDeck": {
+    "initial_deck": {
         "cards" : [
             {
                 "suit": "diamonds",
@@ -286,15 +286,15 @@
     },
     "actions": [
         {
-            "type": "drawFromDeck",
+            "type": "draw_from_deck",
             "player": "player_1"
         },
         {
-            "type": "drawFromDeck",
+            "type": "draw_from_deck",
             "player": "player_1"
         },
         {
-            "type": "discardCard",
+            "type": "discard_card",
             "player": "player_1",
             "card": {
                 "suit": "diamonds",
@@ -302,15 +302,15 @@
             }
         },
         {
-            "type": "drawFromDeck",
+            "type": "draw_from_deck",
             "player": "player_2"
         },
         {
-            "type": "drawFromDeck",
+            "type": "draw_from_deck",
             "player": "player_2"
         },
         {
-            "type": "discardCard",
+            "type": "discard_card",
             "player": "player_2",
             "card": {
                 "suit": "hearts",
@@ -318,15 +318,15 @@
             }
         },
         {
-            "type": "drawFromDeck",
+            "type": "draw_from_deck",
             "player": "player_1"
         },
         {
-            "type": "drawFromDeck",
+            "type": "draw_from_deck",
             "player": "player_1"
         },
         {
-            "type": "discardCard",
+            "type": "discard_card",
             "player": "player_1",
             "card": {
                 "suit": "clubs",
@@ -334,15 +334,15 @@
             }
         },
         {
-            "type": "drawFromDeck",
+            "type": "draw_from_deck",
             "player": "player_2"
         },
         {
-            "type": "drawFromDeck",
+            "type": "draw_from_deck",
             "player": "player_2"
         },
         {
-            "type": "layDownInitialBooks",
+            "type": "lay_down_initial_books",
             "player": "player_2",
             "books": [
                 [
@@ -380,7 +380,7 @@
             ]
         },
         {
-            "type": "discardCard",
+            "type": "discard_card",
             "player": "player_2",
             "card": {
                 "suit": "diamonds",
@@ -388,15 +388,15 @@
             }
         },
         {
-            "type": "drawFromDeck",
+            "type": "draw_from_deck",
             "player": "player_1"
         },
         {
-            "type": "drawFromDeck",
+            "type": "draw_from_deck",
             "player": "player_1"
         },
         {
-            "type": "layDownInitialBooks",
+            "type": "lay_down_initial_books",
             "player": "player_1",
             "books": [
                 [
@@ -444,7 +444,7 @@
             ]
         },
         {
-            "type": "discardCard",
+            "type": "discard_card",
             "player": "player_1",
             "card": {
                 "suit": "spades",
@@ -452,8 +452,8 @@
             }
         }
     ],
-    "finalState": {
-        "discardPile": [
+    "final_state": {
+        "discard_pile": [
             {
                 "suit": "diamonds",
                 "rank": "three"
@@ -480,32 +480,32 @@
                 "name": "player_1",
                 "points": {
                     "ninety": {
-                        "inHand": -60,
-                        "inFoot": -85,
-                        "inBooks": 0,
-                        "laidDown": 100,
-                        "forGoingOut": 0
+                        "in_hand": -60,
+                        "in_foot": -85,
+                        "in_books": 0,
+                        "laid_down": 100,
+                        "for_going_out": 0
                     },
-                    "oneTwenty": {
-                        "inHand": 0,
-                        "inFoot": 0,
-                        "inBooks": 0,
-                        "laidDown": 0,
-                        "forGoingOut": 0
+                    "one_twenty": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
                     },
-                    "oneFifty": {
-                        "inHand": 0,
-                        "inFoot": 0,
-                        "inBooks": 0,
-                        "laidDown": 0,
-                        "forGoingOut": 0
+                    "one_fifty": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
                     },
-                    "oneEighty": {
-                        "inHand": 0,
-                        "inFoot": 0,
-                        "inBooks": 0,
-                        "laidDown": 0,
-                        "forGoingOut": 0
+                    "one_eighty": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
                     }
                 },
                 "hand": [
@@ -650,32 +650,32 @@
                 "name": "player_2",
                 "points": {
                     "ninety": {
-                        "inHand": -90,
-                        "inFoot": -130,
-                        "inBooks": 0,
-                        "laidDown": 95,
-                        "forGoingOut": 0
+                        "in_hand": -90,
+                        "in_foot": -130,
+                        "in_books": 0,
+                        "laid_down": 95,
+                        "for_going_out": 0
                     },
-                    "oneTwenty": {
-                        "inHand": 0,
-                        "inFoot": 0,
-                        "inBooks": 0,
-                        "laidDown": 0,
-                        "forGoingOut": 0
+                    "one_twenty": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
                     },
-                    "oneFifty": {
-                        "inHand": 0,
-                        "inFoot": 0,
-                        "inBooks": 0,
-                        "laidDown": 0,
-                        "forGoingOut": 0
+                    "one_fifty": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
                     },
-                    "oneEighty": {
-                        "inHand": 0,
-                        "inFoot": 0,
-                        "inBooks": 0,
-                        "laidDown": 0,
-                        "forGoingOut": 0
+                    "one_eighty": {
+                        "in_hand": 0,
+                        "in_foot": 0,
+                        "in_books": 0,
+                        "laid_down": 0,
+                        "for_going_out": 0
                     }
                 },
                 "hand": [
