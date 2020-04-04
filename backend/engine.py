@@ -203,6 +203,32 @@ class Round(enum.Enum):
     ONE_FIFTY = "one_fifty"
     ONE_EIGHTY = "one_eighty"
 
+    @property
+    def points_needed(self):
+        if self == Round.NINETY:
+            return 90
+        elif self == Round.ONE_TWENTY:
+            return 120
+        elif self == Round.ONE_FIFTY:
+            return 150
+        elif self == Round.ONE_EIGHTY:
+            return 180
+        else:
+            raise ValueError("Unknown round")
+
+    @property
+    def next_round(self):
+        if self == Round.NINETY:
+            return Round.ONE_TWENTY
+        elif self == Round.ONE_TWENTY:
+            return Round.ONE_FIFTY
+        elif self == Round.ONE_FIFTY:
+            return Round.ONE_EIGHTY
+        elif self == Round.ONE_EIGHTY:
+            return None
+        else:
+            raise ValueError("Unknown round")
+
 #
 # Player
 #
@@ -242,7 +268,7 @@ class Player(object):
         return ((self.cards_drawn_from_deck + self.cards_drawn_from_discard_pile) < 2)
 
     @property
-    def cards_drawn_from_discard_pile(self):
+    def can_draw_from_discard_pile(self):
         return ((self.cards_drawn_from_deck < 2) and (self.cards_drawn_from_discard_pile < 1))
 
     @property
@@ -456,9 +482,9 @@ class Game(object):
         elif type(action) is DiscardCardAction:
             self.apply_discard_card_action(player, action.card)
         elif type(action) is LayDownInitialBooksAction:
-            self.apply_laydown_initial_books_action(player, action.cards)
+            self.apply_lay_down_initial_books_action(player, action.cards)
         elif type(action) is DrawFromDiscardAndLayDownInitialBooksAction:
-            self.apply_draw_from_discard_and_laydown_initial_books_action(player, action.partial_book, action.cards)
+            self.apply_draw_from_discard_and_lay_down_initial_books_action(player, action.partial_book, action.cards)
         elif type(action) is StartBookAction:
             self.apply_start_book_action(player, action.cards)
         elif type(action) is AddCardFromHandToBookAction:
@@ -476,36 +502,129 @@ class Game(object):
         return None
 
     def apply_draw_from_deck_action(self, player):
-        # TODO
-        pass
+        if not player.can_draw_from_deck:
+            raise IllegalActionError("Cannot draw from the deck")
+
+        player.add_card_to_hand_from_deck(self.deck.draw())
+
+        if self.deck.is_empty:
+            self.deck.replenish_cards_and_shuffle(self.discard_pile)
+            self.discard_pile = []
+
+            if self.deck.is_empty:
+                self.end_round_with_player_going_out(None)
 
     def apply_draw_from_discard_and_add_to_book_action(self, player):
-        # TODO
-        pass
+        if not player.can_draw_from_discard_pile or not player.has_laid_down_this_round:
+            raise IllegalActionError("Cannot draw from the discard pile")
+
+        if len(self.discard_pile) == 0:
+            raise IllegalActionError("Discard pile is empty")
+
+        card = self.discard_pile.pop()
+        player.add_card_to_book_from_discard_pile(card)
 
     def apply_draw_from_discard_and_create_book_action(self, player, cards):
-        # TODO
-        pass
+        if not player.can_draw_from_discard_pile:
+            raise IllegalActionError("Cannot draw from the discard pile")
+
+        if len(self.discard_pile) == 0:
+            raise IllegalActionError("Discard pile is empty")
+
+        card = self.discard_pile.pop()
+        cards.append(card)
+
+        player.add_card_to_hand_from_discard_pile(card)
+        player.start_book(cards)
+
+        if player.is_hand_empty and not player.is_in_foot:
+            player.pick_up_foot()
 
     def apply_discard_card_action(self, player, card):
-        # TODO
-        pass
+        if not player.can_end_turn:
+            raise IllegalActionError("Cannot end turn yet")
 
-    def apply_laydown_initial_books_action(self, player, cards):
-        # TODO
-        pass
+        player.remove_card_from_hand(card)
+        self.discard_pile.append(card)
 
-    def apply_draw_from_discard_and_laydown_initial_books_action(self, player, partial_book, cards):
-        # TODO
-        pass
+        if player.is_hand_empty and player.is_in_foot:
+            if not player.can_go_out:
+                raise IllegalActionError("Cannot go out")
+
+            self.end_round_with_player_going_out(player)
+        else:
+            if player.is_hand_empty:
+                player.pick_up_foot()
+
+            player.turn_ended()
+            self.player_iterator.go_to_next_player()
+
+    def apply_lay_down_initial_books_action(self, player, cards):
+        if player.has_laid_down_this_round:
+            raise IllegalActionError("Already laid down this round")
+
+        books = [Book(cards_in_book) for cards_in_book in cards]
+        points_in_books = sum([book.cards_value for book in books])
+
+        if points_in_books < self.round.points_needed:
+            raise IllegalActionError("Not enough points to lay down")
+
+        for cards_in_book in cards:
+            player.start_book(cards_in_book)
+
+        player.laid_down()
+
+        if player.is_hand_empty and not player.is_in_foot:
+            player.pick_up_foot()
+
+    def apply_draw_from_discard_and_lay_down_initial_books_action(self, player, partial_book, cards):
+        if player.has_laid_down_this_round:
+            raise IllegalActionError("Already laid down this round")
+
+        if not player.can_draw_from_discard_pile:
+            raise IllegalActionError("Cannot draw from the discard pile")
+
+        if len(self.discard_pile) == 0:
+            raise IllegalActionError("Discard pile is empty")
+
+        card = self.deck.draw()
+        complete_partial_book = partial_book + [card]
+        initial_books_cards = cards + [complete_partial_book]
+
+        books = [Book(cards_in_book) for cards_in_book in cards]
+        points_in_books = sum([book.cards_value for book in books])
+
+        if points_in_books < self.round.points_needed:
+            raise IllegalActionError("Not enough points to lay down")
+
+        for cards_in_book in cards:
+            player.start_book(cards_in_book)
+
+        player.laid_down()
+
+        if player.is_hand_empty and not player.is_in_foot:
+            player.pick_up_foot()
 
     def apply_start_book_action(self, player, cards):
-        # TODO
-        pass
+        player.start_book(cards)
+
+        if player.is_hand_empty and not player.is_in_foot:
+            player.pick_up_foot()
 
     def apply_add_card_from_hand_to_book_action(self, player, card):
-        # TODO
-        pass
+        player.add_card_to_book_from_hand(card)
+
+        if player.is_hand_empty and not player.is_in_foot:
+            player.pick_up_foot()
+
+    def end_round_with_player_going_out(self, player):
+        for player in self.players:
+            player.round_ended()
+
+        if player is not None:
+            player.add_bonus_for_going_out(self.round)
+
+        self.round = self.round.next_round
 
 #
 # Testing Support
