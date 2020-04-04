@@ -81,14 +81,9 @@ struct Card: Equatable, JSONCodable {
     
     // MARK: - JSONCodable
     
-    enum Keys: String {
-        case suit
-        case rank
-    }
-    
     init?(with json: JSONDictionary) {
-        guard let suitJson = json[Keys.suit.rawValue] as? String,
-            let rankJson = json[Keys.rank.rawValue] as? String
+        guard let suitJson = json["suit"] as? String,
+            let rankJson = json["rank"] as? String
         else {
                 return nil
         }
@@ -105,8 +100,8 @@ struct Card: Equatable, JSONCodable {
     
     func toJSON() -> JSONDictionary {
         return [
-            Keys.suit.rawValue : self.suit.rawValue,
-            Keys.rank.rawValue : self.rank.rawValue
+            "suit" : self.suit.rawValue,
+            "rank" : self.rank.rawValue
         ]
     }
 }

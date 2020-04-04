@@ -9,10 +9,10 @@
 import Foundation
 
 enum Round: String {
-    case ninety
-    case oneTwenty
-    case oneFifty
-    case oneEighty
+    case ninety = "ninety"
+    case oneTwenty = "one_twenty"
+    case oneFifty = "one_fifty"
+    case oneEighty = "one_eighty"
     
     var pointsNeeded: Int {
         switch (self) {
@@ -356,15 +356,10 @@ class Game: JSONEncodable {
     
     // MARK: JSONEncodable
     
-    enum Keys: String {
-        case discardPile
-        case players
-    }
-    
     func toJSON() -> JSONDictionary {
         return [
-            Keys.discardPile.rawValue : self.discardPile.map({ $0.toJSON() }),
-            Keys.players.rawValue : self.players.map({ $0.toJSON() })
+            "discard_pile" : self.discardPile.map({ $0.toJSON() }),
+            "players" : self.players.map({ $0.toJSON() })
         ]
     }
 }

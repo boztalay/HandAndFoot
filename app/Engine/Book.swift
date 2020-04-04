@@ -115,15 +115,10 @@ class Book: JSONEncodable {
     
     // MARK: JSONEncodable
     
-    enum Keys: String {
-        case rank
-        case cards
-    }
-    
     func toJSON() -> JSONDictionary {
         return [
-            Keys.rank.rawValue : self.rank.rawValue,
-            Keys.cards.rawValue : self.cards.map({ $0.toJSON() })
+            "rank" : self.rank.rawValue,
+            "cards" : self.cards.map({ $0.toJSON() })
         ]
     }
 }

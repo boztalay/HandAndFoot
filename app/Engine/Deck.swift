@@ -58,12 +58,8 @@ class Deck {
     
     // MARK: JSONCodable
     
-    enum Keys: String {
-        case cards
-    }
-    
     init?(with json: JSONDictionary) {
-        guard let cardsJson = json[Keys.cards.rawValue] as? [JSONDictionary] else {
+        guard let cardsJson = json["cards"] as? [JSONDictionary] else {
             return nil
         }
         
@@ -80,7 +76,7 @@ class Deck {
     
     func toJSON() -> JSONDictionary {
         return [
-            Keys.cards.rawValue : self.cards.map({ $0.toJSON() })
+            "cards" : self.cards.map({ $0.toJSON() })
         ]
     }
 }

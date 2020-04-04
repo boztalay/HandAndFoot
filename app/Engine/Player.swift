@@ -24,21 +24,13 @@ struct Points: JSONEncodable {
         self.forGoingOut = 0
     }
     
-    enum Keys: String {
-        case inHand
-        case inFoot
-        case inBooks
-        case laidDown
-        case forGoingOut
-    }
-    
     func toJSON() -> JSONDictionary {
         return [
-            Keys.inHand.rawValue : self.inHand,
-            Keys.inFoot.rawValue : self.inFoot,
-            Keys.inBooks.rawValue : self.inBooks,
-            Keys.laidDown.rawValue : self.laidDown,
-            Keys.forGoingOut.rawValue : self.forGoingOut
+            "in_hand" : self.inHand,
+            "in_foot" : self.inFoot,
+            "in_books" : self.inBooks,
+            "laid_down" : self.laidDown,
+            "for_going_out" : self.forGoingOut
         ]
     }
 }
@@ -201,14 +193,6 @@ class Player: JSONEncodable {
     
     // MARK: JSONEncodable
     
-    enum Keys: String {
-        case name
-        case hand
-        case foot
-        case books
-        case points
-    }
-    
     func toJSON() -> JSONDictionary {
         var booksJson: JSONDictionary = [:]
         self.books.forEach({ booksJson[$0.key.rawValue] = $0.value.toJSON() })
@@ -217,11 +201,11 @@ class Player: JSONEncodable {
         self.points.forEach({ pointsJson[$0.key.rawValue] = $0.value.toJSON() })
         
         return [
-            Keys.name.rawValue : self.name,
-            Keys.hand.rawValue : self.hand.map({ $0.toJSON() }),
-            Keys.foot.rawValue : self.foot.map({ $0.toJSON() }),
-            Keys.books.rawValue : booksJson,
-            Keys.points.rawValue : pointsJson
+            "name" : self.name,
+            "hand" : self.hand.map({ $0.toJSON() }),
+            "foot" : self.foot.map({ $0.toJSON() }),
+            "books" : booksJson,
+            "points" : pointsJson
         ]
     }
 }

@@ -44,32 +44,12 @@ enum Action: JSONDecodable {
     
     // MARK: JSONDecodable
     
-    enum Keys: String {
-        case type
-        case player
-        case card
-        case cards
-        case books
-        case partialBook
-    }
-    
-    enum ActionType: String {
-        case drawFromDeck
-        case drawFromDiscardAndAddToBook
-        case drawFromDiscardAndCreateBook
-        case discardCard
-        case layDownInitialBooks
-        case drawFromDiscardAndLayDownInitialBooks
-        case startBook
-        case addCardFromHandToBook
-    }
-    
     init?(with json: JSONDictionary) {
-        guard let type = json[Keys.type.rawValue] as? String else {
+        guard let type = json["type"] as? String else {
             return nil
         }
         
-        guard let playerName = json[Keys.player.rawValue] as? String else {
+        guard let playerName = json["player"] as? String else {
             return nil
         }
         
@@ -79,43 +59,43 @@ enum Action: JSONDecodable {
         let partialBook = Action.getPartialBookFromJsonIfPresent(json: json)
         
         switch (type) {
-            case ActionType.drawFromDeck.rawValue:
+            case "draw_from_deck":
                 self = .drawFromDeck(playerName)
 
-            case ActionType.drawFromDiscardAndAddToBook.rawValue:
+            case "draw_from_discard_and_add_to_book":
                 self = .drawFromDiscardAndAddToBook(playerName)
 
-            case ActionType.drawFromDiscardAndCreateBook.rawValue:
+            case "draw_from_discard_and_create_book":
                 guard let cards = cards else {
                     return nil
                 }
                 self = .drawFromDiscardAndCreateBook(playerName, cards)
 
-            case ActionType.discardCard.rawValue:
+            case "discard_card":
                 guard let card = card else {
                     return nil
                 }
                 self = .discardCard(playerName, card)
 
-            case ActionType.layDownInitialBooks.rawValue:
+            case "lay_down_initial_books":
                 guard let books = books else {
                     return nil
                 }
                 self = .layDownInitialBooks(playerName, books)
             
-            case ActionType.drawFromDiscardAndLayDownInitialBooks.rawValue:
+            case "draw_from_discard_and_lay_down_initial_books":
                 guard let partialBook = partialBook, let books = books else {
                     return nil
                 }
                 self = .drawFromDiscardAndLayDownInitialBooks(playerName, partialBook, books)
 
-            case ActionType.startBook.rawValue:
+            case "start_book":
                 guard let cards = cards else {
                     return nil
                 }
                 self = .startBook(playerName, cards)
             
-            case ActionType.addCardFromHandToBook.rawValue:
+            case "add_card_from_hand_to_book":
                 guard let card = card else {
                     return nil
                 }
@@ -127,7 +107,7 @@ enum Action: JSONDecodable {
     }
     
     static func getCardFromJsonIfPresent(json: JSONDictionary) -> Card? {
-        guard let cardJson = json[Keys.card.rawValue] as? JSONDictionary else {
+        guard let cardJson = json["card"] as? JSONDictionary else {
             return nil
         }
         
@@ -135,7 +115,7 @@ enum Action: JSONDecodable {
     }
     
     static func getCardsFromJsonIfPresent(json: JSONDictionary) -> [Card]? {
-        guard let cardsJson = json[Keys.cards.rawValue] as? [JSONDictionary] else {
+        guard let cardsJson = json["cards"] as? [JSONDictionary] else {
             return nil
         }
         
@@ -153,7 +133,7 @@ enum Action: JSONDecodable {
     }
     
     static func getBooksFromJsonIfPresent(json: JSONDictionary) -> [[Card]]? {
-        guard let booksJson = json[Keys.books.rawValue] as? [[JSONDictionary]] else {
+        guard let booksJson = json["books"] as? [[JSONDictionary]] else {
             return nil
         }
         
@@ -177,7 +157,7 @@ enum Action: JSONDecodable {
     }
     
     static func getPartialBookFromJsonIfPresent(json: JSONDictionary) -> [Card]? {
-        guard let partialBookJson = json[Keys.partialBook.rawValue] as? [JSONDictionary] else {
+        guard let partialBookJson = json["partial_book"] as? [JSONDictionary] else {
             return nil
         }
         
