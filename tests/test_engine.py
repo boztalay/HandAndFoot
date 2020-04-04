@@ -120,7 +120,7 @@ def runTestCase(enginePath, testCasePath):
         sys.exit(1)
 
     testCase = json.load(testCaseFile)
-    expectedFinalState = testCase["finalState"]
+    expectedFinalState = testCase["final_state"]
 
     passed = (actualFinalState == expectedFinalState)
 
