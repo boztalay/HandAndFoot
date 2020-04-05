@@ -138,6 +138,8 @@ def conditionFinalStateForComparison(finalState):
             for bookRank, book in roundBooks.items():
                 book["cards"] = sortCardList(book["cards"])
 
+    return finalState
+
 def sortCardList(cards):
     return sorted(cards, key=lambda x: (x["suit"] + x["rank"]))
 
