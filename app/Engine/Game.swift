@@ -124,7 +124,7 @@ class Game: JSONEncodable {
     // MARK: Applying actions
     
     func apply(action: Action) throws {
-        guard let round = self.round else {
+        guard self.round != nil else {
             throw IllegalActionError.gameIsOver
         }
         
@@ -155,7 +155,7 @@ class Game: JSONEncodable {
                 try self.applyAddCardFromHandToBookAction(player: player, card: card, bookRank: bookRank)
         }
         
-        player.calculatePoints(in: round)
+        player.calculatePoints(in: self.round!)
     }
     
     func getPlayer(named playerName: String) -> Player? {
@@ -352,6 +352,7 @@ class Game: JSONEncodable {
 
             for player in self.players {
                 try self.dealCards(to: player)
+                player.calculatePoints(in: self.round!)
             }
         }
     }

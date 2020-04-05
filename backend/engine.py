@@ -729,6 +729,7 @@ class Game(object):
         if self.round is not None:
             for player in self.players:
                 self.deal_cards_to_player(player)
+                player.calculate_points(self.round)
 
     def to_json(self):
         return {
