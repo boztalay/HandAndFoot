@@ -523,6 +523,14 @@
                         "rank": "eight"
                     },
                     {
+                        "suit": "clubs",
+                        "rank": "ten"
+                    },
+                    {
+                        "suit": "spades",
+                        "rank": "four"
+                    },
+                    {
                         "suit": "hearts",
                         "rank": "king"
                     },
@@ -532,14 +540,6 @@
                     },
                     {
                         "suit": "diamonds",
-                        "rank": "four"
-                    },
-                    {
-                        "suit": "clubs",
-                        "rank": "ten"
-                    },
-                    {
-                        "suit": "spades",
                         "rank": "four"
                     },
                     {
@@ -569,6 +569,14 @@
                         "rank": "four"
                     },
                     {
+                        "suit": "hearts",
+                        "rank": "seven"
+                    },
+                    {
+                        "suit": "spades",
+                        "rank": "queen"
+                    },
+                    {
                         "suit": "clubs",
                         "rank": "six"
                     },
@@ -587,14 +595,6 @@
                     {
                         "suit": "clubs",
                         "rank": "three"
-                    },
-                    {
-                        "suit": "hearts",
-                        "rank": "seven"
-                    },
-                    {
-                        "suit": "spades",
-                        "rank": "queen"
                     },
                     {
                         "suit": "diamonds",
@@ -628,11 +628,11 @@
                                     "rank": "nine"
                                 },
                                 {
-                                    "suit": "clubs",
+                                    "suit": "diamonds",
                                     "rank": "nine"
                                 },
                                 {
-                                    "suit": "diamonds",
+                                    "suit": "clubs",
                                     "rank": "nine"
                                 }
                             ]
@@ -645,12 +645,12 @@
                                     "rank": "queen"
                                 },
                                 {
-                                    "suit": "clubs",
-                                    "rank": "queen"
-                                },
-                                {
                                     "suit": "diamonds",
                                     "rank": "two"
+                                },
+                                {
+                                    "suit": "clubs",
+                                    "rank": "queen"
                                 }
                             ]
                         }
@@ -695,11 +695,11 @@
                 "hand": [
                     {
                         "suit": "hearts",
-                        "rank": "jack"
+                        "rank": "queen"
                     },
                     {
                         "suit": "hearts",
-                        "rank": "queen"
+                        "rank": "jack"
                     },
                     {
                         "suit": "clubs",
@@ -719,11 +719,11 @@
                     },
                     {
                         "suit": "diamonds",
-                        "rank": "king"
+                        "rank": "jack"
                     },
                     {
                         "suit": "diamonds",
-                        "rank": "jack"
+                        "rank": "king"
                     }
                 ],
                 "foot": [
@@ -744,6 +744,14 @@
                         "rank": "five"
                     },
                     {
+                        "suit": "hearts",
+                        "rank": "nine"
+                    },
+                    {
+                        "suit": "spades",
+                        "rank": "jack"
+                    },
+                    {
                         "suit": "clubs",
                         "rank": "king"
                     },
@@ -753,14 +761,6 @@
                     },
                     {
                         "suit": "diamonds",
-                        "rank": "jack"
-                    },
-                    {
-                        "suit": "hearts",
-                        "rank": "nine"
-                    },
-                    {
-                        "suit": "spades",
                         "rank": "jack"
                     },
                     {
@@ -794,11 +794,11 @@
                                     "rank": "ace"
                                 },
                                 {
-                                    "suit": "diamonds",
+                                    "suit": "clubs",
                                     "rank": "ace"
                                 },
                                 {
-                                    "suit": "clubs",
+                                    "suit": "diamonds",
                                     "rank": "ace"
                                 }
                             ]
@@ -811,11 +811,11 @@
                                     "rank": "four"
                                 },
                                 {
-                                    "suit": "hearts",
+                                    "suit": "spades",
                                     "rank": "four"
                                 },
                                 {
-                                    "suit": "spades",
+                                    "suit": "hearts",
                                     "rank": "four"
                                 }
                             ]

@@ -122,9 +122,24 @@ def runTestCase(enginePath, testCasePath):
     testCase = json.load(testCaseFile)
     expectedFinalState = testCase["final_state"]
 
+    actualFinalState = conditionFinalStateForComparison(actualFinalState)
+    expectedFinalState = conditionFinalStateForComparison(expectedFinalState)
+
     passed = (actualFinalState == expectedFinalState)
 
     return (testCasePath, passed)
+
+def conditionFinalStateForComparison(finalState):
+    for i, player in enumerate(finalState["players"]):
+        player["hand"] = sortCardList(player["hand"])
+        player["foot"] = sortCardList(player["foot"])
+
+        for currentRound, roundBooks in player["books"].items():
+            for bookRank, book in roundBooks.items():
+                book["cards"] = sortCardList(book["cards"])
+
+def sortCardList(cards):
+    return sorted(cards, key=lambda x: (x["suit"] + x["rank"]))
 
 def printUsageAndExit():
     fileName = os.path.split(__file__)[1]
