@@ -667,6 +667,765 @@
         "cards": []
     },
     "actions": [
+        {
+            "type": "draw_from_deck",
+            "player": "player_1"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_1"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "diamonds",
+                "rank": "three"
+            },
+            "player": "player_1"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_2"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_2"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "diamonds",
+                "rank": "three"
+            },
+            "player": "player_2"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_3"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_3"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "hearts",
+                "rank": "three"
+            },
+            "player": "player_3"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_1"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_1"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            "player": "player_1"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_2"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_2"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "diamonds",
+                "rank": "three"
+            },
+            "player": "player_2"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_3"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_3"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "hearts",
+                "rank": "three"
+            },
+            "player": "player_3"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_1"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_1"
+        },
+        {
+            "type": "lay_down_initial_books",
+            "books": [
+                [
+                    {
+                        "suit": "spades",
+                        "rank": "four"
+                    },
+                    {
+                        "suit": "clubs",
+                        "rank": "four"
+                    },
+                    {
+                        "suit": "hearts",
+                        "rank": "four"
+                    },
+                    {
+                        "suit": "hearts",
+                        "rank": "four"
+                    }
+                ],
+                [
+                    {
+                        "suit": "clubs",
+                        "rank": "six"
+                    },
+                    {
+                        "suit": "clubs",
+                        "rank": "six"
+                    },
+                    {
+                        "suit": "diamonds",
+                        "rank": "six"
+                    },
+                    {
+                        "suit": "spades",
+                        "rank": "six"
+                    },
+                    {
+                        "suit": "hearts",
+                        "rank": "six"
+                    }
+                ],
+                [
+                    {
+                        "suit": "spades",
+                        "rank": "ace"
+                    },
+                    {
+                        "suit": "hearts",
+                        "rank": "ace"
+                    },
+                    {
+                        "suit": "diamonds",
+                        "rank": "ace"
+                    }
+                ]
+            ],
+            "player": "player_1"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "diamonds",
+                "rank": "jack"
+            },
+            "player": "player_1"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_2"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_2"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "diamonds",
+                "rank": "six"
+            },
+            "player": "player_2"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_3"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_3"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "diamonds",
+                "rank": "five"
+            },
+            "player": "player_3"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_1"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_1"
+        },
+        {
+            "type": "add_card_from_hand_to_book",
+            "card": {
+                "suit": "diamonds",
+                "rank": "six"
+            },
+            "book_rank": "six",
+            "player": "player_1"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "clubs",
+                "rank": "three"
+            },
+            "player": "player_1"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_2"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_2"
+        },
+        {
+            "type": "lay_down_initial_books",
+            "books": [
+                [
+                    {
+                        "suit": "spades",
+                        "rank": "jack"
+                    },
+                    {
+                        "suit": "hearts",
+                        "rank": "jack"
+                    },
+                    {
+                        "suit": "hearts",
+                        "rank": "jack"
+                    }
+                ],
+                [
+                    {
+                        "suit": "clubs",
+                        "rank": "ace"
+                    },
+                    {
+                        "suit": "hearts",
+                        "rank": "ace"
+                    },
+                    {
+                        "suit": "spades",
+                        "rank": "ace"
+                    }
+                ]
+            ],
+            "player": "player_2"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "clubs",
+                "rank": "three"
+            },
+            "player": "player_2"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_3"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_3"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "clubs",
+                "rank": "eight"
+            },
+            "player": "player_3"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_1"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_1"
+        },
+        {
+            "type": "add_card_from_hand_to_book",
+            "card": {
+                "suit": "diamonds",
+                "rank": "four"
+            },
+            "book_rank": "four",
+            "player": "player_1"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "clubs",
+                "rank": "queen"
+            },
+            "player": "player_1"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_2"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_2"
+        },
+        {
+            "type": "start_book",
+            "cards": [
+                {
+                    "suit": "hearts",
+                    "rank": "king"
+                },
+                {
+                    "suit": "diamonds",
+                    "rank": "king"
+                },
+                {
+                    "suit": "diamonds",
+                    "rank": "king"
+                }
+            ],
+            "player": "player_2"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "diamonds",
+                "rank": "nine"
+            },
+            "player": "player_2"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_3"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_3"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "hearts",
+                "rank": "five"
+            },
+            "player": "player_3"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_1"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_1"
+        },
+        {
+            "type": "add_card_from_hand_to_book",
+            "card": {
+                "suit": "clubs",
+                "rank": "six"
+            },
+            "book_rank": "six",
+            "player": "player_1"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "clubs",
+                "rank": "eight"
+            },
+            "player": "player_1"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_2"
+        },
+        {
+            "type": "draw_from_discard_pile_and_create_book",
+            "cards": [
+                {
+                    "suit": "diamonds",
+                    "rank": "eight"
+                },
+                {
+                    "suit": "spades",
+                    "rank": "eight"
+                }
+            ],
+            "player": "player_2"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "spades",
+                "rank": "four"
+            },
+            "player": "player_2"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_3"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_3"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "hearts",
+                "rank": "six"
+            },
+            "player": "player_3"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_1"
+        },
+        {
+            "type": "draw_from_discard_pile_and_add_to_book",
+            "book_rank": "six",
+            "player": "player_1"
+        },
+        {
+            "type": "start_book",
+            "cards": [
+                {
+                    "suit": "hearts",
+                    "rank": "two"
+                },
+                {
+                    "suit": "spades",
+                    "rank": "nine"
+                },
+                {
+                    "suit": "hearts",
+                    "rank": "nine"
+                },
+                {
+                    "suit": "diamonds",
+                    "rank": "nine"
+                }
+            ],
+            "player": "player_1"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "clubs",
+                "rank": "five"
+            },
+            "player": "player_1"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_2"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_2"
+        },
+        {
+            "type": "add_card_from_hand_to_book",
+            "card": {
+                "suit": "hearts",
+                "rank": "king"
+            },
+            "book_rank": "king",
+            "player": "player_2"
+        },
+        {
+            "type": "add_card_from_hand_to_book",
+            "card": {
+                "suit": "hearts",
+                "rank": "king"
+            },
+            "book_rank": "king",
+            "player": "player_2"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "spades",
+                "rank": "queen"
+            },
+            "player": "player_2"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_3"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_3"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "spades",
+                "rank": "four"
+            },
+            "player": "player_3"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_1"
+        },
+        {
+            "type": "draw_from_discard_pile_and_add_to_book",
+            "book_rank": "four",
+            "player": "player_1"
+        },
+        {
+            "type": "add_card_from_hand_to_book",
+            "card": {
+                "suit": "clubs",
+                "rank": "four"
+            },
+            "book_rank": "four",
+            "player": "player_1"
+        },
+        {
+            "type": "add_card_from_hand_to_book",
+            "card": {
+                "suit": "diamonds",
+                "rank": "ace"
+            },
+            "book_rank": "ace",
+            "player": "player_1"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "spades",
+                "rank": "three"
+            },
+            "player": "player_1"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_2"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_2"
+        },
+        {
+            "type": "add_card_from_hand_to_book",
+            "card": {
+                "suit": "spades",
+                "rank": "king"
+            },
+            "book_rank": "king",
+            "player": "player_2"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "hearts",
+                "rank": "ten"
+            },
+            "player": "player_2"
+        },
+        {
+            "type": "draw_from_deck",
+            "player": "player_3"
+        },
+        {
+            "type": "draw_from_discard_pile_and_lay_down_initial_books",
+            "parital_book": [
+                {
+                    "suit": "diamonds",
+                    "rank": "ten"
+                },
+                {
+                    "suit": "diamonds",
+                    "rank": "ten"
+                },
+                {
+                    "suit": "spades",
+                    "rank": "ten"
+                },
+                {
+                    "suit": "clubs",
+                    "rank": "ten"
+                }
+            ],
+            "books": [
+                [
+                    {
+                        "suit": "spades",
+                        "rank": "seven"
+                    },
+                    {
+                        "suit": "diamonds",
+                        "rank": "seven"
+                    },
+                    {
+                        "suit": "diamonds",
+                        "rank": "seven"
+                    }
+                ],
+                [
+                    {
+                        "suit": "spades",
+                        "rank": "joker"
+                    },
+                    {
+                        "suit": "hearts",
+                        "rank": "jack"
+                    },
+                    {
+                        "suit": "diamonds",
+                        "rank": "jack"
+                    }
+                ],
+                [
+                    {
+                        "suit": "spades",
+                        "rank": "joker"
+                    },
+                    {
+                        "suit": "clubs",
+                        "rank": "queen"
+                    },
+                    {
+                        "suit": "diamonds",
+                        "rank": "queen"
+                    }
+                ],
+                [
+                    {
+                        "suit": "spades",
+                        "rank": "ace"
+                    },
+                    {
+                        "suit": "clubs",
+                        "rank": "ace"
+                    },
+                    {
+                        "suit": "diamonds",
+                        "rank": "ace"
+                    },
+                    {
+                        "suit": "hearts",
+                        "rank": "ace"
+                    }
+                ],
+                [
+                    {
+                        "suit": "spades",
+                        "rank": "two"
+                    },
+                    {
+                        "suit": "clubs",
+                        "rank": "king"
+                    },
+                    {
+                        "suit": "clubs",
+                        "rank": "king"
+                    }
+                ]
+            ],
+            "player": "player_3"
+        },
+        {
+            "type": "add_card_from_hand_to_book",
+            "card": {
+                "suit": "clubs",
+                "rank": "two"
+            },
+            "book_rank": "seven",
+            "player": "player_3"
+        },
+        {
+            "type": "add_card_from_hand_to_book",
+            "card": {
+                "suit": "clubs",
+                "rank": "seven"
+            },
+            "book_rank": "seven",
+            "player": "player_3"
+        },
+        {
+            "type": "add_card_from_hand_to_book",
+            "card": {
+                "suit": "spades",
+                "rank": "seven"
+            },
+            "book_rank": "seven",
+            "player": "player_3"
+        },
+        {
+            "type": "add_card_from_hand_to_book",
+            "card": {
+                "suit": "hearts",
+                "rank": "seven"
+            },
+            "book_rank": "seven",
+            "player": "player_3"
+        },
+        {
+            "type": "add_card_from_hand_to_book",
+            "card": {
+                "suit": "spades",
+                "rank": "jack"
+            },
+            "book_rank": "jack",
+            "player": "player_3"
+        },
+        {
+            "type": "add_card_from_hand_to_book",
+            "card": {
+                "suit": "clubs",
+                "rank": "jack"
+            },
+            "book_rank": "jack",
+            "player": "player_3"
+        },
+        {
+            "type": "add_card_from_hand_to_book",
+            "card": {
+                "suit": "hearts",
+                "rank": "queen"
+            },
+            "book_rank": "queen",
+            "player": "player_3"
+        },
+        {
+            "type": "discard_card",
+            "card": {
+                "suit": "spades",
+                "rank": "eight"
+            },
+            "player": "player_3"
+        }
     ],
     "final_state": {
         "discard_pile": [
