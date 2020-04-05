@@ -658,7 +658,336 @@
         ]
     },
     "one_twenty_deck": {
-        "cards": []
+        "cards": [
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            },
+            {
+                "suit": "clubs",
+                "rank": "ten"
+            }
+        ]
     },
     "one_fifty_deck": {
         "cards": []
@@ -2076,11 +2405,11 @@
                 "name": "player_1",
                 "points": {
                     "ninety": {
-                        "in_hand": -155,
+                        "in_hand": 0,
                         "in_foot": 0,
-                        "in_books": 1000,
-                        "laid_down": 205,
-                        "for_going_out": 0
+                        "in_books": 1600,
+                        "laid_down": 470,
+                        "for_going_out": 100
                     },
                     "one_twenty": {
                         "in_hand": 0,
@@ -2316,9 +2645,9 @@
                 "points": {
                     "ninety": {
                         "in_hand": -50,
-                        "in_foot": -185,
-                        "in_books": 0,
-                        "laid_down": 165,
+                        "in_foot": 0,
+                        "in_books": 500,
+                        "laid_down": 330,
                         "for_going_out": 0
                     },
                     "one_twenty": {
@@ -2550,10 +2879,10 @@
                 "name": "player_3",
                 "points": {
                     "ninety": {
-                        "in_hand": -95,
+                        "in_hand": -85,
                         "in_foot": 0,
                         "in_books": 300,
-                        "laid_down": 390,
+                        "laid_down": 445,
                         "for_going_out": 0
                     },
                     "one_twenty": {

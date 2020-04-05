@@ -329,17 +329,14 @@ class Player(object):
     def can_end_turn(self):
         return ((self.cards_drawn_from_deck + self.cards_drawn_from_discard_pile) == 2)
 
-    @property
     def can_go_out(self, current_round):
         return (self.has_natural_book(current_round) and self.has_unnatural_book(current_round) and self.is_in_foot)
 
-    @property
     def has_natural_book(self, current_round):
-        return (len([book for book in self.books[current_round] if book.is_natural]) > 0)
+        return (len([book for book in self.books[current_round].values() if book.is_natural]) > 0)
 
-    @property
     def has_unnatural_book(self, current_round):
-        return (len([book for book in self.books[current_round] if not book.is_natural]) > 0)
+        return (len([book for book in self.books[current_round].values() if not book.is_natural]) > 0)
 
     def add_card_to_hand_from_deck(self, card):
         self.hand.append(card)
@@ -764,7 +761,7 @@ def main(test_case):
             sys.stderr.write("IllegalActionError at action %d: %s\n" % (i, e))
             break
         except Exception as e:
-            sys.stderr.write("Unknown error applying an action: %s\n" % (e))
+            sys.stderr.write("Unknown error applying action %d: %s\n" % (i, e))
             break
 
     final_state_json = game.to_json()
