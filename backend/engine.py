@@ -768,7 +768,7 @@ def main(test_case):
             break
 
     final_state_json = game.to_json()
-    # print(json.dumps(final_state_json, indent=4))
+    print(json.dumps(final_state_json, indent=4))
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
