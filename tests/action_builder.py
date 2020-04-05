@@ -1,6 +1,8 @@
 import json
+import os
 import re
 import sys
+import tempfile
 
 CARD_REGEX = re.compile(r"(\d+|[jqkar])([hdcs])")
 RANK_REGEX = re.compile(r"(\d+|[jqkar])")
@@ -46,6 +48,7 @@ def main():
     player = players[current_player_index]
 
     actions = []
+    (output_fd, output_file_path) = tempfile.mkstemp(text=True)
 
     print()
     print_menu()
@@ -96,13 +99,20 @@ def main():
 
             action["player"] = player
             actions.append(action)
-            print(json.dumps(action, indent=4))
+
+            action_string = json.dumps(action, indent=4)
+            os.write(output_fd, bytes(action_string + ",\n", encoding="utf-8"))
+
+            print(action_string)
             print()
     except KeyboardInterrupt:
         pass
 
     print()
     print(json.dumps(actions, indent=4))
+
+    print(f"Output is in {output_file_path}")
+    os.close(output_fd)
 
 def build_draw_from_deck_action():
     return {
