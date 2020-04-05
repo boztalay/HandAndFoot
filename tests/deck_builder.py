@@ -1,7 +1,7 @@
 import re
 import json
 
-CARD_REGEX = re.compile(r"(\d|\d\d|[jqkar])([hdcs])")
+CARD_REGEX = re.compile(r"(\d+|[jqkar])([hdcs])")
 
 RANKS = {
     "2": "two",

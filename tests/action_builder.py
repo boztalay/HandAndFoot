@@ -2,7 +2,8 @@ import json
 import re
 import sys
 
-CARD_REGEX = re.compile(r"(\d|\d\d|[jqkar])([hdcs])")
+CARD_REGEX = re.compile(r"(\d+|[jqkar])([hdcs])")
+RANK_REGEX = re.compile(r"(\d+|[jqkar])")
 
 RANKS = {
     "2": "two",
@@ -95,7 +96,7 @@ def main():
 
             action["player"] = player
             actions.append(action)
-            print(action)
+            print(json.dumps(action, indent=4))
             print()
     except KeyboardInterrupt:
         pass
@@ -110,7 +111,8 @@ def build_draw_from_deck_action():
 
 def build_draw_from_discard_pile_and_add_to_book_action():
     return {
-        "type": "draw_from_discard_pile_and_add_to_book"
+        "type": "draw_from_discard_pile_and_add_to_book",
+        "book_rank": ask_for_card_rank()
     }
 
 def build_draw_from_discard_pile_and_create_book_action():
@@ -171,7 +173,8 @@ def build_start_book_action():
 def build_add_card_from_hand_to_book_action():
     return {
         "type": "add_card_from_hand_to_book",
-        "card": ask_for_card()
+        "card": ask_for_card(),
+        "book_rank": ask_for_card_rank()
     }
 
 def ask_for_card():
@@ -196,6 +199,25 @@ def ask_for_card():
             "suit": suit,
             "rank": rank
         }
+
+def ask_for_card_rank():
+    while True:
+        rank_string = input("Rank: ")
+        if len(rank_string) == 0:
+            return None
+
+        match = RANK_REGEX.match(rank_string)
+        if match is None:
+            print("    Invalid rank")
+            continue
+
+        try:
+            rank = RANKS[match.group(1)]
+        except KeyError:
+            print("    Invalid card")
+            continue
+
+        return rank
 
 def ask_for_cards():
     cards = []
