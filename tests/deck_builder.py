@@ -43,12 +43,13 @@ def main():
             except KeyError:
                 continue
 
-            cards.append(
-                {
-                    "suit": suit,
-                    "rank": rank
-                }
-            )
+            card = {
+                "suit": suit,
+                "rank": rank
+            }
+
+            cards.append(card)
+            print(card)
 
             plural = "" if len(cards) == 1 else "s"
             print(f"{len(cards)} card{plural}")
