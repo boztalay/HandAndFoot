@@ -139,8 +139,8 @@ class Player: JSONEncodable {
         self.hand.remove(at: cardIndex)
     }
     
-    func addCardToBookFromHand(_ card: Card, in round: Round) throws {
-        guard let book = self.books[round]![card.rank] else {
+    func addCardFromHandToBook(_ card: Card, bookRank: CardRank, in round: Round) throws {
+        guard let book = self.books[round]![bookRank] else {
             throw IllegalActionError.playerDoesntHaveBook
         }
         
@@ -148,8 +148,8 @@ class Player: JSONEncodable {
         try book.addCard(card)
     }
     
-    func addCardToBookFromDiscardPile(_ card: Card, in round: Round) throws {
-        guard let book = self.books[round]![card.rank] else {
+    func addCardFromDiscardPileToBook(_ card: Card, bookRank: CardRank, in round: Round) throws {
+        guard let book = self.books[round]![bookRank] else {
             throw IllegalActionError.playerDoesntHaveBook
         }
 

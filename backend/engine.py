@@ -355,18 +355,18 @@ class Player(object):
         except ValueError:
             raise IllegalActionError("Card not in hand")
 
-    def add_card_to_book_from_hand(self, card, current_round):
+    def add_card_from_hand_to_book(self, card, book_rank, current_round):
         if card.rank not in self.books[current_round]:
             raise IllegalActionError("Player doesn't have a book for the given card")
 
         self.remove_card_from_hand(card)
-        self.books[current_round][card.rank].add_card(card)
+        self.books[current_round][book_rank].add_card(card)
 
-    def add_card_to_book_from_discard_pile(self, card, current_round):
+    def add_card_from_discard_pile_to_book(self, card, book_rank, current_round):
         if card.rank not in self.books[current_round]:
             raise IllegalActionError("Player doesn't have a book for the given card")
 
-        self.books[current_round][card.rank].add_card(card)
+        self.books[current_round][book_rank].add_card(card)
         self.cards_drawn_from_discard_pile += 1
 
     def start_book(self, cards, current_round):
@@ -436,7 +436,8 @@ class Action(abc.ABC):
         if action_type == "draw_from_deck":
             return DrawFromDeckAction(action_json["player"])
         elif action_type == "draw_from_discard_pile_and_add_to_book":
-            return DrawFromDiscardPileAndAddToBookAction(action_json["player"])
+            book_rank = CardRank(action_json["book_rank"])
+            return DrawFromDiscardPileAndAddToBookAction(action_json["player"], book_rank)
         elif action_type == "draw_from_discard_pile_and_create_book":
             cards = [Card.from_json(card_json) for card_json in action_json["cards"]]
             return DrawFromDiscardPileAndCreateBookAction(action_json["player"], cards)
@@ -455,7 +456,8 @@ class Action(abc.ABC):
             return StartBookAction(action_json["player"], cards)
         elif action_type == "add_card_from_hand_to_book":
             card = Card.from_json(action_json["card"])
-            return AddCardFromHandToBookAction(action_json["player"], card)
+            book_rank = CardRank(action_json["book_rank"])
+            return AddCardFromHandToBookAction(action_json["player"], card, book_rank)
         else:
             raise ValueError("Unknown action type: " + action_type)
 
@@ -467,8 +469,9 @@ class DrawFromDeckAction(Action):
         super().__init__(player_name)
 
 class DrawFromDiscardPileAndAddToBookAction(Action):
-    def __init__(self, player_name):
+    def __init__(self, player_name, book_rank):
         super().__init__(player_name)
+        self.book_rank = book_rank
 
 class DrawFromDiscardPileAndCreateBookAction(Action):
     def __init__(self, player_name, cards):
@@ -492,9 +495,10 @@ class DrawFromDiscardPileAndLayDownInitialBooksAction(Action):
         self.books = books
 
 class StartBookAction(Action):
-    def __init__(self, player_name, cards):
+    def __init__(self, player_name, cards, book_rank):
         super().__init__(player_name)
         self.cards = cards
+        self.book_rank = book_rank
 
 class AddCardFromHandToBookAction(Action):
     def __init__(self, player_name, card):
@@ -572,7 +576,7 @@ class Game(object):
         if type(action) is DrawFromDeckAction:
             self.apply_draw_from_deck_action(player)
         elif type(action) is DrawFromDiscardPileAndAddToBookAction:
-            self.apply_draw_from_discard_pile_and_add_to_book_action(player)
+            self.apply_draw_from_discard_pile_and_add_to_book_action(player, action.book_rank)
         elif type(action) is DrawFromDiscardPileAndCreateBookAction:
             self.apply_draw_from_discard_pile_and_create_book_action(player, action.cards)
         elif type(action) is DiscardCardAction:
@@ -584,7 +588,7 @@ class Game(object):
         elif type(action) is StartBookAction:
             self.apply_start_book_action(player, action.cards)
         elif type(action) is AddCardFromHandToBookAction:
-            self.apply_add_card_from_hand_to_book_action(player, action.card)
+            self.apply_add_card_from_hand_to_book_action(player, action.card, action.book_rank)
         else:
             raise ValueError("Unknown action type")
 
@@ -610,7 +614,7 @@ class Game(object):
             if self.deck.is_empty:
                 self.end_round_with_player_going_out(None)
 
-    def apply_draw_from_discard_pile_and_add_to_book_action(self, player):
+    def apply_draw_from_discard_pile_and_add_to_book_action(self, player, book_rank):
         if not player.can_draw_from_discard_pile or not player.has_laid_down_this_round:
             raise IllegalActionError("Cannot draw from the discard pile")
 
@@ -618,7 +622,7 @@ class Game(object):
             raise IllegalActionError("Discard pile is empty")
 
         card = self.discard_pile.pop()
-        player.add_card_to_book_from_discard_pile(card, self.round)
+        player.add_card_from_discard_pile_to_book(card, book_rank, self.round)
 
     def apply_draw_from_discard_pile_and_create_book_action(self, player, cards):
         if not player.can_draw_from_discard_pile:
@@ -707,8 +711,8 @@ class Game(object):
         if player.is_hand_empty and not player.is_in_foot:
             player.pick_up_foot()
 
-    def apply_add_card_from_hand_to_book_action(self, player, card):
-        player.add_card_to_book_from_hand(card, self.round)
+    def apply_add_card_from_hand_to_book_action(self, player, card, book_rank):
+        player.add_card_from_hand_to_book(card, book_rank, self.round)
 
         if player.is_hand_empty and not player.is_in_foot:
             player.pick_up_foot()

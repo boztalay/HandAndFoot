@@ -139,8 +139,8 @@ class Game: JSONEncodable {
         switch (action) {
             case .drawFromDeck:
                 try self.applyDrawFromDeckAction(player: player)
-            case .drawFromDiscardPileAndAddToBook:
-                try self.applyDrawFromDiscardPileAndAddToBookAction(player: player)
+            case let .drawFromDiscardPileAndAddToBook(_, bookRank):
+                try self.applyDrawFromDiscardPileAndAddToBookAction(player: player, bookRank: bookRank)
             case let .drawFromDiscardPileAndCreateBook(_, cards):
                 try self.applyDrawFromDiscardPileAndCreateBookAction(player: player, cards: cards)
             case let .discardCard(_, card):
@@ -151,8 +151,8 @@ class Game: JSONEncodable {
                 try self.applyDrawFromDiscardPileAndLayDownInitialBooksAction(player: player, partialBookCards: partialBookCards, cards: cards)
             case let .startBook(_, cards):
                 try self.applyStartBookAction(player: player, cards: cards)
-            case let .addCardFromHandToBook(_, card):
-                try self.applyAddCardFromHandToBookAction(player: player, card: card)
+            case let .addCardFromHandToBook(_, card, bookRank):
+                try self.applyAddCardFromHandToBookAction(player: player, card: card, bookRank: bookRank)
         }
         
         player.calculatePoints(in: round)
@@ -189,7 +189,7 @@ class Game: JSONEncodable {
     
     // Drawing from the discard pile to add to an existing book
     
-    func applyDrawFromDiscardPileAndAddToBookAction(player: Player) throws {
+    func applyDrawFromDiscardPileAndAddToBookAction(player: Player, bookRank: CardRank) throws {
         guard player.canDrawFromDiscardPile && player.hasLaidDownThisRound else {
             throw IllegalActionError.cannotDrawFromTheDiscardPile
         }
@@ -199,7 +199,7 @@ class Game: JSONEncodable {
         }
 
         let card = self.discardPile.popLast()!
-        try player.addCardToBookFromDiscardPile(card, in: self.round!)
+        try player.addCardFromDiscardPileToBook(card, bookRank: bookRank, in: self.round!)
     }
     
     // Drawing from the discard pile to create a new book
@@ -324,8 +324,8 @@ class Game: JSONEncodable {
     
     // Adding to an existing book
     
-    func applyAddCardFromHandToBookAction(player: Player, card: Card) throws {
-        try player.addCardToBookFromHand(card, in: self.round!)
+    func applyAddCardFromHandToBookAction(player: Player, card: Card, bookRank: CardRank) throws {
+        try player.addCardFromHandToBook(card, bookRank: bookRank, in: self.round!)
         
         if player.isHandEmpty && !player.isInFoot {
             player.pickUpFoot()
