@@ -33,6 +33,13 @@ def main():
     try:
         while True:
             cardString = input("Card: ").strip()
+
+            if cardString == "u":
+                cards = cards[:-1]
+                print("Latest card is now:")
+                print(cards[-1])
+                print()
+
             match = CARD_REGEX.match(cardString)
             if match is None:
                 continue
@@ -52,7 +59,7 @@ def main():
             print(card)
 
             plural = "" if len(cards) == 1 else "s"
-            print(f"{len(cards)} card{plural}")
+            print(f"{len(cards)} card{plural}\n")
     except KeyboardInterrupt:
         pass
 
