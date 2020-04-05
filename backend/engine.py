@@ -495,15 +495,15 @@ class DrawFromDiscardPileAndLayDownInitialBooksAction(Action):
         self.books = books
 
 class StartBookAction(Action):
-    def __init__(self, player_name, cards, book_rank):
+    def __init__(self, player_name, cards):
         super().__init__(player_name)
         self.cards = cards
-        self.book_rank = book_rank
 
 class AddCardFromHandToBookAction(Action):
-    def __init__(self, player_name, card):
+    def __init__(self, player_name, card, book_rank):
         super().__init__(player_name)
         self.card = card
+        self.book_rank = book_rank
 
 #
 # Game
@@ -781,7 +781,9 @@ if __name__ == '__main__':
         test_case = json.load(test_case_file)
     except IOError as e:
         print("Couldn't open the given test case file: " + str(e))
+        sys.exit(1)
     except ValueError as e:
         print("Couldn't read the given test case file as JSON: " + str(e))
+        sys.exit(1)
 
     main(test_case)

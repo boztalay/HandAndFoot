@@ -1259,7 +1259,7 @@
         },
         {
             "type": "draw_from_discard_pile_and_lay_down_initial_books",
-            "parital_book": [
+            "partial_book": [
                 {
                     "suit": "diamonds",
                     "rank": "ten"
@@ -1683,7 +1683,7 @@
                                     "rank": "six"
                                 }
                             ]
-                        }[
+                        },
                         "ace": {
                             "rank": "ace",
                             "cards": [

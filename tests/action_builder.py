@@ -170,7 +170,7 @@ def build_draw_from_discard_pile_and_lay_down_initial_books_action():
 
     return {
         "type": "draw_from_discard_pile_and_lay_down_initial_books",
-        "parital_book": parital_book,
+        "partial_book": parital_book,
         "books": books
     }
 
