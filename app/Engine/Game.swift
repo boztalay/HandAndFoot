@@ -301,7 +301,8 @@ class Game: JSONEncodable {
             throw IllegalActionError.notEnoughPointsToLayDown
         }
         
-        for cardsInBook in cards {
+        player.addCardToHand(card)
+        for cardsInBook in initialBooksCards {
             try player.startBook(with: cardsInBook, in: self.round!)
         }
         

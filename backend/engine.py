@@ -341,6 +341,9 @@ class Player(object):
     def has_unnatural_book(self, current_round):
         return (len([book for book in self.books[current_round] if not book.is_natural]) > 0)
 
+    def add_card_to_hand(self, card):
+        self.hand.append(card)
+
     def add_card_to_hand_from_deck(self, card):
         self.hand.append(card)
         self.cards_drawn_from_deck += 1
@@ -542,7 +545,7 @@ class Game(object):
         self.discard_pile = []
         self.round = Round.NINETY
 
-        self.players = [] 
+        self.players = []
         for player_name in player_names:
             self.players.append(Player(player_name))
 
@@ -697,7 +700,8 @@ class Game(object):
         if points_in_books < self.round.points_needed:
             raise IllegalActionError("Not enough points to lay down")
 
-        for book_cards in books_cards:
+        player.add_card_to_hand(card)
+        for book_cards in initial_books_cards:
             player.start_book(book_cards, self.round)
 
         player.laid_down()
@@ -767,7 +771,7 @@ def main(test_case):
             break
 
     final_state_json = game.to_json()
-    print(json.dumps(final_state_json, indent=4))
+    # print(json.dumps(final_state_json, indent=4))
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
