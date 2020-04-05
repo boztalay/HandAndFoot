@@ -356,14 +356,14 @@ class Player(object):
             raise IllegalActionError("Card not in hand")
 
     def add_card_from_hand_to_book(self, card, book_rank, current_round):
-        if card.rank not in self.books[current_round]:
+        if book_rank not in self.books[current_round]:
             raise IllegalActionError("Player doesn't have a book for the given card")
 
         self.remove_card_from_hand(card)
         self.books[current_round][book_rank].add_card(card)
 
     def add_card_from_discard_pile_to_book(self, card, book_rank, current_round):
-        if card.rank not in self.books[current_round]:
+        if book_rank not in self.books[current_round]:
             raise IllegalActionError("Player doesn't have a book for the given card")
 
         self.books[current_round][book_rank].add_card(card)
@@ -687,7 +687,7 @@ class Game(object):
         if len(self.discard_pile) == 0:
             raise IllegalActionError("Discard pile is empty")
 
-        card = self.deck.draw()
+        card = self.discard_pile.pop()
         complete_partial_book = partial_book_cards + [card]
         initial_books_cards = books_cards + [complete_partial_book]
 
