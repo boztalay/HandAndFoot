@@ -341,9 +341,6 @@ class Player(object):
     def has_unnatural_book(self, current_round):
         return (len([book for book in self.books[current_round] if not book.is_natural]) > 0)
 
-    def add_card_to_hand(self, card):
-        self.hand.append(card)
-
     def add_card_to_hand_from_deck(self, card):
         self.hand.append(card)
         self.cards_drawn_from_deck += 1
@@ -700,7 +697,7 @@ class Game(object):
         if points_in_books < self.round.points_needed:
             raise IllegalActionError("Not enough points to lay down")
 
-        player.add_card_to_hand(card)
+        player.add_card_to_hand_from_discard_pile(card)
         for book_cards in initial_books_cards:
             player.start_book(book_cards, self.round)
 

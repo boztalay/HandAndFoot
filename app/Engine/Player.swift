@@ -121,10 +121,6 @@ class Player: JSONEncodable {
     
     // MARK: Picking up and playing cards
     
-    func addCardToHand(_ card: Card) {
-        self.hand.append(card)
-    }
-    
     func addCardToHandFromDeck(_ card: Card) {
         self.hand.append(card)
         self.cardsDrawnFromDeck += 1
