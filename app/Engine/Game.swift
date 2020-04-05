@@ -346,7 +346,6 @@ class Game: JSONEncodable {
         }
         
         self.discardPile = []
-        self.round = self.round?.nextRound
         
         if let nextRound = self.round?.nextRound {
             self.round = nextRound
