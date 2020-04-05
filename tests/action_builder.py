@@ -73,16 +73,19 @@ def main():
                 actions = actions[:-1]
                 print("Action removed, latest action is now:")
                 print(actions[-1])
+                print()
                 continue
             elif command == "n":
                 current_player_index = (current_player_index + 1) % len(players)
                 player = players[current_player_index]
                 print(f"Player is now {player}")
+                print()
                 continue
             elif command == "p":
                 current_player_index = (current_player_index - 1) % len(players)
                 player = players[current_player_index]
                 print(f"Player is now {player}")
+                print()
                 continue
             elif command == "h":
                 print_menu()
@@ -90,6 +93,7 @@ def main():
             else:
                 continue
 
+            action["player"] = player
             actions.append(action)
             print(action)
             print()
