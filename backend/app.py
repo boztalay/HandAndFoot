@@ -203,7 +203,35 @@ def add_action_to_game(current_user):
     if not current_user.is_authenticated:
         abort(403)
 
-    return "TODO"
+    game_id = request.form.get('game')
+    if game_id is None:
+        abort(400)
+
+    game = Game.get_or_none(Game.id == game_id)
+    if game is None:
+        abort(400)
+
+    if not game.have_all_players_accepted_invite:
+        abort(400)
+
+    action_json = request.form.get('action')
+    if action_json is None:
+        abort(400)
+
+    action = Action.from_json(action_json)
+    if action is None:
+        abort(400)
+
+    game.load_actions()
+
+    try:
+        game.apply_action(action)
+    except engine.IllegalActionError:
+        abort(400)
+
+    action.save()
+
+    return (jsonify({'success': True}), 200)
 
 #
 # Main

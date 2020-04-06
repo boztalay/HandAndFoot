@@ -99,9 +99,17 @@ class Game(BaseModel):
     created = DateTimeField(default=datetime.now)
     last_updated = DateTimeField(default=datetime.now)
 
+    @property
+    def usergames(self):
+        return UserGame.select().where(UserGame.game == self.id)
+
+    @property
+    def have_all_players_accepted_invite(self):
+        return (len([usergame for usergame in self.usergames if not usergame.user_accepted]) == 0)
+
 class UserGame(BaseModel):
-    user = ForeignKeyField(User, backref="usergames")
-    game = ForeignKeyField(Game, backref="usergames")
+    user = ForeignKeyField(User)
+    game = ForeignKeyField(Game)
     role = CharField()
     user_accepted = BooleanField(default=False)
 
@@ -118,5 +126,5 @@ class UserGame(BaseModel):
 class Action(BaseModel):
     action_type = CharField()
     content = CharField()
-    game = ForeignKeyField(Game, backref="actions")
+    game = ForeignKeyField(Game)
     created = DateTimeField(default=datetime.now)
