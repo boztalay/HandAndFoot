@@ -136,6 +136,11 @@ class Deck(object):
         self.cards = cards
         self.shuffle()
 
+    def to_json(self):
+        return {
+            "cards": [card.to_json() for card in self.cards]
+        }
+
 #
 # Book
 #
@@ -736,6 +741,38 @@ class Game(object):
             "discard_pile": [card.to_json() for card in self.discard_pile],
             "players": [player.to_json() for player in self.players]
         }
+
+#
+# Convenience Functions
+#
+
+def generate_initial_game_state(player_count):
+    standard_deck_count = player_count + 1
+
+    decks = {
+        Round.NINETY.value: Deck(standard_deck_count),
+        Round.ONE_TWENTY.value: Deck(standard_deck_count),
+        Round.ONE_FIFTY.value: Deck(standard_deck_count),
+        Round.ONE_EIGHTY.value: Deck(standard_deck_count)
+    }
+
+    for (current_round, deck) in decks.items():
+        deck.shuffle()
+        decks[current_round] = deck.to_json()
+
+    return {
+        "decks": decks
+    }
+
+def create_game_with_initial_state(player_names, initial_state):
+    decks = {
+        Round.NINETY: Deck.from_json(initial_state['decks'][Round.NINETY.value]),
+        Round.ONE_TWENTY: Deck.from_json(initial_state['decks'][Round.ONE_TWENTY.value]),
+        Round.ONE_FIFTY: Deck.from_json(initial_state['decks'][Round.ONE_FIFTY.value]),
+        Round.ONE_EIGHTY: Deck.from_json(initial_state['decks'][Round.ONE_EIGHTY.value])
+    }
+
+    return Game(player_names, decks)
 
 #
 # Testing Support

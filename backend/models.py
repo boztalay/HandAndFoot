@@ -11,6 +11,8 @@ from peewee import *
 from itsdangerous import Signer
 from werkzeug.security import generate_password_hash, check_password_hash
 
+import engine
+
 secrets = yaml.load(open('./secrets.yaml'))
 
 app_secrets = secrets['app']
@@ -96,8 +98,19 @@ class User(BaseModel, UserMixin):
         return token.decode('utf-8')
 
 class Game(BaseModel):
+    initial_state = TextField()
     created = DateTimeField(default=datetime.now)
     last_updated = DateTimeField(default=datetime.now)
+
+    @staticmethod
+    def create(player_count):
+        initial_game_state = engine.generate_initial_game_state(player_count)
+        initial_game_state_json = json.dumps(initial_game_state)
+
+        game = Game(initial_state=initial_game_state_json)
+        game.save()
+
+        return game
 
     @property
     def usergames(self):
@@ -106,6 +119,20 @@ class Game(BaseModel):
     @property
     def have_all_players_accepted_invite(self):
         return (len([usergame for usergame in self.usergames if not usergame.user_accepted]) == 0)
+
+    def load_initial_state(self):
+        initial_game_state = json.loads(self.initial_state)
+        player_names = [usergame.user.email for usergame in self.usergames]
+        self.game = engine.create_game_with_initial_state(player_names, initial_game_state)
+
+    def load_actions(self):
+        actions = Action.select().where(Action.game == self).order_by(Action.created)
+
+        for action in actions:
+            self.apply_action(action)
+
+    def apply_action(self, action):
+        self.game.apply_action(action.game_action)
 
 class UserGame(BaseModel):
     user = ForeignKeyField(User)
@@ -124,7 +151,10 @@ class UserGame(BaseModel):
         return user
 
 class Action(BaseModel):
-    action_type = CharField()
-    content = CharField()
+    content = TextField()
     game = ForeignKeyField(Game)
     created = DateTimeField(default=datetime.now)
+
+    @property
+    def game_action(self):
+        return engine.Action.from_json(json.loads(self.content))

@@ -8,6 +8,8 @@ from itsdangerous import Signer
 from peewee import MySQLDatabase
 import yaml
 
+import engine
+
 from models import db
 from models import UserRole
 from models import User
@@ -166,7 +168,7 @@ def create_game(current_user):
         else:
             users.append(user)
 
-    game = Game.create()
+    game = Game.create(len(users))
     UserGame.create(current_user, game, UserRole.OWNER)
 
     for user in users:
@@ -201,33 +203,49 @@ def accept_game_invite(current_user):
 @token_required
 def add_action_to_game(current_user):
     if not current_user.is_authenticated:
-        abort(403)
+        return (jsonify({'success': False, 'message': 'Not authenticated'}), 403)
 
     game_id = request.form.get('game')
     if game_id is None:
-        abort(400)
+        return (jsonify({'success': False, 'message': 'Game required'}), 400)
 
     game = Game.get_or_none(Game.id == game_id)
     if game is None:
-        abort(400)
+        return (jsonify({'success': False, 'message': 'Unknown game'}), 400)
 
     if not game.have_all_players_accepted_invite:
-        abort(400)
+        return (jsonify({'success': False, 'message': 'Players have not accepted invites yet'}), 400)
 
-    action_json = request.form.get('action')
-    if action_json is None:
-        abort(400)
+    action_string = request.form.get('action')
+    if action_string is None:
+        return (jsonify({'success': False, 'message': 'Action required'}), 400)
 
-    action = Action.from_json(action_json)
-    if action is None:
-        abort(400)
+    try:
+        action_json = json.loads(action_string)
+    except ValueError as e:
+        return (jsonify({'success': False, 'message': 'Given action is invalid JSON', 'error': str(e)}), 400)
 
-    game.load_actions()
+    # TODO: Move this into the Action model class
+    if 'player' not in action_json:
+        return (jsonify({'success': False, 'message': 'Invalid action'}), 400)
+    elif action_json['player'] != current_user.email:
+        return (jsonify({'success': False, 'message': 'Cannot play for another player'}), 400)
+
+    try:
+        game.load_initial_state()
+        game.load_actions()
+    except (engine.IllegalActionError, engine.IllegalSetupError) as e:
+        return (jsonify({'success': False, 'message': 'Error loading game', 'error': str(e)}), 400)
+
+    # TODO: Check that action_json is valid and handle that error explicitly
+    #       instead of just blowing up with a 500 error
+
+    action = Action(content=action_string, game=game)
 
     try:
         game.apply_action(action)
-    except engine.IllegalActionError:
-        abort(400)
+    except (engine.IllegalActionError, engine.IllegalSetupError) as e:
+        return (jsonify({'success': False, 'message': 'Error applying new action', 'error': str(e)}), 400)
 
     action.save()
 
