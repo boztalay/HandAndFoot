@@ -743,8 +743,14 @@ class Game(object):
         }
 
 #
-# Convenience Functions
+# Engine
 #
+
+class Engine(object):
+
+    def __init__(self):
+        pass
+
 
 def generate_initial_game_state(player_count):
     standard_deck_count = player_count + 1

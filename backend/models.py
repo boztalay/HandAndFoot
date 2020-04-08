@@ -155,6 +155,14 @@ class Action(BaseModel):
     game = ForeignKeyField(Game)
     created = DateTimeField(default=datetime.now)
 
+    @staticmethod
+    def create(content, game):
+        action = Action(content=content, game=game)
+        action.load_content_json()
+
+    def load_content_json(self):
+        self.content_json = json.loads(self.content)
+
     @property
     def game_action(self):
-        return engine.Action.from_json(json.loads(self.content))
+        return engine.Action.from_json(self.content_json)

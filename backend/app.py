@@ -23,9 +23,9 @@ from models import Action
 
 app = Flask(__name__)
 
-secrets = yaml.load(open('./secrets.yaml'))
-app_secrets = secrets['app']
-app.secret_key = app_secrets['secret_key']
+secrets = yaml.load(open("./secrets.yaml"))
+app_secrets = secrets["app"]
+app.secret_key = app_secrets["secret_key"]
 
 CORS(app)
 
@@ -35,7 +35,7 @@ CORS(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'
+login_manager.login_view = "login"
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -47,23 +47,23 @@ def load_user(user_id):
 
 def token_required(function):
     def wrapper(*args, **kwargs):
-        api_token = request.headers.get('X-App-Token')
+        api_token = request.headers.get("X-App-Token")
 
         if not api_token:
-            return (jsonify({'success': False, 'message': 'No API token found in request'}), 400)
+            return error("No API token found in request", 400)
 
         try:
             from models import TOKEN_SIGNING_KEY
             s = Signer(TOKEN_SIGNING_KEY)
-            email = s.unsign(api_token).decode('utf-8')
+            email = s.unsign(api_token).decode("utf-8")
 
             user = User.get(User.email == email)
 
-            kwargs['current_user'] = user
+            kwargs["current_user"] = user
             login_user(user)
         except Exception as e:
-            print(e)
-            return (jsonify({'success': False, 'message': 'Invalid request.'}), 400)
+            print("Error logging user in with token: " + str(e))
+            return error("Invalid request", 400)
 
         return function(*args, **kwargs)
 
@@ -89,7 +89,6 @@ def _db_close(exc):
 #
 
 def create_tables():
-    # Create tables based on the following User models if they don't already exist.
     db.create_tables([User, Game, UserGame, Action], safe=True)
 
 #
@@ -98,73 +97,73 @@ def create_tables():
 
 # Account Management
 
-@app.route('/api/signup', methods=['POST'])
+@app.route("/api/signup", methods=["POST"])
 def signup():
-    name = request.form['name']
-    email = request.form['email']
-    password = request.form['password']
+    name = request.form["name"]
+    email = request.form["email"]
+    password = request.form["password"]
 
     existing_user = User.get_or_none(User.email == email)
     if existing_user:
-        return (jsonify({'success': False, 'message': "User already exists"}), 403)
+        return error("User already exists", 403)
 
     new_user = User.create(email, name, password)
 
     if new_user:
         login_user(new_user)
-        return (jsonify({'success': True, 'token': new_user.token()}), 200)
+        return success(token=new_user.token())
     else:
-        abort(403)
+        return error("Could not log new user in", 403)
 
-@app.route('/api/login', methods=['POST'])
+@app.route("/api/login", methods=["POST"])
 def login():
-    email = request.form['email']
-    password = request.form['password']
+    email = request.form["email"]
+    password = request.form["password"]
 
     user = User.login(email=email, password=password)
 
     if user:
         login_user(user)
-        return (jsonify({'success': True, 'token': user.token()}), 200)
+        return success(token=user.token())
     else:
-        abort(403)
+        return error("Could not log user in", 403)
 
-@app.route('/api/logout')
+@app.route("/api/logout")
 def logout():
     logout_user()
-    return (jsonify({'success': True}), 200)
+    return success()
 
 # Synchronization
 
-@app.route('/api/sync', methods=['POST'])
+@app.route("/api/sync", methods=["POST"])
 @token_required
 def sync_user(current_user):
     if not current_user.is_authenticated:
-        abort(403)
+        return error("User must be authenticated", 403)
 
-    return "TODO"
+    return error("Not implemented", 500)
 
 # Game Management
 
-@app.route('/api/game/create', methods=['POST'])
+@app.route("/api/game/create", methods=["POST"])
 @token_required
 def create_game(current_user):
     if not current_user.is_authenticated:
-        abort(403)
+        return error("User must be authenticated", 403)
 
-    user_emails = request.form.get('users')
+    user_emails = request.form.get("users")
     if user_emails is None:
-        abort(400)
+        return error("Emails of other players required", 400)
 
-    user_emails = user_emails.split(';')
+    user_emails = user_emails.split(";")
     if len(user_emails) < 1 or len(user_emails) > 5:
-        abort(400)
+        return error("Player count is out of range", 400)
 
     users = []
     for user_email in user_emails:
         user = User.get_or_none(User.email == user_email)
         if user is None:
-            abort(400)
+            return error("Unknown user", 400)
         else:
             users.append(user)
 
@@ -174,86 +173,98 @@ def create_game(current_user):
     for user in users:
         UserGame.create(user, game, UserRole.PLAYER)
 
-    return (jsonify({'success': True, 'game_id': game.id}), 200)
+    return success(game_id=game.id)
 
-@app.route('/api/game/accept', methods=['POST'])
+@app.route("/api/game/accept", methods=["POST"])
 @token_required
 def accept_game_invite(current_user):
     if not current_user.is_authenticated:
-        abort(403)
+        return error("User must be authenticated", 403)
 
-    game_id = request.form.get('game')
+    game_id = request.form.get("game")
     if game_id is None:
-        abort(400)
+        return error("Game required", 400)
 
     game = Game.get_or_none(Game.id == game_id)
     if game is None:
-        abort(400)
+        return error("Unknown game", 400)
 
     usergame = UserGame.get_or_none(UserGame.user == current_user, UserGame.game == game)
     if usergame is None:
-        abort(400)
+        return error("User is not a part of this game", 400)
 
     usergame.user_accepted = True
     usergame.save()
 
-    return (jsonify({'success': True}), 200)
+    return success()
 
-@app.route('/api/game/add_action', methods=['POST'])
+@app.route("/api/game/add_action", methods=["POST"])
 @token_required
 def add_action_to_game(current_user):
     if not current_user.is_authenticated:
-        return (jsonify({'success': False, 'message': 'Not authenticated'}), 403)
+        return error("User must be authenticated", 403)
 
-    game_id = request.form.get('game')
+    game_id = request.form.get("game")
     if game_id is None:
-        return (jsonify({'success': False, 'message': 'Game required'}), 400)
+        return error("Game required", 400)
 
     game = Game.get_or_none(Game.id == game_id)
     if game is None:
-        return (jsonify({'success': False, 'message': 'Unknown game'}), 400)
+        return error("Unknown game", 400)
 
     if not game.have_all_players_accepted_invite:
-        return (jsonify({'success': False, 'message': 'Players have not accepted invites yet'}), 400)
+        return error("Players have not been accepted invites yet", 400)
 
-    action_string = request.form.get('action')
+    action_string = request.form.get("action")
     if action_string is None:
-        return (jsonify({'success': False, 'message': 'Action required'}), 400)
+        return error("Action required", 400)
 
     try:
         action_json = json.loads(action_string)
     except ValueError as e:
-        return (jsonify({'success': False, 'message': 'Given action is invalid JSON', 'error': str(e)}), 400)
+        return error("Could not decode action as JSON: " + str(e), 400)
 
-    # TODO: Move this into the Action model class
-    if 'player' not in action_json:
-        return (jsonify({'success': False, 'message': 'Invalid action'}), 400)
-    elif action_json['player'] != current_user.email:
-        return (jsonify({'success': False, 'message': 'Cannot play for another player'}), 400)
+    action = Action.create(action_string, game)
+
+    if not action.content_has_player:
+        return error("Invalid action", 400)
+
+    if not action.is_for_player(current_user.email):
+        return error("Cannot play for another player", 400)
 
     try:
         game.load_initial_state()
         game.load_actions()
     except (engine.IllegalActionError, engine.IllegalSetupError) as e:
-        return (jsonify({'success': False, 'message': 'Error loading game', 'error': str(e)}), 400)
-
-    # TODO: Check that action_json is valid and handle that error explicitly
-    #       instead of just blowing up with a 500 error
-
-    action = Action(content=action_string, game=game)
+        return error("Error loading game: " + str(e), 400)
 
     try:
         game.apply_action(action)
     except (engine.IllegalActionError, engine.IllegalSetupError) as e:
-        return (jsonify({'success': False, 'message': 'Error applying new action', 'error': str(e)}), 400)
+        return error("Error applying new action: " + str(e), 400)
 
     action.save()
 
-    return (jsonify({'success': True}), 200)
+    return success()
+
+#
+# Helpers
+#
+
+def error(message, code):
+    return (jsonify({"success": False, "message": message}), code)
+
+def success(*args, **kwargs):
+    response_json = {"success": True}
+
+    for (key, value) in kwargs.items():
+        response_json[key] = value
+
+    return (jsonify(response_json), 200)
 
 #
 # Main
 #
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
