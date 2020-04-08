@@ -1,7 +1,6 @@
 from datetime import datetime
 import enum
 import json
-import yaml
 
 from flask_login import UserMixin
 from flask_login import LoginManager, login_user, logout_user, login_required
@@ -12,24 +11,14 @@ from itsdangerous import Signer
 from werkzeug.security import generate_password_hash, check_password_hash
 
 import engine
-
-secrets = yaml.load(open('./secrets.yaml'))
-
-app_secrets = secrets['app']
-TOKEN_SIGNING_KEY = app_secrets['token_signing_key']
-
-db_secrets = secrets['database']
-db_name = db_secrets['name']
-db_host = db_secrets['host']
-db_user = db_secrets['user']
-db_password = db_secrets['password']
+import secrets
 
 db = MySQLDatabase(
-    db_name,
-    host=db_host,
-    user=db_user,
-    passwd=db_password,
-    charset='utf8mb4' # Enable unicode
+    secrets.db_secrets["name"],
+    host=secrets.db_secrets["host"],
+    user=secrets.db_secrets["user"],
+    passwd=secrets.db_secrets["password"],
+    charset="utf8mb4" # Enable unicode
 )
 
 class UserRole(enum.Enum):
@@ -93,7 +82,7 @@ class User(BaseModel, UserMixin):
         return False
 
     def token(self):
-        s = Signer(TOKEN_SIGNING_KEY)
+        s = Signer(secrets.app_secrets["token_signing_key"])
         token = s.sign(self.email)
         return token.decode('utf-8')
 

@@ -6,9 +6,9 @@ from flask_login import LoginManager, login_user, logout_user, login_required, c
 from itsdangerous import Signer
 
 from peewee import MySQLDatabase
-import yaml
 
 import engine
+import secrets
 
 from models import db
 from models import UserRole
@@ -22,10 +22,7 @@ from models import Action
 #
 
 app = Flask(__name__)
-
-secrets = yaml.load(open("./secrets.yaml"))
-app_secrets = secrets["app"]
-app.secret_key = app_secrets["secret_key"]
+app.secret_key = secrets.app_secrets["secret_key"]
 
 CORS(app)
 
@@ -53,8 +50,7 @@ def token_required(function):
             return error("No API token found in request", 400)
 
         try:
-            from models import TOKEN_SIGNING_KEY
-            s = Signer(TOKEN_SIGNING_KEY)
+            s = Signer(secrets.app_secrets["token_signing_key"])
             email = s.unsign(api_token).decode("utf-8")
 
             user = User.get(User.email == email)
