@@ -33,7 +33,7 @@ class User(BaseModel, flask_login.UserMixin):
     created = peewee.DateTimeField(default=datetime.datetime.now)
     last_updated = peewee.DateTimeField(default=datetime.datetime.now)
 
-    def to_dict(self):    
+    def to_dict(self):
         return {
             'id': self.id,
             'name': self.name,
@@ -89,27 +89,31 @@ class Game(BaseModel):
     last_updated = peewee.DateTimeField(default=datetime.datetime.now)
 
     @staticmethod
-    def create(player_count):
-        initial_game_state = engine.generate_initial_game_state(player_count)
-        initial_game_state_json = json.dumps(initial_game_state)
+    def create(player_names):
+        game_engine = engine.Engine(player_names)
 
-        game = Game(initial_state=initial_game_state_json)
+        initial_game_state_json = game_engine.generate_initial_game_state(player_names)
+        initial_game_state_string = json.dumps(initial_game_state_json)
+
+        game = Game(initial_state=initial_game_state_string)
         game.save()
 
         return game
 
     @property
     def usergames(self):
-        return UserGame.select().where(UserGame.game == self.id)
+        return UserGame.select().where(UserGame.game == self.id).order_by(UserGame.id)
 
     @property
     def have_all_players_accepted_invite(self):
         return (len([usergame for usergame in self.usergames if not usergame.user_accepted]) == 0)
 
     def load_initial_state(self):
-        initial_game_state = json.loads(self.initial_state)
         player_names = [usergame.user.email for usergame in self.usergames]
-        self.game = engine.create_game_with_initial_state(player_names, initial_game_state)
+        self.game_engine = engine.Engine(player_names)
+
+        initial_game_state_json = json.loads(self.initial_state)
+        self.game_engine.start_game_with_initial_state(initial_game_state_json)
 
     def load_actions(self):
         actions = Action.select().where(Action.game == self).order_by(Action.created)
@@ -118,7 +122,7 @@ class Game(BaseModel):
             self.apply_action(action)
 
     def apply_action(self, action):
-        self.game.apply_action(action.game_action)
+        self.game_engine.apply_action(action.load_content_json())
 
 class UserGame(BaseModel):
     user = peewee.ForeignKeyField(User)
@@ -142,13 +146,20 @@ class Action(BaseModel):
     created = peewee.DateTimeField(default=datetime.datetime.now)
 
     @staticmethod
-    def create(content, game):
+    def create_without_saving(content, game):
         action = Action(content=content, game=game)
         action.load_content_json()
+        return action
 
     def load_content_json(self):
         self.content_json = json.loads(self.content)
+        return self.content_json
 
     @property
-    def game_action(self):
-        return engine.Action.from_json(self.content_json)
+    def content_has_player(self):
+        # NOTE: Requires that load_content_json has been called
+        return ("player" in self.content_json)
+
+    def is_for_player(self, player_name):
+        # NOTE: Requires that load_content_json has been called
+        return (self.content_json["player"] == player_name)

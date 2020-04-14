@@ -224,6 +224,7 @@ class Book(object):
             "rank": self.rank.value,
             "cards": [card.to_json() for card in self.cards]
         }
+
 #
 # Round
 #
@@ -748,37 +749,40 @@ class Game(object):
 
 class Engine(object):
 
-    def __init__(self):
-        pass
+    def __init__(self, player_names):
+        self.player_names = player_names
 
+    def generate_initial_game_state(self):
+        standard_deck_count = len(self.player_names) + 1
 
-def generate_initial_game_state(player_count):
-    standard_deck_count = player_count + 1
+        decks = {
+            Round.NINETY.value: Deck(standard_deck_count),
+            Round.ONE_TWENTY.value: Deck(standard_deck_count),
+            Round.ONE_FIFTY.value: Deck(standard_deck_count),
+            Round.ONE_EIGHTY.value: Deck(standard_deck_count)
+        }
 
-    decks = {
-        Round.NINETY.value: Deck(standard_deck_count),
-        Round.ONE_TWENTY.value: Deck(standard_deck_count),
-        Round.ONE_FIFTY.value: Deck(standard_deck_count),
-        Round.ONE_EIGHTY.value: Deck(standard_deck_count)
-    }
+        for (current_round, deck) in decks.items():
+            deck.shuffle()
+            decks[current_round] = deck.to_json()
 
-    for (current_round, deck) in decks.items():
-        deck.shuffle()
-        decks[current_round] = deck.to_json()
+        return {
+            "decks": decks
+        }
 
-    return {
-        "decks": decks
-    }
+    def start_game_with_initial_state(self, initial_state):
+        decks = {
+            Round.NINETY: Deck.from_json(initial_state["decks"][Round.NINETY.value]),
+            Round.ONE_TWENTY: Deck.from_json(initial_state["decks"][Round.ONE_TWENTY.value]),
+            Round.ONE_FIFTY: Deck.from_json(initial_state["decks"][Round.ONE_FIFTY.value]),
+            Round.ONE_EIGHTY: Deck.from_json(initial_state["decks"][Round.ONE_EIGHTY.value])
+        }
 
-def create_game_with_initial_state(player_names, initial_state):
-    decks = {
-        Round.NINETY: Deck.from_json(initial_state['decks'][Round.NINETY.value]),
-        Round.ONE_TWENTY: Deck.from_json(initial_state['decks'][Round.ONE_TWENTY.value]),
-        Round.ONE_FIFTY: Deck.from_json(initial_state['decks'][Round.ONE_FIFTY.value]),
-        Round.ONE_EIGHTY: Deck.from_json(initial_state['decks'][Round.ONE_EIGHTY.value])
-    }
+        self.game = Game(self.player_names, decks)
 
-    return Game(player_names, decks)
+    def apply_action(self, action_json):
+        action = Action.from_json(action_json)
+        self.game.apply_action(action)
 
 #
 # Testing Support
@@ -811,7 +815,7 @@ def main(test_case):
     final_state_json = game.to_json()
     print(json.dumps(final_state_json, indent=4))
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     if len(sys.argv) != 2:
         print("Gimme a test case to run!")
         sys.exit(1)

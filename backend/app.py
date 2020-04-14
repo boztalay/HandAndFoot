@@ -34,7 +34,7 @@ def load_user(user_id):
 
 def token_required(function):
     def wrapper(*args, **kwargs):
-        api_token = request.headers.get("X-App-Token")
+        api_token = flask.request.headers.get("X-App-Token")
 
         if not api_token:
             return error("No API token found in request", 400)
@@ -90,9 +90,9 @@ def create_tables():
 
 @app.route("/api/signup", methods=["POST"])
 def signup():
-    name = request.form["name"]
-    email = request.form["email"]
-    password = request.form["password"]
+    name = flask.request.form["name"]
+    email = flask.request.form["email"]
+    password = flask.request.form["password"]
 
     existing_user = models.User.get_or_none(models.User.email == email)
     if existing_user:
@@ -108,8 +108,8 @@ def signup():
 
 @app.route("/api/login", methods=["POST"])
 def login():
-    email = request.form["email"]
-    password = request.form["password"]
+    email = flask.request.form["email"]
+    password = flask.request.form["password"]
 
     user = models.User.login(email=email, password=password)
 
@@ -142,7 +142,7 @@ def create_game(current_user):
     if not current_user.is_authenticated:
         return error("User must be authenticated", 403)
 
-    user_emails = request.form.get("users")
+    user_emails = flask.request.form.get("users")
     if user_emails is None:
         return error("Emails of other players required", 400)
 
@@ -158,7 +158,7 @@ def create_game(current_user):
         else:
             users.append(user)
 
-    game = models.Game.create(len(users))
+    game = models.Game.create(users)
     models.UserGame.create(current_user, game, models.UserRole.OWNER)
 
     for user in users:
@@ -172,7 +172,7 @@ def accept_game_invite(current_user):
     if not current_user.is_authenticated:
         return error("User must be authenticated", 403)
 
-    game_id = request.form.get("game")
+    game_id = flask.request.form.get("game")
     if game_id is None:
         return error("Game required", 400)
 
@@ -195,7 +195,7 @@ def add_action_to_game(current_user):
     if not current_user.is_authenticated:
         return error("User must be authenticated", 403)
 
-    game_id = request.form.get("game")
+    game_id = flask.request.form.get("game")
     if game_id is None:
         return error("Game required", 400)
 
@@ -204,18 +204,16 @@ def add_action_to_game(current_user):
         return error("Unknown game", 400)
 
     if not game.have_all_players_accepted_invite:
-        return error("Players have not been accepted invites yet", 400)
+        return error("Players have not all accepted invites yet", 400)
 
-    action_string = request.form.get("action")
+    action_string = flask.request.form.get("action")
     if action_string is None:
         return error("Action required", 400)
 
     try:
-        action_json = json.loads(action_string)
+        action = models.Action.create_without_saving(action_string, game)
     except ValueError as e:
         return error("Could not decode action as JSON: " + str(e), 400)
-
-    action = models.Action.create(action_string, game)
 
     if not action.content_has_player:
         return error("Invalid action", 400)
@@ -243,7 +241,7 @@ def add_action_to_game(current_user):
 #
 
 def error(message, code):
-    return (jsonify({"success": False, "message": message}), code)
+    return (flask.jsonify({"success": False, "message": message}), code)
 
 def success(*args, **kwargs):
     response_json = {"success": True}
@@ -251,7 +249,7 @@ def success(*args, **kwargs):
     for (key, value) in kwargs.items():
         response_json[key] = value
 
-    return (jsonify(response_json), 200)
+    return (flask.jsonify(response_json), 200)
 
 #
 # Main
