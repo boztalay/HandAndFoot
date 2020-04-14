@@ -1,42 +1,32 @@
-from datetime import datetime
-
-from flask import *
-from flask_cors import CORS
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
-from itsdangerous import Signer
-
-from peewee import MySQLDatabase
+import flask
+import flask_cors
+import flask_login
+import itsdangerous
 
 import engine
+import models
 import secrets
-
-from models import db
-from models import UserRole
-from models import User
-from models import Game
-from models import UserGame
-from models import Action
 
 #
 # Setup
 #
 
-app = Flask(__name__)
+app = flask.Flask(__name__)
 app.secret_key = secrets.app_secrets["secret_key"]
 
-CORS(app)
+flask_cors.CORS(app)
 
 #
 # Flask-Login
 #
 
-login_manager = LoginManager()
+login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
 
 @login_manager.user_loader
 def load_user(user_id):
-    return User.get_or_none(User.email == user_id)
+    return models.User.get_or_none(models.User.email == user_id)
 
 #
 # Token Authentication
@@ -50,13 +40,13 @@ def token_required(function):
             return error("No API token found in request", 400)
 
         try:
-            s = Signer(secrets.app_secrets["token_signing_key"])
-            email = s.unsign(api_token).decode("utf-8")
+            signer = itsdangerous.Signer(secrets.app_secrets["token_signing_key"])
+            email = signer.unsign(api_token).decode("utf-8")
 
-            user = User.get(User.email == email)
+            user = models.User.get(models.User.email == email)
 
             kwargs["current_user"] = user
-            login_user(user)
+            flask_login.login_user(user)
         except Exception as e:
             print("Error logging user in with token: " + str(e))
             return error("Invalid request", 400)
@@ -72,20 +62,25 @@ def token_required(function):
 
 @app.before_request
 def _db_connect():
-    if db.is_closed():
-        db.connect()
+    if models.db.is_closed():
+        models.db.connect()
 
 @app.teardown_request
 def _db_close(exc):
-    if not db.is_closed():
-        db.close()
+    if not models.db.is_closed():
+        models.db.close()
 
 #
 # Testing
 #
 
 def create_tables():
-    db.create_tables([User, Game, UserGame, Action], safe=True)
+    models.db.create_tables([
+        models.User,
+        models.Game,
+        models.UserGame,
+        models.Action
+    ], safe=True)
 
 #
 # Frontend Routes
@@ -99,14 +94,14 @@ def signup():
     email = request.form["email"]
     password = request.form["password"]
 
-    existing_user = User.get_or_none(User.email == email)
+    existing_user = models.User.get_or_none(models.User.email == email)
     if existing_user:
         return error("User already exists", 403)
 
-    new_user = User.create(email, name, password)
+    new_user = models.User.create(email, name, password)
 
     if new_user:
-        login_user(new_user)
+        flask_login.login_user(new_user)
         return success(token=new_user.token())
     else:
         return error("Could not log new user in", 403)
@@ -116,17 +111,17 @@ def login():
     email = request.form["email"]
     password = request.form["password"]
 
-    user = User.login(email=email, password=password)
+    user = models.User.login(email=email, password=password)
 
     if user:
-        login_user(user)
+        flask_login.login_user(user)
         return success(token=user.token())
     else:
         return error("Could not log user in", 403)
 
 @app.route("/api/logout")
 def logout():
-    logout_user()
+    flask_login.logout_user()
     return success()
 
 # Synchronization
@@ -157,17 +152,17 @@ def create_game(current_user):
 
     users = []
     for user_email in user_emails:
-        user = User.get_or_none(User.email == user_email)
+        user = models.User.get_or_none(models.User.email == user_email)
         if user is None:
             return error("Unknown user", 400)
         else:
             users.append(user)
 
-    game = Game.create(len(users))
-    UserGame.create(current_user, game, UserRole.OWNER)
+    game = models.Game.create(len(users))
+    models.UserGame.create(current_user, game, models.UserRole.OWNER)
 
     for user in users:
-        UserGame.create(user, game, UserRole.PLAYER)
+        models.UserGame.create(user, game, models.UserRole.PLAYER)
 
     return success(game_id=game.id)
 
@@ -181,11 +176,11 @@ def accept_game_invite(current_user):
     if game_id is None:
         return error("Game required", 400)
 
-    game = Game.get_or_none(Game.id == game_id)
+    game = models.Game.get_or_none(models.Game.id == game_id)
     if game is None:
         return error("Unknown game", 400)
 
-    usergame = UserGame.get_or_none(UserGame.user == current_user, UserGame.game == game)
+    usergame = models.UserGame.get_or_none(models.UserGame.user == current_user, models.UserGame.game == game)
     if usergame is None:
         return error("User is not a part of this game", 400)
 
@@ -204,7 +199,7 @@ def add_action_to_game(current_user):
     if game_id is None:
         return error("Game required", 400)
 
-    game = Game.get_or_none(Game.id == game_id)
+    game = models.Game.get_or_none(models.Game.id == game_id)
     if game is None:
         return error("Unknown game", 400)
 
@@ -220,7 +215,7 @@ def add_action_to_game(current_user):
     except ValueError as e:
         return error("Could not decode action as JSON: " + str(e), 400)
 
-    action = Action.create(action_string, game)
+    action = models.Action.create(action_string, game)
 
     if not action.content_has_player:
         return error("Invalid action", 400)
