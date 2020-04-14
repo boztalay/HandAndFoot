@@ -1,19 +1,16 @@
-from datetime import datetime
+import datetime
 import enum
 import json
 
-from flask_login import UserMixin
-from flask_login import LoginManager, login_user, logout_user, login_required
-
-from peewee import *
-
-from itsdangerous import Signer
-from werkzeug.security import generate_password_hash, check_password_hash
+import flask_login
+import itsdangerous
+import peewee
+import werkzeug
 
 import engine
 import secrets
 
-db = MySQLDatabase(
+db = peewee.MySQLDatabase(
     secrets.db_secrets["name"],
     host=secrets.db_secrets["host"],
     user=secrets.db_secrets["user"],
@@ -25,16 +22,16 @@ class UserRole(enum.Enum):
     OWNER = "owner"
     PLAYER = "player"
 
-class BaseModel(Model):
+class BaseModel(peewee.Model):
     class Meta:
         database = db
 
-class User(BaseModel, UserMixin):
-    name = CharField()
-    email = CharField(unique=True)
-    password_hash = CharField()
-    created = DateTimeField(default=datetime.now)
-    last_updated = DateTimeField(default=datetime.now)
+class User(BaseModel, flask_login.UserMixin):
+    name = peewee.CharField()
+    email = peewee.CharField(unique=True)
+    password_hash = peewee.CharField()
+    created = peewee.DateTimeField(default=datetime.datetime.now)
+    last_updated = peewee.DateTimeField(default=datetime.datetime.now)
 
     def to_dict(self):    
         return {
@@ -57,13 +54,13 @@ class User(BaseModel, UserMixin):
 
     @staticmethod
     def create(email, name, password):
-        password_hash = generate_password_hash(password)
+        password_hash = werkzeug.security.generate_password_hash(password)
         user = User(email=email, name=name, password_hash=password_hash)
         user.save()
         return user
 
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        return werkzeug.security.check_password_hash(self.password_hash, password)
 
     def get_id(self):
         return self.email
@@ -82,14 +79,14 @@ class User(BaseModel, UserMixin):
         return False
 
     def token(self):
-        s = Signer(secrets.app_secrets["token_signing_key"])
-        token = s.sign(self.email)
+        signer = itsdangerous.Signer(secrets.app_secrets["token_signing_key"])
+        token = signer.sign(self.email)
         return token.decode('utf-8')
 
 class Game(BaseModel):
-    initial_state = TextField()
-    created = DateTimeField(default=datetime.now)
-    last_updated = DateTimeField(default=datetime.now)
+    initial_state = peewee.TextField()
+    created = peewee.DateTimeField(default=datetime.datetime.now)
+    last_updated = peewee.DateTimeField(default=datetime.datetime.now)
 
     @staticmethod
     def create(player_count):
@@ -124,10 +121,10 @@ class Game(BaseModel):
         self.game.apply_action(action.game_action)
 
 class UserGame(BaseModel):
-    user = ForeignKeyField(User)
-    game = ForeignKeyField(Game)
-    role = CharField()
-    user_accepted = BooleanField(default=False)
+    user = peewee.ForeignKeyField(User)
+    game = peewee.ForeignKeyField(Game)
+    role = peewee.CharField()
+    user_accepted = peewee.BooleanField(default=False)
 
     @staticmethod
     def create(user, game, role):
@@ -140,9 +137,9 @@ class UserGame(BaseModel):
         return user
 
 class Action(BaseModel):
-    content = TextField()
-    game = ForeignKeyField(Game)
-    created = DateTimeField(default=datetime.now)
+    content = peewee.TextField()
+    game = peewee.ForeignKeyField(Game)
+    created = peewee.DateTimeField(default=datetime.datetime.now)
 
     @staticmethod
     def create(content, game):
