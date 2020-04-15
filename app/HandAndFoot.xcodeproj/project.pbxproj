@@ -14,7 +14,6 @@
 		FB5D038024469FA90044FBC5 /* HandAndFoot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037E24469FA90044FBC5 /* HandAndFoot.xcdatamodeld */; };
 		FB5D038224469FB10044FBC5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB5D038124469FB10044FBC5 /* Assets.xcassets */; };
 		FB5D038524469FB10044FBC5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB5D038324469FB10044FBC5 /* LaunchScreen.storyboard */; };
-		FBDB3BA72446A066008831FF /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9C2446A066008831FF /* main.swift */; };
 		FBDB3BA82446A066008831FF /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9E2446A066008831FF /* Game.swift */; };
 		FBDB3BA92446A066008831FF /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9F2446A066008831FF /* Card.swift */; };
 		FBDB3BAA2446A066008831FF /* Deck.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA02446A066008831FF /* Deck.swift */; };
@@ -23,7 +22,32 @@
 		FBDB3BAD2446A066008831FF /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA32446A066008831FF /* Player.swift */; };
 		FBDB3BAE2446A066008831FF /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA42446A066008831FF /* Action.swift */; };
 		FBDB3BAF2446A066008831FF /* JSONCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA62446A066008831FF /* JSONCodable.swift */; };
+		FBDB3BB62446A2D8008831FF /* GameModel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BB42446A2D8008831FF /* GameModel+CoreDataClass.swift */; };
+		FBDB3BBA2446A321008831FF /* User+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BB82446A321008831FF /* User+CoreDataClass.swift */; };
+		FBDB3BBE2446A39B008831FF /* UserGame+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BBC2446A39B008831FF /* UserGame+CoreDataClass.swift */; };
+		FBDB3BC22446A3E7008831FF /* ActionModel+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BC02446A3E7008831FF /* ActionModel+CoreDataClass.swift */; };
+		FBDB3BCF2446A446008831FF /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9E2446A066008831FF /* Game.swift */; };
+		FBDB3BD02446A446008831FF /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9F2446A066008831FF /* Card.swift */; };
+		FBDB3BD12446A446008831FF /* Deck.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA02446A066008831FF /* Deck.swift */; };
+		FBDB3BD22446A446008831FF /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA12446A066008831FF /* Book.swift */; };
+		FBDB3BD32446A446008831FF /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA22446A066008831FF /* Errors.swift */; };
+		FBDB3BD42446A446008831FF /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA32446A066008831FF /* Player.swift */; };
+		FBDB3BD52446A446008831FF /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA42446A066008831FF /* Action.swift */; };
+		FBDB3BD62446A486008831FF /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9C2446A066008831FF /* main.swift */; };
+		FBDB3BD72446A559008831FF /* JSONCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA62446A066008831FF /* JSONCodable.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		FBDB3BC62446A43F008831FF /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		FB5D037224469FA90044FBC5 /* HandAndFoot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HandAndFoot.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,10 +68,22 @@
 		FBDB3BA32446A066008831FF /* Player.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
 		FBDB3BA42446A066008831FF /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
 		FBDB3BA62446A066008831FF /* JSONCodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONCodable.swift; sourceTree = "<group>"; };
+		FBDB3BB42446A2D8008831FF /* GameModel+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GameModel+CoreDataClass.swift"; sourceTree = "<group>"; };
+		FBDB3BB82446A321008831FF /* User+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+CoreDataClass.swift"; sourceTree = "<group>"; };
+		FBDB3BBC2446A39B008831FF /* UserGame+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserGame+CoreDataClass.swift"; sourceTree = "<group>"; };
+		FBDB3BC02446A3E7008831FF /* ActionModel+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ActionModel+CoreDataClass.swift"; sourceTree = "<group>"; };
+		FBDB3BC82446A43F008831FF /* EngineTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EngineTest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		FB5D036F24469FA90044FBC5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FBDB3BC52446A43F008831FF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -72,6 +108,7 @@
 			isa = PBXGroup;
 			children = (
 				FB5D037224469FA90044FBC5 /* HandAndFoot.app */,
+				FBDB3BC82446A43F008831FF /* EngineTest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -82,6 +119,10 @@
 				FB5D037524469FA90044FBC5 /* AppDelegate.swift */,
 				FB5D037724469FA90044FBC5 /* SceneDelegate.swift */,
 				FB5D037924469FA90044FBC5 /* ViewController.swift */,
+				FBDB3BC02446A3E7008831FF /* ActionModel+CoreDataClass.swift */,
+				FBDB3BB42446A2D8008831FF /* GameModel+CoreDataClass.swift */,
+				FBDB3BB82446A321008831FF /* User+CoreDataClass.swift */,
+				FBDB3BBC2446A39B008831FF /* UserGame+CoreDataClass.swift */,
 				FB5D037B24469FA90044FBC5 /* Main.storyboard */,
 				FB5D038124469FB10044FBC5 /* Assets.xcassets */,
 				FB5D038324469FB10044FBC5 /* LaunchScreen.storyboard */,
@@ -141,6 +182,23 @@
 			productReference = FB5D037224469FA90044FBC5 /* HandAndFoot.app */;
 			productType = "com.apple.product-type.application";
 		};
+		FBDB3BC72446A43F008831FF /* EngineTest */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FBDB3BCC2446A43F008831FF /* Build configuration list for PBXNativeTarget "EngineTest" */;
+			buildPhases = (
+				FBDB3BC42446A43F008831FF /* Sources */,
+				FBDB3BC52446A43F008831FF /* Frameworks */,
+				FBDB3BC62446A43F008831FF /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = EngineTest;
+			productName = EngineTest;
+			productReference = FBDB3BC82446A43F008831FF /* EngineTest */;
+			productType = "com.apple.product-type.tool";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -152,6 +210,9 @@
 				ORGANIZATIONNAME = "Ben Oztalay";
 				TargetAttributes = {
 					FB5D037124469FA90044FBC5 = {
+						CreatedOnToolsVersion = 11.4;
+					};
+					FBDB3BC72446A43F008831FF = {
 						CreatedOnToolsVersion = 11.4;
 					};
 				};
@@ -170,6 +231,7 @@
 			projectRoot = "";
 			targets = (
 				FB5D037124469FA90044FBC5 /* HandAndFoot */,
+				FBDB3BC72446A43F008831FF /* EngineTest */,
 			);
 		};
 /* End PBXProject section */
@@ -196,15 +258,34 @@
 				FBDB3BAE2446A066008831FF /* Action.swift in Sources */,
 				FB5D037A24469FA90044FBC5 /* ViewController.swift in Sources */,
 				FBDB3BA82446A066008831FF /* Game.swift in Sources */,
+				FBDB3BBE2446A39B008831FF /* UserGame+CoreDataClass.swift in Sources */,
 				FBDB3BA92446A066008831FF /* Card.swift in Sources */,
 				FBDB3BAF2446A066008831FF /* JSONCodable.swift in Sources */,
-				FBDB3BA72446A066008831FF /* main.swift in Sources */,
+				FBDB3BC22446A3E7008831FF /* ActionModel+CoreDataClass.swift in Sources */,
 				FBDB3BAA2446A066008831FF /* Deck.swift in Sources */,
 				FBDB3BAB2446A066008831FF /* Book.swift in Sources */,
 				FBDB3BAC2446A066008831FF /* Errors.swift in Sources */,
 				FB5D037624469FA90044FBC5 /* AppDelegate.swift in Sources */,
 				FB5D038024469FA90044FBC5 /* HandAndFoot.xcdatamodeld in Sources */,
 				FB5D037824469FA90044FBC5 /* SceneDelegate.swift in Sources */,
+				FBDB3BB62446A2D8008831FF /* GameModel+CoreDataClass.swift in Sources */,
+				FBDB3BBA2446A321008831FF /* User+CoreDataClass.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FBDB3BC42446A43F008831FF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FBDB3BD12446A446008831FF /* Deck.swift in Sources */,
+				FBDB3BD02446A446008831FF /* Card.swift in Sources */,
+				FBDB3BD62446A486008831FF /* main.swift in Sources */,
+				FBDB3BD22446A446008831FF /* Book.swift in Sources */,
+				FBDB3BD42446A446008831FF /* Player.swift in Sources */,
+				FBDB3BD52446A446008831FF /* Action.swift in Sources */,
+				FBDB3BD32446A446008831FF /* Errors.swift in Sources */,
+				FBDB3BCF2446A446008831FF /* Game.swift in Sources */,
+				FBDB3BD72446A559008831FF /* JSONCodable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -349,7 +430,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = HandAndFoot/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -366,7 +447,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = HandAndFoot/Info.plist;
+				INFOPLIST_FILE = App/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -375,6 +456,30 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		FBDB3BCD2446A43F008831FF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		FBDB3BCE2446A43F008831FF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = "";
+				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
@@ -395,6 +500,15 @@
 			buildConfigurations = (
 				FB5D038A24469FB10044FBC5 /* Debug */,
 				FB5D038B24469FB10044FBC5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FBDB3BCC2446A43F008831FF /* Build configuration list for PBXNativeTarget "EngineTest" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FBDB3BCD2446A43F008831FF /* Debug */,
+				FBDB3BCE2446A43F008831FF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

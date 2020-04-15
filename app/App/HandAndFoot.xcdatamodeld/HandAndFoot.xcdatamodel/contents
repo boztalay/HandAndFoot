@@ -1,4 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Swift" usedWithCloudKit="false" userDefinedModelVersionIdentifier="">
-    <elements/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E287" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="ActionModel" representedClassName="ActionModel" syncable="YES" codeGenerationType="category">
+        <attribute name="content" attributeType="String"/>
+        <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="game" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GameModel" inverseName="actions" inverseEntity="GameModel"/>
+    </entity>
+    <entity name="GameModel" representedClassName="GameModel" syncable="YES" codeGenerationType="category">
+        <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="initialState" attributeType="String"/>
+        <attribute name="lastUpdated" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="actions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ActionModel" inverseName="game" inverseEntity="ActionModel"/>
+        <relationship name="usergames" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserGame" inverseName="game" inverseEntity="UserGame"/>
+    </entity>
+    <entity name="User" representedClassName="User" syncable="YES" codeGenerationType="category">
+        <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="email" attributeType="String"/>
+        <attribute name="lastUpdated" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <relationship name="usergames" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserGame" inverseName="user" inverseEntity="UserGame"/>
+    </entity>
+    <entity name="UserGame" representedClassName="UserGame" syncable="YES" codeGenerationType="category">
+        <attribute name="role" attributeType="String"/>
+        <attribute name="userAccepted" attributeType="Boolean" usesScalarValueType="YES"/>
+        <relationship name="game" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GameModel" inverseName="usergames" inverseEntity="GameModel"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="usergames" inverseEntity="User"/>
+    </entity>
+    <elements>
+        <element name="GameModel" positionX="-36" positionY="9" width="128" height="118"/>
+        <element name="User" positionX="0" positionY="72" width="128" height="118"/>
+        <element name="UserGame" positionX="27" positionY="117" width="128" height="103"/>
+        <element name="ActionModel" positionX="54" positionY="153" width="128" height="88"/>
+    </elements>
 </model>
