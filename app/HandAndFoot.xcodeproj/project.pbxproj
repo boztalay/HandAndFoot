@@ -7,73 +7,47 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		FB73EB2A243042A300AEC91E /* JSONCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB73EB29243042A300AEC91E /* JSONCodable.swift */; };
-		FB73EB2B24304B5700AEC91E /* JSONCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB73EB29243042A300AEC91E /* JSONCodable.swift */; };
-		FB73EB2D24304B8900AEC91E /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB73EB2C24304B8900AEC91E /* Action.swift */; };
-		FB73EB2E24304B8900AEC91E /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB73EB2C24304B8900AEC91E /* Action.swift */; };
-		FB7CF9EA242D942400B18111 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CF9E9242D942400B18111 /* AppDelegate.swift */; };
-		FB7CF9EC242D942400B18111 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CF9EB242D942400B18111 /* SceneDelegate.swift */; };
-		FB7CF9EE242D942400B18111 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CF9ED242D942400B18111 /* ViewController.swift */; };
-		FB7CF9F1242D942400B18111 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB7CF9EF242D942400B18111 /* Main.storyboard */; };
-		FB7CF9F3242D942600B18111 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB7CF9F2242D942600B18111 /* Assets.xcassets */; };
-		FB7CF9F6242D942600B18111 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB7CF9F4242D942600B18111 /* LaunchScreen.storyboard */; };
-		FB7CFA04242D945700B18111 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CFA03242D945700B18111 /* main.swift */; };
-		FB7CFA0A242D94AB00B18111 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CFA09242D94AB00B18111 /* Errors.swift */; };
-		FB7CFA0C242D94C100B18111 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CFA0B242D94C100B18111 /* Card.swift */; };
-		FB7CFA0E242D94DD00B18111 /* Deck.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CFA0D242D94DD00B18111 /* Deck.swift */; };
-		FB7CFA10242D94FD00B18111 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CFA0F242D94FD00B18111 /* Player.swift */; };
-		FB7CFA12242D952600B18111 /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CFA11242D952600B18111 /* Book.swift */; };
-		FB7CFA14242D954500B18111 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CFA13242D954500B18111 /* Game.swift */; };
-		FB7CFA15242D956A00B18111 /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CFA09242D94AB00B18111 /* Errors.swift */; };
-		FB7CFA16242D956A00B18111 /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CFA0B242D94C100B18111 /* Card.swift */; };
-		FB7CFA17242D956A00B18111 /* Deck.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CFA0D242D94DD00B18111 /* Deck.swift */; };
-		FB7CFA18242D956A00B18111 /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CFA0F242D94FD00B18111 /* Player.swift */; };
-		FB7CFA19242D956A00B18111 /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CFA11242D952600B18111 /* Book.swift */; };
-		FB7CFA1A242D956A00B18111 /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7CFA13242D954500B18111 /* Game.swift */; };
+		FB5D037624469FA90044FBC5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037524469FA90044FBC5 /* AppDelegate.swift */; };
+		FB5D037824469FA90044FBC5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037724469FA90044FBC5 /* SceneDelegate.swift */; };
+		FB5D037A24469FA90044FBC5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037924469FA90044FBC5 /* ViewController.swift */; };
+		FB5D037D24469FA90044FBC5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB5D037B24469FA90044FBC5 /* Main.storyboard */; };
+		FB5D038024469FA90044FBC5 /* HandAndFoot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037E24469FA90044FBC5 /* HandAndFoot.xcdatamodeld */; };
+		FB5D038224469FB10044FBC5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB5D038124469FB10044FBC5 /* Assets.xcassets */; };
+		FB5D038524469FB10044FBC5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB5D038324469FB10044FBC5 /* LaunchScreen.storyboard */; };
+		FBDB3BA72446A066008831FF /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9C2446A066008831FF /* main.swift */; };
+		FBDB3BA82446A066008831FF /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9E2446A066008831FF /* Game.swift */; };
+		FBDB3BA92446A066008831FF /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9F2446A066008831FF /* Card.swift */; };
+		FBDB3BAA2446A066008831FF /* Deck.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA02446A066008831FF /* Deck.swift */; };
+		FBDB3BAB2446A066008831FF /* Book.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA12446A066008831FF /* Book.swift */; };
+		FBDB3BAC2446A066008831FF /* Errors.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA22446A066008831FF /* Errors.swift */; };
+		FBDB3BAD2446A066008831FF /* Player.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA32446A066008831FF /* Player.swift */; };
+		FBDB3BAE2446A066008831FF /* Action.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA42446A066008831FF /* Action.swift */; };
+		FBDB3BAF2446A066008831FF /* JSONCodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA62446A066008831FF /* JSONCodable.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXCopyFilesBuildPhase section */
-		FB7CF9FF242D945700B18111 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 1;
-		};
-/* End PBXCopyFilesBuildPhase section */
-
 /* Begin PBXFileReference section */
-		FB73EB29243042A300AEC91E /* JSONCodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JSONCodable.swift; sourceTree = "<group>"; };
-		FB73EB2C24304B8900AEC91E /* Action.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
-		FB7CF9E6242D942400B18111 /* HandAndFoot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HandAndFoot.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		FB7CF9E9242D942400B18111 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		FB7CF9EB242D942400B18111 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		FB7CF9ED242D942400B18111 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		FB7CF9F0242D942400B18111 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		FB7CF9F2242D942600B18111 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		FB7CF9F5242D942600B18111 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		FB7CF9F7242D942600B18111 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FB7CFA01242D945700B18111 /* EngineTest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = EngineTest; sourceTree = BUILT_PRODUCTS_DIR; };
-		FB7CFA03242D945700B18111 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		FB7CFA09242D94AB00B18111 /* Errors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
-		FB7CFA0B242D94C100B18111 /* Card.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
-		FB7CFA0D242D94DD00B18111 /* Deck.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Deck.swift; sourceTree = "<group>"; };
-		FB7CFA0F242D94FD00B18111 /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
-		FB7CFA11242D952600B18111 /* Book.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
-		FB7CFA13242D954500B18111 /* Game.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
+		FB5D037224469FA90044FBC5 /* HandAndFoot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HandAndFoot.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FB5D037524469FA90044FBC5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		FB5D037724469FA90044FBC5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		FB5D037924469FA90044FBC5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		FB5D037C24469FA90044FBC5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		FB5D037F24469FA90044FBC5 /* HandAndFoot.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = HandAndFoot.xcdatamodel; sourceTree = "<group>"; };
+		FB5D038124469FB10044FBC5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		FB5D038424469FB10044FBC5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		FB5D038624469FB10044FBC5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FBDB3B9C2446A066008831FF /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		FBDB3B9E2446A066008831FF /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
+		FBDB3B9F2446A066008831FF /* Card.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
+		FBDB3BA02446A066008831FF /* Deck.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Deck.swift; sourceTree = "<group>"; };
+		FBDB3BA12446A066008831FF /* Book.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Book.swift; sourceTree = "<group>"; };
+		FBDB3BA22446A066008831FF /* Errors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Errors.swift; sourceTree = "<group>"; };
+		FBDB3BA32446A066008831FF /* Player.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
+		FBDB3BA42446A066008831FF /* Action.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Action.swift; sourceTree = "<group>"; };
+		FBDB3BA62446A066008831FF /* JSONCodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONCodable.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		FB7CF9E3242D942400B18111 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FB7CF9FE242D945700B18111 /* Frameworks */ = {
+		FB5D036F24469FA90044FBC5 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -83,80 +57,80 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		FB73EB282430429000AEC91E /* Utilities */ = {
+		FB5D036924469FA90044FBC5 = {
 			isa = PBXGroup;
 			children = (
-				FB73EB29243042A300AEC91E /* JSONCodable.swift */,
-			);
-			path = Utilities;
-			sourceTree = "<group>";
-		};
-		FB7CF9DD242D942400B18111 = {
-			isa = PBXGroup;
-			children = (
-				FB7CF9E8242D942400B18111 /* App */,
-				FB7CFA08242D948C00B18111 /* Engine */,
-				FB7CFA02242D945700B18111 /* EngineTest */,
-				FB73EB282430429000AEC91E /* Utilities */,
-				FB7CF9E7242D942400B18111 /* Products */,
+				FB5D037424469FA90044FBC5 /* App */,
+				FBDB3B9D2446A066008831FF /* Engine */,
+				FBDB3B9B2446A066008831FF /* EngineTest */,
+				FBDB3BA52446A066008831FF /* Utilities */,
+				FB5D037324469FA90044FBC5 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		FB7CF9E7242D942400B18111 /* Products */ = {
+		FB5D037324469FA90044FBC5 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				FB7CF9E6242D942400B18111 /* HandAndFoot.app */,
-				FB7CFA01242D945700B18111 /* EngineTest */,
+				FB5D037224469FA90044FBC5 /* HandAndFoot.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		FB7CF9E8242D942400B18111 /* App */ = {
+		FB5D037424469FA90044FBC5 /* App */ = {
 			isa = PBXGroup;
 			children = (
-				FB7CF9E9242D942400B18111 /* AppDelegate.swift */,
-				FB7CF9EB242D942400B18111 /* SceneDelegate.swift */,
-				FB7CF9ED242D942400B18111 /* ViewController.swift */,
-				FB7CF9EF242D942400B18111 /* Main.storyboard */,
-				FB7CF9F2242D942600B18111 /* Assets.xcassets */,
-				FB7CF9F4242D942600B18111 /* LaunchScreen.storyboard */,
-				FB7CF9F7242D942600B18111 /* Info.plist */,
+				FB5D037524469FA90044FBC5 /* AppDelegate.swift */,
+				FB5D037724469FA90044FBC5 /* SceneDelegate.swift */,
+				FB5D037924469FA90044FBC5 /* ViewController.swift */,
+				FB5D037B24469FA90044FBC5 /* Main.storyboard */,
+				FB5D038124469FB10044FBC5 /* Assets.xcassets */,
+				FB5D038324469FB10044FBC5 /* LaunchScreen.storyboard */,
+				FB5D038624469FB10044FBC5 /* Info.plist */,
+				FB5D037E24469FA90044FBC5 /* HandAndFoot.xcdatamodeld */,
 			);
 			path = App;
 			sourceTree = "<group>";
 		};
-		FB7CFA02242D945700B18111 /* EngineTest */ = {
+		FBDB3B9B2446A066008831FF /* EngineTest */ = {
 			isa = PBXGroup;
 			children = (
-				FB7CFA03242D945700B18111 /* main.swift */,
+				FBDB3B9C2446A066008831FF /* main.swift */,
 			);
 			path = EngineTest;
 			sourceTree = "<group>";
 		};
-		FB7CFA08242D948C00B18111 /* Engine */ = {
+		FBDB3B9D2446A066008831FF /* Engine */ = {
 			isa = PBXGroup;
 			children = (
-				FB73EB2C24304B8900AEC91E /* Action.swift */,
-				FB7CFA11242D952600B18111 /* Book.swift */,
-				FB7CFA0B242D94C100B18111 /* Card.swift */,
-				FB7CFA0D242D94DD00B18111 /* Deck.swift */,
-				FB7CFA09242D94AB00B18111 /* Errors.swift */,
-				FB7CFA13242D954500B18111 /* Game.swift */,
-				FB7CFA0F242D94FD00B18111 /* Player.swift */,
+				FBDB3B9E2446A066008831FF /* Game.swift */,
+				FBDB3B9F2446A066008831FF /* Card.swift */,
+				FBDB3BA02446A066008831FF /* Deck.swift */,
+				FBDB3BA12446A066008831FF /* Book.swift */,
+				FBDB3BA22446A066008831FF /* Errors.swift */,
+				FBDB3BA32446A066008831FF /* Player.swift */,
+				FBDB3BA42446A066008831FF /* Action.swift */,
 			);
 			path = Engine;
+			sourceTree = "<group>";
+		};
+		FBDB3BA52446A066008831FF /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				FBDB3BA62446A066008831FF /* JSONCodable.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		FB7CF9E5242D942400B18111 /* HandAndFoot */ = {
+		FB5D037124469FA90044FBC5 /* HandAndFoot */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = FB7CF9FA242D942600B18111 /* Build configuration list for PBXNativeTarget "HandAndFoot" */;
+			buildConfigurationList = FB5D038924469FB10044FBC5 /* Build configuration list for PBXNativeTarget "HandAndFoot" */;
 			buildPhases = (
-				FB7CF9E2242D942400B18111 /* Sources */,
-				FB7CF9E3242D942400B18111 /* Frameworks */,
-				FB7CF9E4242D942400B18111 /* Resources */,
+				FB5D036E24469FA90044FBC5 /* Sources */,
+				FB5D036F24469FA90044FBC5 /* Frameworks */,
+				FB5D037024469FA90044FBC5 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -164,45 +138,25 @@
 			);
 			name = HandAndFoot;
 			productName = HandAndFoot;
-			productReference = FB7CF9E6242D942400B18111 /* HandAndFoot.app */;
+			productReference = FB5D037224469FA90044FBC5 /* HandAndFoot.app */;
 			productType = "com.apple.product-type.application";
-		};
-		FB7CFA00242D945700B18111 /* EngineTest */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = FB7CFA05242D945700B18111 /* Build configuration list for PBXNativeTarget "EngineTest" */;
-			buildPhases = (
-				FB7CF9FD242D945700B18111 /* Sources */,
-				FB7CF9FE242D945700B18111 /* Frameworks */,
-				FB7CF9FF242D945700B18111 /* CopyFiles */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = EngineTest;
-			productName = HandAndFootEngine;
-			productReference = FB7CFA01242D945700B18111 /* EngineTest */;
-			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		FB7CF9DE242D942400B18111 /* Project object */ = {
+		FB5D036A24469FA90044FBC5 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1140;
 				LastUpgradeCheck = 1140;
 				ORGANIZATIONNAME = "Ben Oztalay";
 				TargetAttributes = {
-					FB7CF9E5242D942400B18111 = {
-						CreatedOnToolsVersion = 11.4;
-					};
-					FB7CFA00242D945700B18111 = {
+					FB5D037124469FA90044FBC5 = {
 						CreatedOnToolsVersion = 11.4;
 					};
 				};
 			};
-			buildConfigurationList = FB7CF9E1242D942400B18111 /* Build configuration list for PBXProject "HandAndFoot" */;
+			buildConfigurationList = FB5D036D24469FA90044FBC5 /* Build configuration list for PBXProject "HandAndFoot" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -210,80 +164,65 @@
 				en,
 				Base,
 			);
-			mainGroup = FB7CF9DD242D942400B18111;
-			productRefGroup = FB7CF9E7242D942400B18111 /* Products */;
+			mainGroup = FB5D036924469FA90044FBC5;
+			productRefGroup = FB5D037324469FA90044FBC5 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				FB7CF9E5242D942400B18111 /* HandAndFoot */,
-				FB7CFA00242D945700B18111 /* EngineTest */,
+				FB5D037124469FA90044FBC5 /* HandAndFoot */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		FB7CF9E4242D942400B18111 /* Resources */ = {
+		FB5D037024469FA90044FBC5 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FB7CF9F6242D942600B18111 /* LaunchScreen.storyboard in Resources */,
-				FB7CF9F3242D942600B18111 /* Assets.xcassets in Resources */,
-				FB7CF9F1242D942400B18111 /* Main.storyboard in Resources */,
+				FB5D038524469FB10044FBC5 /* LaunchScreen.storyboard in Resources */,
+				FB5D038224469FB10044FBC5 /* Assets.xcassets in Resources */,
+				FB5D037D24469FA90044FBC5 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		FB7CF9E2242D942400B18111 /* Sources */ = {
+		FB5D036E24469FA90044FBC5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FB73EB2A243042A300AEC91E /* JSONCodable.swift in Sources */,
-				FB73EB2D24304B8900AEC91E /* Action.swift in Sources */,
-				FB7CFA12242D952600B18111 /* Book.swift in Sources */,
-				FB7CFA14242D954500B18111 /* Game.swift in Sources */,
-				FB7CFA0E242D94DD00B18111 /* Deck.swift in Sources */,
-				FB7CFA0A242D94AB00B18111 /* Errors.swift in Sources */,
-				FB7CF9EE242D942400B18111 /* ViewController.swift in Sources */,
-				FB7CFA0C242D94C100B18111 /* Card.swift in Sources */,
-				FB7CFA10242D94FD00B18111 /* Player.swift in Sources */,
-				FB7CF9EA242D942400B18111 /* AppDelegate.swift in Sources */,
-				FB7CF9EC242D942400B18111 /* SceneDelegate.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		FB7CF9FD242D945700B18111 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				FB73EB2B24304B5700AEC91E /* JSONCodable.swift in Sources */,
-				FB73EB2E24304B8900AEC91E /* Action.swift in Sources */,
-				FB7CFA17242D956A00B18111 /* Deck.swift in Sources */,
-				FB7CFA15242D956A00B18111 /* Errors.swift in Sources */,
-				FB7CFA1A242D956A00B18111 /* Game.swift in Sources */,
-				FB7CFA19242D956A00B18111 /* Book.swift in Sources */,
-				FB7CFA16242D956A00B18111 /* Card.swift in Sources */,
-				FB7CFA18242D956A00B18111 /* Player.swift in Sources */,
-				FB7CFA04242D945700B18111 /* main.swift in Sources */,
+				FBDB3BAD2446A066008831FF /* Player.swift in Sources */,
+				FBDB3BAE2446A066008831FF /* Action.swift in Sources */,
+				FB5D037A24469FA90044FBC5 /* ViewController.swift in Sources */,
+				FBDB3BA82446A066008831FF /* Game.swift in Sources */,
+				FBDB3BA92446A066008831FF /* Card.swift in Sources */,
+				FBDB3BAF2446A066008831FF /* JSONCodable.swift in Sources */,
+				FBDB3BA72446A066008831FF /* main.swift in Sources */,
+				FBDB3BAA2446A066008831FF /* Deck.swift in Sources */,
+				FBDB3BAB2446A066008831FF /* Book.swift in Sources */,
+				FBDB3BAC2446A066008831FF /* Errors.swift in Sources */,
+				FB5D037624469FA90044FBC5 /* AppDelegate.swift in Sources */,
+				FB5D038024469FA90044FBC5 /* HandAndFoot.xcdatamodeld in Sources */,
+				FB5D037824469FA90044FBC5 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		FB7CF9EF242D942400B18111 /* Main.storyboard */ = {
+		FB5D037B24469FA90044FBC5 /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				FB7CF9F0242D942400B18111 /* Base */,
+				FB5D037C24469FA90044FBC5 /* Base */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
 		};
-		FB7CF9F4242D942600B18111 /* LaunchScreen.storyboard */ = {
+		FB5D038324469FB10044FBC5 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
-				FB7CF9F5242D942600B18111 /* Base */,
+				FB5D038424469FB10044FBC5 /* Base */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -291,7 +230,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		FB7CF9F8242D942600B18111 /* Debug */ = {
+		FB5D038724469FB10044FBC5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -351,7 +290,7 @@
 			};
 			name = Debug;
 		};
-		FB7CF9F9242D942600B18111 /* Release */ = {
+		FB5D038824469FB10044FBC5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -405,12 +344,12 @@
 			};
 			name = Release;
 		};
-		FB7CF9FB242D942600B18111 /* Debug */ = {
+		FB5D038A24469FB10044FBC5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = App/Info.plist;
+				INFOPLIST_FILE = HandAndFoot/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -422,12 +361,12 @@
 			};
 			name = Debug;
 		};
-		FB7CF9FC242D942600B18111 /* Release */ = {
+		FB5D038B24469FB10044FBC5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = App/Info.plist;
+				INFOPLIST_FILE = HandAndFoot/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -436,62 +375,44 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		FB7CFA06242D945700B18111 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 5.0;
-			};
-			name = Debug;
-		};
-		FB7CFA07242D945700B18111 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = macosx;
-				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		FB7CF9E1242D942400B18111 /* Build configuration list for PBXProject "HandAndFoot" */ = {
+		FB5D036D24469FA90044FBC5 /* Build configuration list for PBXProject "HandAndFoot" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				FB7CF9F8242D942600B18111 /* Debug */,
-				FB7CF9F9242D942600B18111 /* Release */,
+				FB5D038724469FB10044FBC5 /* Debug */,
+				FB5D038824469FB10044FBC5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		FB7CF9FA242D942600B18111 /* Build configuration list for PBXNativeTarget "HandAndFoot" */ = {
+		FB5D038924469FB10044FBC5 /* Build configuration list for PBXNativeTarget "HandAndFoot" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				FB7CF9FB242D942600B18111 /* Debug */,
-				FB7CF9FC242D942600B18111 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		FB7CFA05242D945700B18111 /* Build configuration list for PBXNativeTarget "EngineTest" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				FB7CFA06242D945700B18111 /* Debug */,
-				FB7CFA07242D945700B18111 /* Release */,
+				FB5D038A24469FB10044FBC5 /* Debug */,
+				FB5D038B24469FB10044FBC5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		FB5D037E24469FA90044FBC5 /* HandAndFoot.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				FB5D037F24469FA90044FBC5 /* HandAndFoot.xcdatamodel */,
+			);
+			currentVersion = FB5D037F24469FA90044FBC5 /* HandAndFoot.xcdatamodel */;
+			path = HandAndFoot.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
-	rootObject = FB7CF9DE242D942400B18111 /* Project object */;
+	rootObject = FB5D036A24469FA90044FBC5 /* Project object */;
 }

@@ -2,6 +2,15 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "self:HandAndFoot.xcodeproj">
+      location = "group:../Engine">
+   </FileRef>
+   <FileRef
+      location = "group:../EngineTest">
+   </FileRef>
+   <FileRef
+      location = "group:../Utilities">
+   </FileRef>
+   <FileRef
+      location = "self:">
    </FileRef>
 </Workspace>

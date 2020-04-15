@@ -2,7 +2,7 @@
 //  SceneDelegate.swift
 //  HandAndFoot
 //
-//  Created by Ben Oztalay on 3/26/20.
+//  Created by Ben Oztalay on 4/14/20.
 //  Copyright © 2020 Ben Oztalay. All rights reserved.
 //
 
@@ -46,6 +46,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called as the scene transitions from the foreground to the background.
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
+
+        // Save changes in the application's managed object context when the application transitions to the background.
+        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
     }
 
 
