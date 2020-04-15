@@ -92,7 +92,7 @@ class Game(BaseModel):
     def create(player_names):
         game_engine = engine.Engine(player_names)
 
-        initial_game_state_json = game_engine.generate_initial_game_state(player_names)
+        initial_game_state_json = game_engine.generate_initial_game_state()
         initial_game_state_string = json.dumps(initial_game_state_json)
 
         game = Game(initial_state=initial_game_state_string)
@@ -146,9 +146,10 @@ class Action(BaseModel):
     created = peewee.DateTimeField(default=datetime.datetime.now)
 
     @staticmethod
-    def create_without_saving(content, game):
+    def create_without_saving(content_json, game):
+        content = json.dumps(content_json)
         action = Action(content=content, game=game)
-        action.load_content_json()
+        action.content_json = content_json
         return action
 
     def load_content_json(self):
@@ -157,9 +158,11 @@ class Action(BaseModel):
 
     @property
     def content_has_player(self):
-        # NOTE: Requires that load_content_json has been called
+        # NOTE: Requires that either create_without_saving or load_content_json
+        #       has been called
         return ("player" in self.content_json)
 
     def is_for_player(self, player_name):
-        # NOTE: Requires that load_content_json has been called
+        # NOTE: Requires that either create_without_saving or load_content_json
+        #       has been called
         return (self.content_json["player"] == player_name)

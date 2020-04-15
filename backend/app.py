@@ -90,9 +90,13 @@ def create_tables():
 
 @app.route("/api/signup", methods=["POST"])
 def signup():
-    name = flask.request.form["name"]
-    email = flask.request.form["email"]
-    password = flask.request.form["password"]
+    body = flask.request.get_json()
+    if body is None:
+        return error("Could not decode body as JSON", 400)
+
+    name = body.get("name")
+    email = body.get("email")
+    password = body.get("password")
 
     existing_user = models.User.get_or_none(models.User.email == email)
     if existing_user:
@@ -108,8 +112,12 @@ def signup():
 
 @app.route("/api/login", methods=["POST"])
 def login():
-    email = flask.request.form["email"]
-    password = flask.request.form["password"]
+    body = flask.request.get_json()
+    if body is None:
+        return error("Could not decode body as JSON", 400)
+
+    email = body.get("email")
+    password = body.get("password")
 
     user = models.User.login(email=email, password=password)
 
@@ -142,11 +150,14 @@ def create_game(current_user):
     if not current_user.is_authenticated:
         return error("User must be authenticated", 403)
 
-    user_emails = flask.request.form.get("users")
-    if user_emails is None:
+    body = flask.request.get_json()
+    if body is None:
+        return error("Could not decode body as JSON", 400)
+
+    user_emails = body.get("users")
+    if (user_emails is None) or (type(user_emails) is not list):
         return error("Emails of other players required", 400)
 
-    user_emails = user_emails.split(";")
     if len(user_emails) < 1 or len(user_emails) > 5:
         return error("Player count is out of range", 400)
 
@@ -172,7 +183,11 @@ def accept_game_invite(current_user):
     if not current_user.is_authenticated:
         return error("User must be authenticated", 403)
 
-    game_id = flask.request.form.get("game")
+    body = flask.request.get_json()
+    if body is None:
+        return error("Could not decode body as JSON", 400)
+
+    game_id = body.get("game")
     if game_id is None:
         return error("Game required", 400)
 
@@ -195,7 +210,11 @@ def add_action_to_game(current_user):
     if not current_user.is_authenticated:
         return error("User must be authenticated", 403)
 
-    game_id = flask.request.form.get("game")
+    body = flask.request.get_json()
+    if body is None:
+        return error("Could not decode body as JSON", 400)
+
+    game_id = body.get("game")
     if game_id is None:
         return error("Game required", 400)
 
@@ -206,14 +225,11 @@ def add_action_to_game(current_user):
     if not game.have_all_players_accepted_invite:
         return error("Players have not all accepted invites yet", 400)
 
-    action_string = flask.request.form.get("action")
-    if action_string is None:
+    action_json = body.get("action")
+    if action_json is None:
         return error("Action required", 400)
 
-    try:
-        action = models.Action.create_without_saving(action_string, game)
-    except ValueError as e:
-        return error("Could not decode action as JSON: " + str(e), 400)
+    action = models.Action.create_without_saving(action_json, game)
 
     if not action.content_has_player:
         return error("Invalid action", 400)
