@@ -22,7 +22,8 @@ class LoginViewController: UIViewController {
     }
     
     @IBAction func logInButtonPressed(_ sender: Any) {
-        guard let email = self.logInEmailTextField.text, let password = self.logInPasswordTextField.text else {
+        guard let email = self.logInEmailTextField.text,
+              let password = self.logInPasswordTextField.text else {
             return
         }
         
@@ -34,6 +35,16 @@ class LoginViewController: UIViewController {
     }
 
     @IBAction func signUpButtonPressed(_ sender: Any) {
-
+        guard let name = self.signUpNameTextField.text,
+              let email = self.signUpEmailTextField.text,
+              let password = self.signUpPasswordTextField.text else {
+            return
+        }
+        
+        Network.shared.sendSignUpRequest(name: name, email: email, password: password) { success, httpStatusCode, response in
+            print("Success: \(success)")
+            print("Status Code: \(String(describing: httpStatusCode))")
+            print("Response: \(String(describing: response))")
+        }
     }
 }
