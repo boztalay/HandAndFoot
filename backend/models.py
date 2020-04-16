@@ -83,6 +83,21 @@ class User(BaseModel, flask_login.UserMixin):
         token = signer.sign(self.email)
         return token.decode('utf-8')
 
+    name = peewee.CharField()
+    email = peewee.CharField(unique=True)
+    password_hash = peewee.CharField()
+    created = peewee.DateTimeField(default=datetime.datetime.now)
+    last_updated = peewee.DateTimeField(default=datetime.datetime.now)
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "email": self.email,
+            "created": self.created,
+            "last_updated": self.last_updated
+        }
+
 class Game(BaseModel):
     initial_state = peewee.TextField()
     created = peewee.DateTimeField(default=datetime.datetime.now)
@@ -124,9 +139,17 @@ class Game(BaseModel):
     def apply_action(self, action):
         self.game_engine.apply_action(action.load_content_json())
 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "initial_state": self.initial_state,
+            "created": self.created,
+            "last_updated": self.last_updated
+        }
+
 class UserGame(BaseModel):
-    user = peewee.ForeignKeyField(User)
-    game = peewee.ForeignKeyField(Game)
+    user = peewee.ForeignKeyField(User, lazy_load=False)
+    game = peewee.ForeignKeyField(Game, lazy_load=False)
     role = peewee.CharField()
     user_accepted = peewee.BooleanField(default=False)
 
@@ -140,9 +163,18 @@ class UserGame(BaseModel):
         usergame.save()
         return user
 
+    def to_json(self):
+        return {
+            "id": self.id,
+            "user": self.user_id,
+            "game": self.game_id,
+            "role": self.role,
+            "user_accepted": self.user_accepted
+        }
+
 class Action(BaseModel):
     content = peewee.TextField()
-    game = peewee.ForeignKeyField(Game)
+    game = peewee.ForeignKeyField(Game, lazy_load=False)
     created = peewee.DateTimeField(default=datetime.datetime.now)
 
     @staticmethod
@@ -166,3 +198,11 @@ class Action(BaseModel):
         # NOTE: Requires that either create_without_saving or load_content_json
         #       has been called
         return (self.content_json["player"] == player_name)
+
+    def to_json(self):
+        return {
+            "id": self.id,
+            "content": self.content,
+            "game": self.game_id,
+            "created": self.created
+        }
