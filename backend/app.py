@@ -156,8 +156,9 @@ def sync_user(current_user):
         return error("Last updated date and time is required", 400)
 
     try:
-        # TODO: NEEDS TIMEZONE INFORMATION
         last_updated = datetime.datetime.fromisoformat(last_updated_string)
+        if last_updated.tzinfo is None:
+            raise ValueError
     except ValueError:
         return error("Invalid last updated date and time", 400)
 
