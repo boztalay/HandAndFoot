@@ -242,7 +242,7 @@ def accept_game_invite(current_user):
     usergame.user_accepted = True
     usergame.save()
 
-    game.last_updated = datetime.datetime.now()
+    game.last_updated = datetime.datetime.now(datetime.timezone.utc)
     game.save()
 
     return success()
@@ -293,7 +293,7 @@ def add_action_to_game(current_user):
 
     action.save()
 
-    game.last_updated = datetime.datetime.now()
+    game.last_updated = datetime.datetime.now(datetime.timezone.utc)
     game.save()
 
     return success()
