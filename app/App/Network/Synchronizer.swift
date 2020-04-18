@@ -56,6 +56,7 @@ class Synchronizer {
                 return
             }
             
+            AppDelegate.shared.saveContext()
             callback(true)
         }
     }

@@ -7,10 +7,10 @@
 //
 
 import Foundation
-import CoreData
 
 enum UpdateError: Error {
     case invalidDictionary
+    case foundTooManyObjects
 }
 
 protocol Updateable {
