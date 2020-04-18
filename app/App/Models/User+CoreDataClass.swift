@@ -11,6 +11,13 @@ import Foundation
 import CoreData
 
 @objc(User)
-public class User: NSManagedObject {
+public class User: NSManagedObject, Updateable {
 
+    static func updateOrCreate(from json: JSONDictionary) throws {
+        // TODO
+    }
+    
+    func update(from json: JSONDictionary) throws {
+        // TODO
+    }
 }

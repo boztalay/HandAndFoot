@@ -170,7 +170,7 @@ def sync_user(current_user):
     #       in a database query
     user_ids = []
     for usergame in usergames:
-        if (usergame.user_id not in user_ids) and (usergame.user_id != current_user.id):
+        if (usergame.user_id not in user_ids):
             user_ids.append(usergame.user_id)
 
     users = User.select().where(User.id.in_(user_ids) & (User.last_updated > last_updated))
@@ -179,8 +179,7 @@ def sync_user(current_user):
         games=[game.to_json() for game in games],
         usergames=[usergame.to_json() for usergame in usergames],
         actions=[action.to_json() for action in actions],
-        users=[user.to_json() for user in users],
-        self=current_user.to_json()
+        users=[user.to_json() for user in users]
     )
 
 # Game Management

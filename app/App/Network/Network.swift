@@ -51,6 +51,19 @@ class Network {
         )
     }
     
+    func sendSyncRequest(responseHandler: @escaping NetworkResponseHandler) {
+        guard self.token != nil else {
+            responseHandler(false, nil, nil)
+            return
+        }
+        
+        self.sendRequest(
+            path: "/api/sync",
+            payload: [:],
+            responseHandler: responseHandler
+        )
+    }
+    
     private func loginResponseHandler(originalResponseHandler: @escaping NetworkResponseHandler) -> NetworkResponseHandler {
         return { success, httpStatusCode, response in
             if success, let token = response?["token"] as? String {
