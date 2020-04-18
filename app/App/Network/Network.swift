@@ -13,10 +13,20 @@ typealias NetworkResponseHandler = (Bool, Int?, JSONDictionary?) -> ()
 class Network {
     
     private static let baseUrl = URL(string: "https://handandfoot-boztalay.structure.sh")!
+    private static let tokenArchiveKey = "token"
     
     static let shared = Network()
     
     var token: String?
+    var strongbox: Strongbox
+    
+    init() {
+        self.strongbox = Strongbox()
+        
+        if let token = self.strongbox.unarchive(objectForKey: Network.tokenArchiveKey) as? String {
+            self.token = token
+        }
+    }
     
     func sendLoginRequest(email: String, password: String, responseHandler: @escaping NetworkResponseHandler) {
         self.sendRequest(
@@ -45,6 +55,9 @@ class Network {
         return { success, httpStatusCode, response in
             if success, let token = response?["token"] as? String {
                 self.token = token
+                if !self.strongbox.archive(self.token, key: Network.tokenArchiveKey) {
+                    fatalError("Couldn't archive token")
+                }
             }
             
             originalResponseHandler(success, httpStatusCode, response)
