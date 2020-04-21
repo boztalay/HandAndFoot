@@ -51,7 +51,7 @@ class Network {
         )
     }
     
-    func sendSyncRequest(responseHandler: @escaping NetworkResponseHandler) {
+    func sendSyncRequest(lastUpdated: Date, responseHandler: @escaping NetworkResponseHandler) {
         guard self.token != nil else {
             responseHandler(false, nil, nil)
             return
@@ -59,7 +59,9 @@ class Network {
         
         self.sendRequest(
             path: "/api/sync",
-            payload: [:],
+            payload: [
+                "last_updated" : DateFormatter.stringForServer(from: lastUpdated)
+            ],
             responseHandler: responseHandler
         )
     }

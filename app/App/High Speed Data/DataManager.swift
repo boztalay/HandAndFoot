@@ -14,6 +14,32 @@ typealias DataManagerSyncCallback = (Bool) -> ()
 class DataManager {
     
     static let shared = DataManager()
+    private static let firstSyncDate = Date(timeIntervalSince1970: 0)
+    
+    var currentUser: User? {
+        guard let userEmail = UserDefaults.standard.string(forKey: "currentUserEmail") else {
+            return nil
+        }
+        
+        return self.fetchUser(with: userEmail)
+    }
+    
+    func setCurrentUser(with email: String) {
+        UserDefaults.standard.set(email, forKey: "currentUserEmail")
+    }
+    
+    private var lastUpdated: Date? {
+        get {
+            guard let object = UserDefaults.standard.object(forKey: "lastUpdated") else {
+                return nil
+            }
+            
+            return (object as! Date)
+        }
+        set(date) {
+            UserDefaults.standard.set(date, forKey: "lastUpdated")
+        }
+    }
 
     lazy private var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "HandAndFoot")
@@ -50,8 +76,35 @@ class DataManager {
         }
     }
     
+    private func fetchUser(with email: String) -> User? {
+        let fetchRequest = NSFetchRequest<User>(entityName: User.entityName)
+        fetchRequest.predicate = NSPredicate(format: "email == %@", email)
+        
+        let results: [User]
+        do {
+            results = try self.persistentContainer.viewContext.fetch(fetchRequest)
+        } catch {
+            return nil
+        }
+        
+        if results.count == 0 {
+            return nil
+        } else if results.count == 1 {
+            return results.first!
+        } else {
+            fatalError("Found more than one User with the same email")
+        }
+    }
+    
     func sync(callback: @escaping DataManagerSyncCallback) {
-        Network.shared.sendSyncRequest() { (success, httpStatusCode, response) in
+        let syncDate: Date
+        if self.lastUpdated != nil {
+            syncDate = self.lastUpdated!
+        } else {
+            syncDate = DataManager.firstSyncDate
+        }
+        
+        Network.shared.sendSyncRequest(lastUpdated: syncDate) { (success, httpStatusCode, response) in
             guard success else {
                 callback(false)
                 return
@@ -93,6 +146,8 @@ class DataManager {
             }
             
             self.saveContext()
+            self.lastUpdated = syncDate
+            
             callback(true)
         }
     }
