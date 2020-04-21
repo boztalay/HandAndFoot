@@ -16,6 +16,22 @@ public class GameModel: NSManagedObject, ModelUpdateable {
     static let entityName = "GameModel"
     
     func update(from json: JSONDictionary) throws {
-        // TODO
+        guard let id = json["id"] as? Int,
+              let initialState = json["initial_state"] as? String,
+              let createdString = json["created"] as? String,
+              let lastUpdatedString = json["last_updated"] as? String else {
+            
+            throw ModelUpdateError.invalidDictionary
+        }
+
+        guard let created = DateFormatter.dateForClient(from: createdString),
+              let lastUpdated = DateFormatter.dateForClient(from: lastUpdatedString) else {
+            throw ModelUpdateError.invalidDateFromServer
+        }
+        
+        self.id = Int32(id)
+        self.initialState = initialState
+        self.created = created
+        self.lastUpdated = lastUpdated
     }
 }

@@ -172,7 +172,6 @@
 		FBDB3BA52446A066008831FF /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				FB64284D244AB20F00FDF34E /* ModelUpdateable.swift */,
 				FBDB3BA62446A066008831FF /* JSONCodable.swift */,
 				FB642849244AA26200FDF34E /* Strongbox.swift */,
 			);
@@ -198,6 +197,7 @@
 				FBDB3BB42446A2D8008831FF /* GameModel+CoreDataClass.swift */,
 				FBDB3BB82446A321008831FF /* User+CoreDataClass.swift */,
 				FBDB3BBC2446A39B008831FF /* UserGame+CoreDataClass.swift */,
+				FB64284D244AB20F00FDF34E /* ModelUpdateable.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";

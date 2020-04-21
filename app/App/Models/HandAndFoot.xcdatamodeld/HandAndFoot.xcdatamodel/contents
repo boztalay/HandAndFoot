@@ -24,7 +24,7 @@
     </entity>
     <entity name="UserGame" representedClassName="UserGame" syncable="YES" codeGenerationType="category">
         <attribute name="id" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="role" attributeType="String"/>
+        <attribute name="roleString" attributeType="String"/>
         <attribute name="userAccepted" attributeType="Boolean" usesScalarValueType="YES"/>
         <relationship name="game" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="GameModel" inverseName="usergames" inverseEntity="GameModel"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="usergames" inverseEntity="User"/>
