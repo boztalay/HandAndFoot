@@ -58,7 +58,7 @@ class DataManager {
         }
         
         let fetchRequest = NSFetchRequest<T>(entityName: T.entityName)
-        fetchRequest.predicate = NSPredicate(format: "id == %@", id)
+        fetchRequest.predicate = NSPredicate(format: "id == %d", id)
         
         let results: [T]
         do {
@@ -128,6 +128,10 @@ class DataManager {
                 for gameJson in gameJsons {
                     try GameModel.updateOrCreate(from: gameJson)
                 }
+
+                for userJson in userJsons {
+                    try User.updateOrCreate(from: userJson)
+                }
                 
                 for usergameJson in usergameJsons {
                     try UserGame.updateOrCreate(from: usergameJson)
@@ -136,17 +140,13 @@ class DataManager {
                 for actionJson in actionJsons {
                     try ActionModel.updateOrCreate(from: actionJson)
                 }
-                
-                for userJson in userJsons {
-                    try User.updateOrCreate(from: userJson)
-                }
             } catch {
                 callback(false)
                 return
             }
             
             self.saveContext()
-            self.lastUpdated = syncDate
+            self.lastUpdated = Date()
             
             callback(true)
         }

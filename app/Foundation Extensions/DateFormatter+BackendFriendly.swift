@@ -21,7 +21,8 @@ extension DateFormatter {
     // "2020-04-06T18:07:22-00:00"
     static var toServerFormatter: DateFormatter {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-ddTHH:mm:ssZZZZZ"
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss Z"
+        formatter.timeZone = TimeZone.init(abbreviation: "UTC")!
         return formatter
     }
     

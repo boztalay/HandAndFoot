@@ -26,7 +26,7 @@ public class UserGame: NSManagedObject, ModelUpdateable {
     
     func update(from json: JSONDictionary) throws {
         guard let id = json["id"] as? Int,
-              let userId = json["content"] as? Int,
+              let userId = json["user"] as? Int,
               let gameId = json["game"] as? Int,
               let roleString = json["role"] as? String,
               let userAccepted = json["user_accepted"] as? Bool else {

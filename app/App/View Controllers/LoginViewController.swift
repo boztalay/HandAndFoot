@@ -31,6 +31,15 @@ class LoginViewController: UIViewController {
             print("Success: \(success)")
             print("Status Code: \(String(describing: httpStatusCode))")
             print("Response: \(String(describing: response))")
+
+            guard success else {
+                return
+            }
+
+            DataManager.shared.setCurrentUser(with: email)
+            DataManager.shared.sync() { (success) in
+                print("Sync success: \(success)")
+            }
         }
     }
 
@@ -45,6 +54,15 @@ class LoginViewController: UIViewController {
             print("Success: \(success)")
             print("Status Code: \(String(describing: httpStatusCode))")
             print("Response: \(String(describing: response))")
+            
+            guard success else {
+                return
+            }
+
+            DataManager.shared.setCurrentUser(with: email)
+            DataManager.shared.sync() { (success) in
+                print("Sync success: \(success)")
+            }
         }
     }
 }

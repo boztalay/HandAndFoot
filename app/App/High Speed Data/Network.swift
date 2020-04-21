@@ -117,7 +117,9 @@ class Network {
                 return
             }
 
-            responseHandler(success, httpResponse.statusCode, jsonResponse)
+            DispatchQueue.main.async {
+                responseHandler(success, httpResponse.statusCode, jsonResponse)
+            }
         }
 
         task.resume()
