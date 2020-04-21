@@ -156,7 +156,8 @@ def sync_user(current_user):
         return error("Last updated date and time is required", 400)
 
     try:
-        last_updated = datetime.datetime.fromisoformat(last_updated_string)
+        # "2020-04-06 18:07:22 -0000"
+        last_updated = datetime.datetime.strptime(last_updated_string, "%Y-%m-%d %H:%M:%S %z")
         if last_updated.tzinfo is None:
             raise ValueError
     except ValueError:
