@@ -11,11 +11,9 @@ import Foundation
 import CoreData
 
 @objc(User)
-public class User: NSManagedObject, Updateable {
+public class User: NSManagedObject, ModelUpdateable {
 
-    static func updateOrCreate(from json: JSONDictionary) throws {
-        // TODO
-    }
+    static let entityName = "User"
     
     func update(from json: JSONDictionary) throws {
         // TODO

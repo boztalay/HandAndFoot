@@ -27,7 +27,7 @@ class LoginViewController: UIViewController {
             return
         }
         
-        Network.shared.sendLoginRequest(email: email, password: password) { success, httpStatusCode, response in
+        Network.shared.sendLoginRequest(email: email, password: password) { (success, httpStatusCode, response) in
             print("Success: \(success)")
             print("Status Code: \(String(describing: httpStatusCode))")
             print("Response: \(String(describing: response))")
@@ -41,7 +41,7 @@ class LoginViewController: UIViewController {
             return
         }
         
-        Network.shared.sendSignUpRequest(name: name, email: email, password: password) { success, httpStatusCode, response in
+        Network.shared.sendSignUpRequest(name: name, email: email, password: password) { (success, httpStatusCode, response) in
             print("Success: \(success)")
             print("Status Code: \(String(describing: httpStatusCode))")
             print("Response: \(String(describing: response))")

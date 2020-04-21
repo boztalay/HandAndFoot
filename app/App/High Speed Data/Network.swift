@@ -65,7 +65,7 @@ class Network {
     }
     
     private func loginResponseHandler(originalResponseHandler: @escaping NetworkResponseHandler) -> NetworkResponseHandler {
-        return { success, httpStatusCode, response in
+        return { (success, httpStatusCode, response) in
             if success, let token = response?["token"] as? String {
                 self.token = token
                 if !self.strongbox.archive(self.token, key: Network.tokenArchiveKey) {
@@ -89,7 +89,7 @@ class Network {
             urlRequest.addValue(token, forHTTPHeaderField: "X-App-Token")
         }
 
-        let task = URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+        let task = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
             if error != nil {
                 responseHandler(false, nil, nil)
                 return

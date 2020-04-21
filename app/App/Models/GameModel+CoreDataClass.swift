@@ -11,11 +11,9 @@ import Foundation
 import CoreData
 
 @objc(GameModel)
-public class GameModel: NSManagedObject, Updateable {
+public class GameModel: NSManagedObject, ModelUpdateable {
 
-    static func updateOrCreate(from json: JSONDictionary) throws {
-        // TODO
-    }
+    static let entityName = "GameModel"
     
     func update(from json: JSONDictionary) throws {
         // TODO

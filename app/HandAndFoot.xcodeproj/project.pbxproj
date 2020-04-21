@@ -14,9 +14,10 @@
 		FB5D038024469FA90044FBC5 /* HandAndFoot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037E24469FA90044FBC5 /* HandAndFoot.xcdatamodeld */; };
 		FB5D038224469FB10044FBC5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB5D038124469FB10044FBC5 /* Assets.xcassets */; };
 		FB5D038524469FB10044FBC5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB5D038324469FB10044FBC5 /* LaunchScreen.storyboard */; };
+		FB5E2C1B244F6CA900210545 /* DateFormatter+BackendFriendly.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5E2C1A244F6CA900210545 /* DateFormatter+BackendFriendly.swift */; };
 		FB64284A244AA26200FDF34E /* Strongbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB642849244AA26200FDF34E /* Strongbox.swift */; };
-		FB64284C244AAAC600FDF34E /* Synchronizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB64284B244AAAC600FDF34E /* Synchronizer.swift */; };
-		FB64284E244AB20F00FDF34E /* Updateable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB64284D244AB20F00FDF34E /* Updateable.swift */; };
+		FB64284C244AAAC600FDF34E /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB64284B244AAAC600FDF34E /* DataManager.swift */; };
+		FB64284E244AB20F00FDF34E /* ModelUpdateable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB64284D244AB20F00FDF34E /* ModelUpdateable.swift */; };
 		FBDB3BA82446A066008831FF /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9E2446A066008831FF /* Game.swift */; };
 		FBDB3BA92446A066008831FF /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9F2446A066008831FF /* Card.swift */; };
 		FBDB3BAA2446A066008831FF /* Deck.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA02446A066008831FF /* Deck.swift */; };
@@ -63,9 +64,10 @@
 		FB5D038124469FB10044FBC5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FB5D038424469FB10044FBC5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FB5D038624469FB10044FBC5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FB5E2C1A244F6CA900210545 /* DateFormatter+BackendFriendly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+BackendFriendly.swift"; sourceTree = "<group>"; };
 		FB642849244AA26200FDF34E /* Strongbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Strongbox.swift; sourceTree = "<group>"; };
-		FB64284B244AAAC600FDF34E /* Synchronizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Synchronizer.swift; sourceTree = "<group>"; };
-		FB64284D244AB20F00FDF34E /* Updateable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Updateable.swift; sourceTree = "<group>"; };
+		FB64284B244AAAC600FDF34E /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
+		FB64284D244AB20F00FDF34E /* ModelUpdateable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelUpdateable.swift; sourceTree = "<group>"; };
 		FBDB3B9C2446A066008831FF /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		FBDB3B9E2446A066008831FF /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		FBDB3B9F2446A066008831FF /* Card.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
@@ -109,6 +111,7 @@
 				FBDB3B9D2446A066008831FF /* Engine */,
 				FBDB3B9B2446A066008831FF /* EngineTest */,
 				FBDB3BA52446A066008831FF /* Utilities */,
+				FB5E2C19244F6C7400210545 /* Foundation Extensions */,
 				FB5D037324469FA90044FBC5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -129,11 +132,19 @@
 				FB5D037724469FA90044FBC5 /* SceneDelegate.swift */,
 				FB5D037B24469FA90044FBC5 /* Main.storyboard */,
 				FBDB3BDB2446AA05008831FF /* View Controllers */,
-				FBDB3BDC2446AA31008831FF /* Network */,
+				FBDB3BDC2446AA31008831FF /* High Speed Data */,
 				FBDB3BDA2446A9E9008831FF /* Models */,
 				FBDB3BD92446A9CB008831FF /* Misc */,
 			);
 			path = App;
+			sourceTree = "<group>";
+		};
+		FB5E2C19244F6C7400210545 /* Foundation Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				FB5E2C1A244F6CA900210545 /* DateFormatter+BackendFriendly.swift */,
+			);
+			path = "Foundation Extensions";
 			sourceTree = "<group>";
 		};
 		FBDB3B9B2446A066008831FF /* EngineTest */ = {
@@ -161,7 +172,7 @@
 		FBDB3BA52446A066008831FF /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				FB64284D244AB20F00FDF34E /* Updateable.swift */,
+				FB64284D244AB20F00FDF34E /* ModelUpdateable.swift */,
 				FBDB3BA62446A066008831FF /* JSONCodable.swift */,
 				FB642849244AA26200FDF34E /* Strongbox.swift */,
 			);
@@ -199,13 +210,13 @@
 			path = "View Controllers";
 			sourceTree = "<group>";
 		};
-		FBDB3BDC2446AA31008831FF /* Network */ = {
+		FBDB3BDC2446AA31008831FF /* High Speed Data */ = {
 			isa = PBXGroup;
 			children = (
 				FBDB3BDD2446AA47008831FF /* Network.swift */,
-				FB64284B244AAAC600FDF34E /* Synchronizer.swift */,
+				FB64284B244AAAC600FDF34E /* DataManager.swift */,
 			);
-			path = Network;
+			path = "High Speed Data";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -301,7 +312,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FBDB3BAD2446A066008831FF /* Player.swift in Sources */,
-				FB64284C244AAAC600FDF34E /* Synchronizer.swift in Sources */,
+				FB64284C244AAAC600FDF34E /* DataManager.swift in Sources */,
 				FBDB3BAE2446A066008831FF /* Action.swift in Sources */,
 				FB5D037A24469FA90044FBC5 /* LoginViewController.swift in Sources */,
 				FBDB3BA82446A066008831FF /* Game.swift in Sources */,
@@ -314,12 +325,13 @@
 				FBDB3BDE2446AA47008831FF /* Network.swift in Sources */,
 				FBDB3BAC2446A066008831FF /* Errors.swift in Sources */,
 				FB5D037624469FA90044FBC5 /* AppDelegate.swift in Sources */,
-				FB64284E244AB20F00FDF34E /* Updateable.swift in Sources */,
+				FB64284E244AB20F00FDF34E /* ModelUpdateable.swift in Sources */,
 				FB5D038024469FA90044FBC5 /* HandAndFoot.xcdatamodeld in Sources */,
 				FB5D037824469FA90044FBC5 /* SceneDelegate.swift in Sources */,
 				FBDB3BB62446A2D8008831FF /* GameModel+CoreDataClass.swift in Sources */,
 				FB64284A244AA26200FDF34E /* Strongbox.swift in Sources */,
 				FBDB3BBA2446A321008831FF /* User+CoreDataClass.swift in Sources */,
+				FB5E2C1B244F6CA900210545 /* DateFormatter+BackendFriendly.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
