@@ -25,11 +25,11 @@ extension DateFormatter {
         return formatter
     }
     
-    func dateForClient(from backendResponseString: String) -> Date? {
+    static func dateForClient(from backendResponseString: String) -> Date? {
         return DateFormatter.fromServerFormatter.date(from: backendResponseString)
     }
     
-    func stringForServer(from date: Date) -> String {
+    static func stringForServer(from date: Date) -> String {
         return DateFormatter.toServerFormatter.string(from: date)
     }
 }

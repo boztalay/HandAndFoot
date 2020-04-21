@@ -12,6 +12,7 @@ import CoreData
 enum ModelUpdateError: Error {
     case couldNotFindOrCreateEntity
     case invalidDictionary
+    case invalidDateFromServer
 }
 
 protocol ModelUpdateable: NSManagedObject {

@@ -23,11 +23,18 @@ public class ActionModel: NSManagedObject, ModelUpdateable {
             
             throw ModelUpdateError.invalidDictionary
         }
+
+        guard let created = DateFormatter.dateForClient(from: createdString) else {
+            throw ModelUpdateError.invalidDateFromServer
+        }
+        
+        guard let game: GameModel = DataManager.shared.fetchEntity(with: ["id" : gameId]) else {
+            throw ModelUpdateError.invalidDictionary
+        }
         
         self.id = Int32(id)
         self.content = content
-        // TODO
-        // self.game = GameModel.fetch(withId: gameId)!
-        // self.created = some fancy extension of DateFormatter to suit our needs
+        self.created = created
+        self.game = game
     }
 }
