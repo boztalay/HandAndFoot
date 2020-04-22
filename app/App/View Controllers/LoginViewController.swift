@@ -20,7 +20,8 @@ class LoginViewController: UIViewController {
     var emailTextField: UITextField
     var passwordTextField: UITextField
     var passwordConfirmationTextField: UITextField
-    var logOrSignInButton: UIButton
+    var logInButton: UIButton
+    var signUpButton: UIButton
     
     var mode: LoginViewControllerMode
     
@@ -46,7 +47,11 @@ class LoginViewController: UIViewController {
         self.passwordConfirmationTextField.placeholder = "Password (Again [Sorry])"
         self.passwordConfirmationTextField.isSecureTextEntry = true
         
-        self.logOrSignInButton = UIButton()
+        self.logInButton = UIButton(type: .system)
+        self.logInButton.setTitle(LoginViewControllerMode.logIn.rawValue, for: .normal)
+        
+        self.signUpButton = UIButton(type: .system)
+        self.signUpButton.setTitle(LoginViewControllerMode.signUp.rawValue, for: .normal)
 
         self.mode = .logIn
         
@@ -61,9 +66,9 @@ class LoginViewController: UIViewController {
         self.modeSegmentedControl.addTarget(self, action: #selector(LoginViewController.modeSegmentedControlChanged), for: .valueChanged)
         self.modeSegmentedControl.centerHorizontally(in: self.view)
         self.modeSegmentedControl.pin(edge: .top, to: .top, of: self.view, with: 10.0)
-        
-        self.view.addSubview(self.logOrSignInButton)
-        self.logOrSignInButton.addTarget(self, action: #selector(LoginViewController.logInOrSignInButtonPressed), for: .touchUpInside)
+
+        self.logInButton.addTarget(self, action: #selector(LoginViewController.logInButtonPressed), for: .touchUpInside)
+        self.signUpButton.addTarget(self, action: #selector(LoginViewController.signUpButtonPressed), for: .touchUpInside)
         
         self.setMode(.logIn)
     }
@@ -80,6 +85,8 @@ class LoginViewController: UIViewController {
         self.emailTextField.removeFromSuperview()
         self.passwordTextField.removeFromSuperview()
         self.passwordConfirmationTextField.removeFromSuperview()
+        self.logInButton.removeFromSuperview()
+        self.signUpButton.removeFromSuperview()
         
         switch self.mode {
             case .logIn:
@@ -97,6 +104,11 @@ class LoginViewController: UIViewController {
         self.view.addSubview(self.passwordTextField)
         self.passwordTextField.centerHorizontally(in: self.view)
         self.passwordTextField.pin(edge: .top, to: .bottom, of: self.emailTextField, with: 10.0)
+        
+        self.view.addSubview(self.logInButton)
+        self.logInButton.setTitle(self.mode.rawValue, for: .normal)
+        self.logInButton.centerHorizontally(in: self.view)
+        self.logInButton.pin(edge: .top, to: .bottom, of: self.passwordTextField, with: 10.0)
     }
     
     func setUpViewsForSigningUp() {
@@ -111,14 +123,18 @@ class LoginViewController: UIViewController {
         self.view.addSubview(self.passwordTextField)
         self.passwordTextField.centerHorizontally(in: self.view)
         self.passwordTextField.pin(edge: .top, to: .bottom, of: self.emailTextField, with: 10.0)
-        
-        
+
         self.view.addSubview(self.passwordConfirmationTextField)
         self.passwordConfirmationTextField.centerHorizontally(in: self.view)
         self.passwordConfirmationTextField.pin(edge: .top, to: .bottom, of: self.passwordTextField, with: 10.0)
+        
+        self.view.addSubview(self.signUpButton)
+        self.signUpButton.setTitle(self.mode.rawValue, for: .normal)
+        self.signUpButton.centerHorizontally(in: self.view)
+        self.signUpButton.pin(edge: .top, to: .bottom, of: self.passwordConfirmationTextField, with: 10.0)
     }
     
-    @objc func logInOrSignInButtonPressed(_ sender: Any) {
+    @objc func logInButtonPressed(_ sender: Any) {
         // TODO: Make more generic for what mode we're in
         
         guard let email = self.emailTextField.text,
