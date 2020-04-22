@@ -30,19 +30,27 @@ class LoginViewController: UIViewController {
         self.modeSegmentedControl.selectedSegmentIndex = 0
         
         self.emailTextField = UITextField()
+        self.emailTextField.borderStyle = .roundedRect
+        self.emailTextField.textAlignment = .center
         self.emailTextField.textContentType = .emailAddress
         self.emailTextField.placeholder = "Electronic Mail Address"
         
         self.passwordTextField = UITextField()
+        self.passwordTextField.borderStyle = .roundedRect
+        self.passwordTextField.textAlignment = .center
         self.passwordTextField.textContentType = .password
         self.passwordTextField.placeholder = "Password"
         self.passwordTextField.isSecureTextEntry = true
         
         self.nameTextField = UITextField()
+        self.nameTextField.borderStyle = .roundedRect
+        self.nameTextField.textAlignment = .center
         self.nameTextField.textContentType = .name
         self.nameTextField.placeholder = "Name"
         
         self.passwordConfirmationTextField = UITextField()
+        self.passwordConfirmationTextField.borderStyle = .roundedRect
+        self.passwordConfirmationTextField.textAlignment = .center
         self.passwordConfirmationTextField.textContentType = .password
         self.passwordConfirmationTextField.placeholder = "Password (Again [Sorry])"
         self.passwordConfirmationTextField.isSecureTextEntry = true
@@ -65,7 +73,7 @@ class LoginViewController: UIViewController {
         self.view.addSubview(self.modeSegmentedControl)
         self.modeSegmentedControl.addTarget(self, action: #selector(LoginViewController.modeSegmentedControlChanged), for: .valueChanged)
         self.modeSegmentedControl.centerHorizontally(in: self.view)
-        self.modeSegmentedControl.pin(edge: .top, to: .top, of: self.view, with: 10.0)
+        self.modeSegmentedControl.pin(edge: .top, to: .top, of: self.view, with: 250.0)
 
         self.logInButton.addTarget(self, action: #selector(LoginViewController.logInButtonPressed), for: .touchUpInside)
         self.signUpButton.addTarget(self, action: #selector(LoginViewController.signUpButtonPressed), for: .touchUpInside)
@@ -94,12 +102,19 @@ class LoginViewController: UIViewController {
             case .signUp:
                 self.setUpViewsForSigningUp()
         }
+        
+        self.nameTextField.pinWidth(to: 300.0)
+        self.emailTextField.pinWidth(to: 300.0)
+        self.passwordTextField.pinWidth(to: 300.0)
+        self.passwordConfirmationTextField.pinWidth(to: 300.0)
+        self.logInButton.pinWidth(to: 300.0)
+        self.signUpButton.pinWidth(to: 300.0)
     }
     
     func setUpViewsForLoggingIn() {
         self.view.addSubview(self.emailTextField)
         self.emailTextField.centerHorizontally(in: self.view)
-        self.emailTextField.pin(edge: .top, to: .bottom, of: self.modeSegmentedControl, with: 10.0)
+        self.emailTextField.pin(edge: .top, to: .bottom, of: self.modeSegmentedControl, with: 25.0)
         
         self.view.addSubview(self.passwordTextField)
         self.passwordTextField.centerHorizontally(in: self.view)
@@ -108,13 +123,13 @@ class LoginViewController: UIViewController {
         self.view.addSubview(self.logInButton)
         self.logInButton.setTitle(self.mode.rawValue, for: .normal)
         self.logInButton.centerHorizontally(in: self.view)
-        self.logInButton.pin(edge: .top, to: .bottom, of: self.passwordTextField, with: 10.0)
+        self.logInButton.pin(edge: .top, to: .bottom, of: self.passwordTextField, with: 25.0)
     }
     
     func setUpViewsForSigningUp() {
         self.view.addSubview(self.nameTextField)
         self.nameTextField.centerHorizontally(in: self.view)
-        self.nameTextField.pin(edge: .top, to: .bottom, of: self.modeSegmentedControl, with: 10.0)
+        self.nameTextField.pin(edge: .top, to: .bottom, of: self.modeSegmentedControl, with: 25.0)
         
         self.view.addSubview(self.emailTextField)
         self.emailTextField.centerHorizontally(in: self.view)
@@ -131,7 +146,7 @@ class LoginViewController: UIViewController {
         self.view.addSubview(self.signUpButton)
         self.signUpButton.setTitle(self.mode.rawValue, for: .normal)
         self.signUpButton.centerHorizontally(in: self.view)
-        self.signUpButton.pin(edge: .top, to: .bottom, of: self.passwordConfirmationTextField, with: 10.0)
+        self.signUpButton.pin(edge: .top, to: .bottom, of: self.passwordConfirmationTextField, with: 25.0)
     }
     
     @objc func logInButtonPressed(_ sender: Any) {
