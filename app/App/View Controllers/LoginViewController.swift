@@ -33,6 +33,7 @@ class LoginViewController: UIViewController {
         self.emailTextField.borderStyle = .roundedRect
         self.emailTextField.textAlignment = .center
         self.emailTextField.textContentType = .emailAddress
+        self.emailTextField.autocapitalizationType = .none
         self.emailTextField.placeholder = "Electronic Mail Address"
         
         self.passwordTextField = UITextField()
@@ -75,8 +76,8 @@ class LoginViewController: UIViewController {
         self.modeSegmentedControl.centerHorizontally(in: self.view)
         self.modeSegmentedControl.pin(edge: .top, to: .top, of: self.view, with: 250.0)
 
-        self.logInButton.addTarget(self, action: #selector(LoginViewController.logInButtonPressed), for: .touchUpInside)
-        self.signUpButton.addTarget(self, action: #selector(LoginViewController.signUpButtonPressed), for: .touchUpInside)
+        self.logInButton.addTarget(self, action: #selector(LoginViewController.logInOrSignUpButtonPressed), for: .touchUpInside)
+        self.signUpButton.addTarget(self, action: #selector(LoginViewController.logInOrSignUpButtonPressed), for: .touchUpInside)
         
         self.setMode(.logIn)
     }
@@ -149,70 +150,44 @@ class LoginViewController: UIViewController {
         self.signUpButton.pin(edge: .top, to: .bottom, of: self.passwordConfirmationTextField, with: 25.0)
     }
     
-    @objc func logInButtonPressed(_ sender: Any) {
-        // TODO: Make more generic for what mode we're in
-        
-        guard let email = self.emailTextField.text,
-              let password = self.passwordTextField.text else {
-            return
-        }
-        
-        Network.shared.sendLoginRequest(email: email, password: password) { (success, httpStatusCode, response) in
-            print("Success: \(success)")
-            print("Status Code: \(String(describing: httpStatusCode))")
-            print("Response: \(String(describing: response))")
-
-            guard success else {
-                return
-            }
-
-            DataManager.shared.setCurrentUser(with: email)
-            DataManager.shared.sync() { (success) in
-                print("Sync success: \(success)")
-            }
-        }
-    }
-
-    @objc func signUpButtonPressed(_ sender: Any) {
+    @objc func logInOrSignUpButtonPressed(_ sender: Any) {
         guard let name = self.nameTextField.text,
               let email = self.emailTextField.text,
               let password = self.passwordTextField.text,
               let passwordConfirmation = self.passwordConfirmationTextField.text else {
-            
-            let alert = UIAlertController.init(
-                title: "Missing Field",
-                message: "Please fill out all fields!",
-                preferredStyle: .alert
-            )
-
-            alert.show(self, sender: nil)
-            return
+            fatalError("Whaaaaaat")
         }
         
-        guard password == passwordConfirmation else {
-            let alert = UIAlertController.init(
-                title: "Password Mismatch",
-                message: "Passwords don't match!",
-                preferredStyle: .alert
-            )
-
-            alert.show(self, sender: nil)
-            return
-        }
-        
-        Network.shared.sendSignUpRequest(name: name, email: email, password: password) { (success, httpStatusCode, response) in
-            print("Success: \(success)")
-            print("Status Code: \(String(describing: httpStatusCode))")
-            print("Response: \(String(describing: response))")
-            
-            guard success else {
+        if self.mode == .logIn {
+            Network.shared.sendLoginRequest(email: email, password: password) { (success, httpStatusCode, response) in
+                self.handleLogin(with: email, success)
+            }
+        } else if self.mode == .signUp {
+            guard password == passwordConfirmation else {
+                UIAlertController.presentErrorAlert(on: self, title: "Password Mismatch", message: "Passwords don't match!")
                 return
             }
-
-            DataManager.shared.setCurrentUser(with: email)
-            DataManager.shared.sync() { (success) in
-                print("Sync success: \(success)")
+            
+            Network.shared.sendSignUpRequest(name: name, email: email, password: password) { (success, httpStatusCode, response) in
+                self.handleLogin(with: email, success)
             }
+        }
+    }
+    
+    func handleLogin(with email: String, _ success: Bool) {
+        guard success else {
+            UIAlertController.presentErrorAlert(on: self, title: "Login Failure", message: "Couldn't log in!")
+            return
+        }
+
+        DataManager.shared.setCurrentUser(with: email)
+        DataManager.shared.sync() { (success) in
+            guard success else {
+                UIAlertController.presentErrorAlert(on: self, title: "Sync Failure", message: "Couldn't sync!")
+                return
+            }
+            
+            print("Sync success: \(success)")
         }
     }
     
