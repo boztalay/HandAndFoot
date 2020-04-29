@@ -104,12 +104,12 @@ class LoginViewController: UIViewController {
                 self.setUpViewsForSigningUp()
         }
         
-        self.nameTextField.pinWidth(to: 300.0)
-        self.emailTextField.pinWidth(to: 300.0)
-        self.passwordTextField.pinWidth(to: 300.0)
-        self.passwordConfirmationTextField.pinWidth(to: 300.0)
-        self.logInButton.pinWidth(to: 300.0)
-        self.signUpButton.pinWidth(to: 300.0)
+        self.nameTextField.setWidth(to: 300.0)
+        self.emailTextField.setWidth(to: 300.0)
+        self.passwordTextField.setWidth(to: 300.0)
+        self.passwordConfirmationTextField.setWidth(to: 300.0)
+        self.logInButton.setWidth(to: 300.0)
+        self.signUpButton.setWidth(to: 300.0)
     }
     
     func setUpViewsForLoggingIn() {
@@ -188,10 +188,14 @@ class LoginViewController: UIViewController {
             }
             
             print("Sync success: \(success)")
+            
+            let gamesViewController = GamesViewController()
+            gamesViewController.modalPresentationStyle = .fullScreen
+            self.present(gamesViewController, animated: true, completion: nil)
         }
     }
     
     required init?(coder: NSCoder) {
-        fatalError("Not implemented")
+        fatalError("init(coder:) has not been implemented")
     }
 }
