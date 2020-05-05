@@ -187,8 +187,6 @@ class LoginViewController: UIViewController {
                 return
             }
             
-            print("Sync success: \(success)")
-            
             let gamesViewController = GamesViewController()
             gamesViewController.modalPresentationStyle = .fullScreen
             self.present(gamesViewController, animated: true, completion: nil)

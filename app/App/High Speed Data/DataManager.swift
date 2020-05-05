@@ -96,6 +96,25 @@ class DataManager {
         }
     }
     
+    func fetchEntities<T: ModelUpdateable>(sortedBy sortKey: String? = nil, ascending: Bool = false) -> [T]? {
+        let fetchRequest = NSFetchRequest<T>(entityName: T.entityName)
+        
+        if let sortKey = sortKey {
+            fetchRequest.sortDescriptors = [
+                NSSortDescriptor(key: sortKey, ascending: ascending)
+            ]
+        }
+        
+        let results: [T]
+        do {
+            results = try self.persistentContainer.viewContext.fetch(fetchRequest)
+        } catch {
+            return nil
+        }
+        
+        return results
+    }
+    
     func sync(callback: @escaping DataManagerSyncCallback) {
         let syncDate: Date
         if self.lastUpdated != nil {
