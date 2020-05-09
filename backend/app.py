@@ -6,7 +6,7 @@ import flask_login
 import itsdangerous
 
 import engine
-import secrets
+import sekrits
 
 from models import db
 from models import User
@@ -19,7 +19,7 @@ from models import Action
 #
 
 app = flask.Flask(__name__)
-app.secret_key = secrets.app_secrets["secret_key"]
+app.secret_key = sekrits.app_secrets["secret_key"]
 
 flask_cors.CORS(app)
 
@@ -47,7 +47,7 @@ def token_required(function):
             return error("No API token found in request", 400)
 
         try:
-            signer = itsdangerous.Signer(secrets.app_secrets["token_signing_key"])
+            signer = itsdangerous.Signer(sekrits.app_secrets["token_signing_key"])
             email = signer.unsign(api_token).decode("utf-8")
 
             user = User.get(User.email == email)

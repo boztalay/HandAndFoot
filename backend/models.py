@@ -8,13 +8,13 @@ import peewee
 import werkzeug
 
 import engine
-import secrets
+import sekrits
 
 db = peewee.MySQLDatabase(
-    secrets.db_secrets["name"],
-    host=secrets.db_secrets["host"],
-    user=secrets.db_secrets["user"],
-    passwd=secrets.db_secrets["password"],
+    sekrits.db_secrets["name"],
+    host=sekrits.db_secrets["host"],
+    user=sekrits.db_secrets["user"],
+    passwd=sekrits.db_secrets["password"],
     charset="utf8mb4" # Enable unicode
 )
 
@@ -73,7 +73,7 @@ class User(BaseModel, flask_login.UserMixin):
         return False
 
     def token(self):
-        signer = itsdangerous.Signer(secrets.app_secrets["token_signing_key"])
+        signer = itsdangerous.Signer(sekrits.app_secrets["token_signing_key"])
         token = signer.sign(self.email)
         return token.decode('utf-8')
 
