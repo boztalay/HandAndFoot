@@ -23,8 +23,15 @@ protocol ModelUpdateable: NSManagedObject {
 extension ModelUpdateable {
 
     static func updateOrCreate(from json: JSONDictionary) throws {
-        guard let entity: Self = DataManager.shared.fetchEntity(with: json) else {
-            throw ModelUpdateError.couldNotFindOrCreateEntity
+        var entity: Self
+
+        if let existingEntity: Self = DataManager.shared.fetchEntity(with: json) {
+            entity = existingEntity
+        } else {
+            guard let newEntity: Self = DataManager.shared.createEntity() else {
+                throw ModelUpdateError.couldNotFindOrCreateEntity
+            }
+            entity = newEntity
         }
         
         try entity.update(from: json)

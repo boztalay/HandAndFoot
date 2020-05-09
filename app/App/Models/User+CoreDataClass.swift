@@ -17,8 +17,8 @@ public class User: NSManagedObject, ModelUpdateable {
     
     func update(from json: JSONDictionary) throws {
         guard let id = json["id"] as? Int,
-              let firstName = json["firstName"] as? String,
-              let lastName = json["lastName"] as? String,
+              let firstName = json["first_name"] as? String,
+              let lastName = json["last_name"] as? String,
               let email = json["email"] as? String,
               let createdString = json["created"] as? String,
               let lastUpdatedString = json["last_updated"] as? String else {

@@ -19,7 +19,7 @@ public class GameModel: NSManagedObject, ModelUpdateable {
         guard let id = json["id"] as? Int,
               let initialState = json["initial_state"] as? String,
               let title = json["title"] as? String,
-              let currentUserId = json["currentUser"] as? Int,
+              let currentUserId = json["current_user"] as? Int,
               let createdString = json["created"] as? String,
               let lastUpdatedString = json["last_updated"] as? String else {
             

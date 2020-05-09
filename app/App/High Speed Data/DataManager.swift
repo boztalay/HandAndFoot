@@ -52,6 +52,10 @@ class DataManager {
         return container
     }()
     
+    func createEntity<T: ModelUpdateable>() -> T? {
+        return NSEntityDescription.insertNewObject(forEntityName: T.entityName, into: self.persistentContainer.viewContext) as? T
+    }
+    
     func fetchEntity<T: ModelUpdateable>(with json: JSONDictionary) -> T?  {
         guard let id = json["id"] as? Int else {
             return nil
@@ -67,9 +71,7 @@ class DataManager {
             return nil
         }
         
-        if results.count == 0 {
-            return NSEntityDescription.insertNewObject(forEntityName: T.entityName, into: self.persistentContainer.viewContext) as? T
-        } else if results.count == 1 {
+        if results.count == 1 {
             return results.first!
         } else {
             return nil
@@ -144,12 +146,12 @@ class DataManager {
             }
             
             do {
-                for gameJson in gameJsons {
-                    try GameModel.updateOrCreate(from: gameJson)
-                }
-
                 for userJson in userJsons {
                     try User.updateOrCreate(from: userJson)
+                }
+                
+                for gameJson in gameJsons {
+                    try GameModel.updateOrCreate(from: gameJson)
                 }
                 
                 for usergameJson in usergameJsons {
