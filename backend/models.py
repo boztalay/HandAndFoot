@@ -95,13 +95,14 @@ class Game(BaseModel):
     last_updated = peewee.DateTimeField(default=datetime.datetime.now)
 
     @staticmethod
-    def create(title, player_names):
+    def create(title, users):
+        player_names = [user.email for user in users]
         game_engine = engine.Engine(player_names)
 
         initial_game_state_json = game_engine.generate_initial_game_state()
         initial_game_state_string = json.dumps(initial_game_state_json)
 
-        game = Game(initial_state=initial_game_state_string)
+        game = Game(title=title, initial_state=initial_game_state_string, current_user=users[0])
         game.save()
 
         return game

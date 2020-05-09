@@ -10,6 +10,7 @@ import sekrits
 
 from models import db
 from models import User
+from models import UserRole
 from models import Game
 from models import UserGame
 from models import Action
@@ -207,7 +208,7 @@ def create_game(current_user):
     if len(user_emails) < 1 or len(user_emails) > 5:
         return error("Player count is out of range", 400)
 
-    users = []
+    users = [current_user]
     for user_email in user_emails:
         user = User.get_or_none(User.email == user_email)
         if user is None:
@@ -218,7 +219,8 @@ def create_game(current_user):
     game = Game.create(title, users)
     UserGame.create(current_user, game, UserRole.OWNER)
 
-    for user in users:
+    # TODO: [1:] is kinda gross
+    for user in users[1:]:
         UserGame.create(user, game, UserRole.PLAYER)
 
     return success(game_id=game.id)
