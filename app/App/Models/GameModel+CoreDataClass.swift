@@ -18,6 +18,8 @@ public class GameModel: NSManagedObject, ModelUpdateable {
     func update(from json: JSONDictionary) throws {
         guard let id = json["id"] as? Int,
               let initialState = json["initial_state"] as? String,
+              let title = json["title"] as? String,
+              let currentUserId = json["currentUser"] as? Int,
               let createdString = json["created"] as? String,
               let lastUpdatedString = json["last_updated"] as? String else {
             
@@ -29,8 +31,14 @@ public class GameModel: NSManagedObject, ModelUpdateable {
             throw ModelUpdateError.invalidDateFromServer
         }
         
+        guard let currentUser: User = DataManager.shared.fetchEntity(with: ["id" : currentUserId]) else {
+            throw ModelUpdateError.invalidDictionary
+        }
+        
         self.id = Int32(id)
         self.initialState = initialState
+        self.title = title
+        self.currentUser = currentUser
         self.created = created
         self.lastUpdated = lastUpdated
     }

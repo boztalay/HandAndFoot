@@ -11,15 +11,19 @@
         <attribute name="id" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="initialState" attributeType="String"/>
         <attribute name="lastUpdated" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="title" optional="YES" attributeType="String"/>
         <relationship name="actions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ActionModel" inverseName="game" inverseEntity="ActionModel"/>
+        <relationship name="currentUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="currentGames" inverseEntity="User"/>
         <relationship name="usergames" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserGame" inverseName="game" inverseEntity="UserGame"/>
     </entity>
     <entity name="User" representedClassName="User" syncable="YES" codeGenerationType="category">
         <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="email" attributeType="String"/>
+        <attribute name="firstName" attributeType="String"/>
         <attribute name="id" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="lastName" optional="YES" attributeType="String"/>
         <attribute name="lastUpdated" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="name" attributeType="String"/>
+        <relationship name="currentGames" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="GameModel" inverseName="currentUser" inverseEntity="GameModel"/>
         <relationship name="usergames" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserGame" inverseName="user" inverseEntity="UserGame"/>
     </entity>
     <entity name="UserGame" representedClassName="UserGame" syncable="YES" codeGenerationType="category">
@@ -31,8 +35,8 @@
     </entity>
     <elements>
         <element name="ActionModel" positionX="54" positionY="153" width="128" height="103"/>
-        <element name="GameModel" positionX="-36" positionY="9" width="128" height="133"/>
-        <element name="User" positionX="0" positionY="72" width="128" height="133"/>
+        <element name="GameModel" positionX="-36" positionY="9" width="128" height="163"/>
+        <element name="User" positionX="0" positionY="72" width="128" height="163"/>
         <element name="UserGame" positionX="27" positionY="117" width="128" height="118"/>
     </elements>
 </model>

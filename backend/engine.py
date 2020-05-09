@@ -752,6 +752,10 @@ class Engine(object):
     def __init__(self, player_names):
         self.player_names = player_names
 
+    @property
+    def current_player(self):
+        return self.game.player_iterator.current_player
+
     def generate_initial_game_state(self):
         standard_deck_count = len(self.player_names) + 1
 

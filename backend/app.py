@@ -101,7 +101,8 @@ def signup():
     if body is None:
         return error("Could not decode body as JSON", 400)
 
-    name = body.get("name")
+    first_name = body.get("first_name")
+    last_name = body.get("last_name")
     email = body.get("email")
     password = body.get("password")
 
@@ -109,7 +110,7 @@ def signup():
     if existing_user:
         return error("User already exists", 403)
 
-    new_user = User.create(email, name, password)
+    new_user = User.create(email, first_name, last_name, password)
 
     if new_user:
         flask_login.login_user(new_user)
@@ -195,6 +196,10 @@ def create_game(current_user):
     if body is None:
         return error("Could not decode body as JSON", 400)
 
+    title = body.get("title")
+    if (title is None) or (type(title) is not str):
+        return error("Title required", 400)
+
     user_emails = body.get("users")
     if (user_emails is None) or (type(user_emails) is not list):
         return error("Emails of other players required", 400)
@@ -210,7 +215,7 @@ def create_game(current_user):
         else:
             users.append(user)
 
-    game = Game.create(users)
+    game = Game.create(title, users)
     UserGame.create(current_user, game, UserRole.OWNER)
 
     for user in users:
@@ -294,6 +299,7 @@ def add_action_to_game(current_user):
 
     action.save()
 
+    game.update_current_user()
     game.last_updated = datetime.datetime.now(datetime.timezone.utc)
     game.save()
 

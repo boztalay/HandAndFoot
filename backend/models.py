@@ -27,18 +27,12 @@ class BaseModel(peewee.Model):
         database = db
 
 class User(BaseModel, flask_login.UserMixin):
-    name = peewee.CharField()
+    first_name = peewee.CharField()
+    last_name = peewee.CharField()
     email = peewee.CharField(unique=True)
     password_hash = peewee.CharField()
     created = peewee.DateTimeField(default=datetime.datetime.now)
     last_updated = peewee.DateTimeField(default=datetime.datetime.now)
-
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'name': self.name,
-            'email': self.email,
-        }
 
     @staticmethod
     def login(email, password):
@@ -53,9 +47,9 @@ class User(BaseModel, flask_login.UserMixin):
             return None
 
     @staticmethod
-    def create(email, name, password):
+    def create(email, first_name, last_name, password):
         password_hash = werkzeug.security.generate_password_hash(password)
-        user = User(email=email, name=name, password_hash=password_hash)
+        user = User(email=email, first_name=first_name, last_name=last_name, password_hash=password_hash)
         user.save()
         return user
 
@@ -83,16 +77,11 @@ class User(BaseModel, flask_login.UserMixin):
         token = signer.sign(self.email)
         return token.decode('utf-8')
 
-    name = peewee.CharField()
-    email = peewee.CharField(unique=True)
-    password_hash = peewee.CharField()
-    created = peewee.DateTimeField(default=datetime.datetime.now)
-    last_updated = peewee.DateTimeField(default=datetime.datetime.now)
-
     def to_json(self):
         return {
             "id": self.id,
-            "name": self.name,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
             "email": self.email,
             "created": self.created,
             "last_updated": self.last_updated
@@ -100,11 +89,13 @@ class User(BaseModel, flask_login.UserMixin):
 
 class Game(BaseModel):
     initial_state = peewee.TextField()
+    title = peewee.CharField()
+    current_user = peewee.ForeignKeyField(User, lazy_load=False)
     created = peewee.DateTimeField(default=datetime.datetime.now)
     last_updated = peewee.DateTimeField(default=datetime.datetime.now)
 
     @staticmethod
-    def create(player_names):
+    def create(title, player_names):
         game_engine = engine.Engine(player_names)
 
         initial_game_state_json = game_engine.generate_initial_game_state()
@@ -139,10 +130,20 @@ class Game(BaseModel):
     def apply_action(self, action):
         self.game_engine.apply_action(action.load_content_json())
 
+    def update_current_user(self):
+        current_user_email = self.game_engine.current_player
+        current_user = User.get_or_none(User.email == current_user_email)
+        if current_user is None:
+            raise ValueError("Something went terribly wrong")
+
+        self.current_user = current_user
+
     def to_json(self):
         return {
             "id": self.id,
             "initial_state": self.initial_state,
+            "title": self.title,
+            "current_user": self.current_user_id,
             "created": self.created,
             "last_updated": self.last_updated
         }
