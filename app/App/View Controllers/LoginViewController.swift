@@ -80,6 +80,11 @@ class LoginViewController: UIViewController {
         self.signUpButton.addTarget(self, action: #selector(LoginViewController.logInOrSignUpButtonPressed), for: .touchUpInside)
         
         self.setMode(.logIn)
+        
+        // TODO: REMOVE
+        self.emailTextField.text = "ben@ben.com"
+        self.passwordTextField.text = "password"
+        self.logInOrSignUpButtonPressed(self)
     }
 
     @objc func modeSegmentedControlChanged(_ sender: Any) {

@@ -11,12 +11,14 @@ import UIKit
 class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     var gameListTableView: UITableView
+    var dividerView: UIView
     var gamePreviewView: GamePreviewView
     
     var gameModels: [GameModel]
 
     init() {
         self.gameListTableView = UITableView()
+        self.dividerView = UIView()
         self.gamePreviewView = GamePreviewView()
         self.gameModels = []
         
@@ -39,8 +41,15 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.gameListTableView.pin(edge: .bottom, to: .bottom, of: self.view)
         self.gameListTableView.pinWidth(toWidthOf: self.view, multiplier: 0.3)
         
+        self.view.addSubview(self.dividerView)
+        self.dividerView.pin(edge: .top, to: .top, of: self.view)
+        self.dividerView.pin(edge: .bottom, to: .bottom, of: self.view)
+        self.dividerView.pin(edge: .leading, to: .trailing, of: self.gameListTableView)
+        self.dividerView.setWidth(to: 0.5)
+        self.dividerView.backgroundColor = .lightGray
+        
         self.view.addSubview(self.gamePreviewView)
-        self.gamePreviewView.pin(edge: .leading, to: .trailing, of: self.gameListTableView)
+        self.gamePreviewView.pin(edge: .leading, to: .trailing, of: self.dividerView)
         self.gamePreviewView.pin(edge: .top, to: .top, of: self.view)
         self.gamePreviewView.pin(edge: .bottom, to: .bottom, of: self.view)
         self.gamePreviewView.pin(edge: .trailing, to: .trailing, of: self.view)

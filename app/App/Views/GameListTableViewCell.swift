@@ -21,13 +21,15 @@ class GameListTableViewCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         self.addSubview(self.titleLabel)
-        self.titleLabel.pin(edge: .top, to: .top, of: self)
+        self.titleLabel.pin(edge: .top, to: .top, of: self, with: 3.0)
         self.titleLabel.pinX(to: self, leading: self.separatorInset.left)
 
         self.addSubview(self.turnLabel)
         self.turnLabel.pin(edge: .top, to: .bottom, of: self.titleLabel)
-        self.turnLabel.pin(edge: .bottom, to: .bottom, of: self)
+        self.turnLabel.pin(edge: .bottom, to: .bottom, of: self, with: -3.0)
         self.turnLabel.pinX(to: self, leading: self.separatorInset.left)
+        self.turnLabel.font = UIFont.systemFont(ofSize: 16.0)
+        self.turnLabel.textColor = .lightGray
     }
 
     func setGame(_ game: GameModel) {
