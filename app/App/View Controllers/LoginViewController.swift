@@ -188,8 +188,10 @@ class LoginViewController: UIViewController {
             }
             
             let gamesViewController = GamesViewController()
-            gamesViewController.modalPresentationStyle = .fullScreen
-            self.present(gamesViewController, animated: true, completion: nil)
+            let navigationController = UINavigationController(rootViewController: gamesViewController)
+            navigationController.modalPresentationStyle = .fullScreen
+
+            self.present(navigationController, animated: true, completion: nil)
         }
     }
     

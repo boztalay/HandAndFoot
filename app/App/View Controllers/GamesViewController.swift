@@ -9,7 +9,7 @@
 import UIKit
 
 class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-    
+
     var gameListTableView: UITableView
     var gamePreviewView: GamePreviewView
     
@@ -30,6 +30,8 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
+        
+        self.title = "Games"
         
         self.view.addSubview(self.gameListTableView)
         self.gameListTableView.pin(edge: .leading, to: .leading, of: self.view)

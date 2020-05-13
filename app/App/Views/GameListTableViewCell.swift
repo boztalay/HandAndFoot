@@ -12,18 +12,27 @@ class GameListTableViewCell: UITableViewCell {
     
     static let reuseIdentifier = "GameListTableViewCell"
 
-    var gameIdLabel: UILabel
+    var titleLabel: UILabel
+    var turnLabel: UILabel
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        self.gameIdLabel = UILabel()
+        self.titleLabel = UILabel()
+        self.turnLabel = UILabel()
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        self.addSubview(self.gameIdLabel)
-        self.gameIdLabel.pin(to: self)
+
+        self.addSubview(self.titleLabel)
+        self.titleLabel.pin(edge: .top, to: .top, of: self)
+        self.titleLabel.pinX(to: self, leading: self.separatorInset.left)
+
+        self.addSubview(self.turnLabel)
+        self.turnLabel.pin(edge: .top, to: .bottom, of: self.titleLabel)
+        self.turnLabel.pin(edge: .bottom, to: .bottom, of: self)
+        self.turnLabel.pinX(to: self, leading: self.separatorInset.left)
     }
 
     func setGame(_ game: GameModel) {
-        self.gameIdLabel.text = "\(game.id)"
+        self.titleLabel.text = "\(game.title!)"
+        self.turnLabel.text = "\(game.currentUser!.firstName!)'s turn"
     }
     
     required init?(coder: NSCoder) {
