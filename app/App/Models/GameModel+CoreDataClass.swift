@@ -15,6 +15,8 @@ public class GameModel: NSManagedObject, ModelUpdateable {
 
     static let entityName = "GameModel"
     
+    var game: Game?
+    
     func update(from json: JSONDictionary) throws {
         guard let id = json["id"] as? Int,
               let initialState = json["initial_state"] as? String,
@@ -41,5 +43,32 @@ public class GameModel: NSManagedObject, ModelUpdateable {
         self.currentUser = currentUser
         self.created = created
         self.lastUpdated = lastUpdated
+    }
+    
+    func loadGame() {
+        guard let userGames = DataManager.shared.fetchUserGames(of: self) else {
+            fatalError("AAAHHH")
+        }
+        
+        let playerNames = userGames.map() { $0.user!.email! }
+        
+        let initialStateJson = try! JSONSerialization.jsonObject(with: self.initialState!.data(using: .utf8)!, options: []) as! JSONDictionary
+        let decks = [
+            Round.ninety: Deck(with: initialStateJson[Round.ninety.rawValue] as! JSONDictionary)!,
+            Round.oneTwenty: Deck(with: initialStateJson[Round.oneTwenty.rawValue] as! JSONDictionary)!,
+            Round.oneFifty: Deck(with: initialStateJson[Round.oneFifty.rawValue] as! JSONDictionary)!,
+            Round.oneEighty: Deck(with: initialStateJson[Round.oneEighty.rawValue] as! JSONDictionary)!
+        ]
+
+        guard let actionModels = DataManager.shared.fetchActions(of: self) else {
+            fatalError("OH NOOOO")
+        }
+        
+        let actions = actionModels.map() { Action(with: $0.contentJson)! }
+
+        self.game = try! Game(playerNames: playerNames, decks: decks)
+        for action in actions {
+            try! self.game!.apply(action: action)
+        }
     }
 }

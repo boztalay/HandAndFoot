@@ -37,4 +37,8 @@ public class ActionModel: NSManagedObject, ModelUpdateable {
         self.created = created
         self.game = game
     }
+    
+    var contentJson: JSONDictionary {
+        return try! JSONSerialization.jsonObject(with: self.content!.data(using: .utf8)!, options: []) as! JSONDictionary
+    }
 }

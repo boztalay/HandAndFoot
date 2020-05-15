@@ -117,6 +117,40 @@ class DataManager {
         return results
     }
     
+    func fetchUserGames(of game: GameModel) -> [UserGame]? {
+        let fetchRequest = NSFetchRequest<UserGame>(entityName: UserGame.entityName)
+        fetchRequest.predicate = NSPredicate(format: "game == %@", game)
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(key: "id", ascending: true)
+        ]
+        
+        let results: [UserGame]
+        do {
+            results = try self.persistentContainer.viewContext.fetch(fetchRequest)
+        } catch {
+            return nil
+        }
+        
+        return results
+    }
+    
+    func fetchActions(of game: GameModel) -> [ActionModel]? {
+        let fetchRequest = NSFetchRequest<ActionModel>(entityName: ActionModel.entityName)
+        fetchRequest.predicate = NSPredicate(format: "game == %@", game)
+        fetchRequest.sortDescriptors = [
+            NSSortDescriptor(key: "created", ascending: true)
+        ]
+        
+        let results: [ActionModel]
+        do {
+            results = try self.persistentContainer.viewContext.fetch(fetchRequest)
+        } catch {
+            return nil
+        }
+        
+        return results
+    }
+    
     func sync(callback: @escaping DataManagerSyncCallback) {
         let syncDate: Date
         if self.lastUpdated != nil {

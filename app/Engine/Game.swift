@@ -71,8 +71,8 @@ class Game: JSONEncodable {
     
     private var decks: [Round : Deck]
     private var discardPile: [Card]
-    private var players: [Player]
-    private var round: Round?
+    private(set) var players: [Player]
+    private(set) var round: Round?
     private var playerIterator: PlayerIterator
     
     var deck: Deck {
