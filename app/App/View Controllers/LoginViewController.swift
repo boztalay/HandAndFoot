@@ -15,17 +15,19 @@ enum LoginViewControllerMode: String, CaseIterable {
 
 class LoginViewController: UIViewController {
     
-    var modeSegmentedControl: UISegmentedControl
-    var nameTextField: UITextField
-    var emailTextField: UITextField
-    var passwordTextField: UITextField
-    var passwordConfirmationTextField: UITextField
-    var logInButton: UIButton
-    var signUpButton: UIButton
+    var modeSegmentedControl: UISegmentedControl!
+    var nameTextField: UITextField!
+    var emailTextField: UITextField!
+    var passwordTextField: UITextField!
+    var passwordConfirmationTextField: UITextField!
+    var logInButton: UIButton!
+    var signUpButton: UIButton!
     
-    var mode: LoginViewControllerMode
+    var mode: LoginViewControllerMode!
     
     init() {
+        super.init(nibName: nil, bundle: nil)
+
         self.modeSegmentedControl = UISegmentedControl(items: LoginViewControllerMode.allCases.map({ $0.rawValue }))
         self.modeSegmentedControl.selectedSegmentIndex = 0
         
@@ -63,8 +65,6 @@ class LoginViewController: UIViewController {
         self.signUpButton.setTitle(LoginViewControllerMode.signUp.rawValue, for: .normal)
 
         self.mode = .logIn
-        
-        super.init(nibName: nil, bundle: nil)
     }
 
     override func viewDidLoad() {
@@ -102,7 +102,7 @@ class LoginViewController: UIViewController {
         self.logInButton.removeFromSuperview()
         self.signUpButton.removeFromSuperview()
         
-        switch self.mode {
+        switch self.mode! {
             case .logIn:
                 self.setUpViewsForLoggingIn()
             case .signUp:

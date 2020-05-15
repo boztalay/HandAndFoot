@@ -10,21 +10,20 @@ import UIKit
 
 class CardView: UIView {
     
-    var rankLabel: UILabel
-    var suitLabel: UILabel
+    var rankLabel: UILabel!
+    var suitLabel: UILabel!
     
     init(card: Card) {
-        self.rankLabel = UILabel()
-        self.suitLabel = UILabel()
-
         super.init(frame: CGRect.zero)
-    }
-    
-    override func layoutSubviews() {
+        
+        self.rankLabel = UILabel()
+        self.addSubview(self.rankLabel)
         self.rankLabel.pin(edge: .leading, to: .leading, of: self, with: 5.0)
         self.rankLabel.pin(edge: .trailing, to: .trailing, of: self, with: 5.0)
         self.rankLabel.pin(edge: .top, to: .top, of: self, with: 5.0)
         
+        self.suitLabel = UILabel()
+        self.addSubview(self.suitLabel)
         self.suitLabel.pin(edge: .leading, to: .leading, of: self, with: 5.0)
         self.suitLabel.pin(edge: .trailing, to: .trailing, of: self, with: 5.0)
         self.suitLabel.pin(edge: .bottom, to: .bottom, of: self, with: 5.0)
