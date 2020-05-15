@@ -56,6 +56,15 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         self.gameModels = DataManager.shared.fetchEntities(sortedBy: "lastUpdated", ascending: false)!
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if self.gameModels.count > 0 {
+            self.gameListTableView.selectRow(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .top)
+            self.tableView(self.gameListTableView, didSelectRowAt: IndexPath(item: 0, section: 0))
+        }
+    }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.gameModels.count
