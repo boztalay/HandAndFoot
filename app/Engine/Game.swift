@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum Round: String {
+enum Round: String, CaseIterable {
     case ninety = "ninety"
     case oneTwenty = "one_twenty"
     case oneFifty = "one_fifty"
@@ -37,6 +37,19 @@ enum Round: String {
             return .oneEighty
         case .oneEighty:
             return nil
+        }
+    }
+    
+    var niceName: String {
+        switch (self) {
+            case .ninety:
+                return "Ninety"
+            case .oneTwenty:
+                return "One Twenty"
+            case .oneFifty:
+                return "One Fifty"
+            case .oneEighty:
+                return "One Eighty"
         }
     }
 }

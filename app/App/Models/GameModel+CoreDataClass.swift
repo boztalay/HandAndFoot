@@ -53,11 +53,12 @@ public class GameModel: NSManagedObject, ModelUpdateable {
         let playerNames = userGames.map() { $0.user!.email! }
         
         let initialStateJson = try! JSONSerialization.jsonObject(with: self.initialState!.data(using: .utf8)!, options: []) as! JSONDictionary
+        let decksJson = initialStateJson["decks"] as! JSONDictionary
         let decks = [
-            Round.ninety: Deck(with: initialStateJson[Round.ninety.rawValue] as! JSONDictionary)!,
-            Round.oneTwenty: Deck(with: initialStateJson[Round.oneTwenty.rawValue] as! JSONDictionary)!,
-            Round.oneFifty: Deck(with: initialStateJson[Round.oneFifty.rawValue] as! JSONDictionary)!,
-            Round.oneEighty: Deck(with: initialStateJson[Round.oneEighty.rawValue] as! JSONDictionary)!
+            Round.ninety: Deck(with: decksJson[Round.ninety.rawValue] as! JSONDictionary)!,
+            Round.oneTwenty: Deck(with: decksJson[Round.oneTwenty.rawValue] as! JSONDictionary)!,
+            Round.oneFifty: Deck(with: decksJson[Round.oneFifty.rawValue] as! JSONDictionary)!,
+            Round.oneEighty: Deck(with: decksJson[Round.oneEighty.rawValue] as! JSONDictionary)!
         ]
 
         guard let actionModels = DataManager.shared.fetchActions(of: self) else {
@@ -70,5 +71,15 @@ public class GameModel: NSManagedObject, ModelUpdateable {
         for action in actions {
             try! self.game!.apply(action: action)
         }
+    }
+    
+    func user(with email: String) -> User? {
+        let matchingUsergames = self.usergames!.filter() { ($0 as! UserGame).user!.email == email }
+        guard matchingUsergames.count == 1 else {
+            return nil
+        }
+        
+        let usergame = matchingUsergames.first! as! UserGame
+        return usergame.user!
     }
 }

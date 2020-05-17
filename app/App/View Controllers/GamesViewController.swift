@@ -72,12 +72,12 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = self.gameListTableView.dequeueReusableCell(withIdentifier: GameListTableViewCell.reuseIdentifier, for: indexPath) as! GameListTableViewCell
-        cell.setGame(self.gameModels[indexPath.row])
+        cell.setGameModel(self.gameModels[indexPath.row])
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.gamePreviewView.setGame(self.gameModels[indexPath.row])
+        self.gamePreviewView.setGameModel(self.gameModels[indexPath.row])
     }
     
     required init?(coder: NSCoder) {

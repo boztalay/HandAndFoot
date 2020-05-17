@@ -32,7 +32,7 @@ class GameListTableViewCell: UITableViewCell {
         self.turnLabel.textColor = .lightGray
     }
 
-    func setGame(_ game: GameModel) {
+    func setGameModel(_ game: GameModel) {
         self.titleLabel.text = "\(game.title!)"
         self.turnLabel.text = "\(game.currentUser!.firstName!)'s turn"
     }

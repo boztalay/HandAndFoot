@@ -42,7 +42,7 @@ class Player: JSONEncodable {
     private var hand: [Card]
     private var foot: [Card]
     private var books: [Round : [CardRank : Book]]
-    private var points: [Round : Points]
+    private(set) var points: [Round : Points]
     private var cardsDrawnFromDeck: UInt
     private var cardsDrawnFromDiscardPile: UInt
     
