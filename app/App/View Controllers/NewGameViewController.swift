@@ -33,7 +33,7 @@ class NewGameViewController: UIViewController, UITableViewDelegate, UITableViewD
         self.playerSearchController.searchResultsUpdater = self
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(NewGameViewController.cancelButtonPressed))
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: nil, action: #selector(NewGameViewController.doneButtonPressed))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(NewGameViewController.doneButtonPressed))
     }
     
     override func viewDidLoad() {

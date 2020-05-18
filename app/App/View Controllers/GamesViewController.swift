@@ -29,7 +29,7 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.gameListTableView.register(GameListTableViewCell.self, forCellReuseIdentifier: GameListTableViewCell.reuseIdentifier)
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "New Game", style: .plain, target: self, action: #selector(GamesViewController.newGameButtonPressed))
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Profile", style: .plain, target: nil, action: #selector(GamesViewController.profileButtonPressed))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Profile", style: .plain, target: self, action: #selector(GamesViewController.profileButtonPressed))
     }
     
     override func viewDidLoad() {
@@ -90,7 +90,9 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     @objc func profileButtonPressed(_ sender: Any) {
-        
+        let profileViewController = ProfileViewController()
+        let navigationController = UINavigationController(rootViewController: profileViewController)
+        self.present(navigationController, animated: true, completion: nil)
     }
     
     required init?(coder: NSCoder) {
