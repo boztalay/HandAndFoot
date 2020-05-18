@@ -84,7 +84,9 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     @objc func newGameButtonPressed(_ sender: Any) {
-        
+        let newGameViewController = NewGameViewController()
+        let navigationController = UINavigationController(rootViewController: newGameViewController)
+        self.present(navigationController, animated: true, completion: nil)
     }
     
     @objc func profileButtonPressed(_ sender: Any) {
