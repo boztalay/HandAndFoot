@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FB5512B424727EDE00814BAF /* ScoreBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5512B324727EDE00814BAF /* ScoreBoardView.swift */; };
 		FB5D037624469FA90044FBC5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037524469FA90044FBC5 /* AppDelegate.swift */; };
 		FB5D037824469FA90044FBC5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037724469FA90044FBC5 /* SceneDelegate.swift */; };
 		FB5D037A24469FA90044FBC5 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037924469FA90044FBC5 /* LoginViewController.swift */; };
@@ -60,6 +61,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		FB5512B324727EDE00814BAF /* ScoreBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreBoardView.swift; sourceTree = "<group>"; };
 		FB5D037224469FA90044FBC5 /* HandAndFoot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HandAndFoot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB5D037524469FA90044FBC5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FB5D037724469FA90044FBC5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -165,6 +167,7 @@
 				FB7DD378244FEA1800BC8AB4 /* CardView.swift */,
 				FBB97EFF24591A7700187CBF /* GamePreviewView.swift */,
 				FB79C2F3246158D100814CAE /* GameListTableViewCell.swift */,
+				FB5512B324727EDE00814BAF /* ScoreBoardView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -335,6 +338,7 @@
 			files = (
 				FB7DD37D24502B7500BC8AB4 /* UIAlertController+Convenience.swift in Sources */,
 				FB7DD37B244FEBFB00BC8AB4 /* UIView+Layout.swift in Sources */,
+				FB5512B424727EDE00814BAF /* ScoreBoardView.swift in Sources */,
 				FBDB3BAD2446A066008831FF /* Player.swift in Sources */,
 				FB64284C244AAAC600FDF34E /* DataManager.swift in Sources */,
 				FBB97EFE2459183E00187CBF /* GamesViewController.swift in Sources */,
