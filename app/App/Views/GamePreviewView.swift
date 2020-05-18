@@ -32,7 +32,7 @@ class GamePreviewView: UIView {
         self.titleLabel.removeFromSuperview()
         self.addSubview(self.titleLabel)
         self.titleLabel.centerHorizontally(in: self)
-        self.titleLabel.pin(edge: .top, to: .top, of: self, with: 20)
+        self.titleLabel.pin(edge: .top, to: .top, of: self, with: 40)
         self.titleLabel.font = UIFont.boldSystemFont(ofSize: 24.0)
         self.titleLabel.text = gameModel.title
         

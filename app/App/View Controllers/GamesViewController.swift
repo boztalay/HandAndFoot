@@ -27,6 +27,9 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.gameListTableView.delegate = self
         self.gameListTableView.dataSource = self
         self.gameListTableView.register(GameListTableViewCell.self, forCellReuseIdentifier: GameListTableViewCell.reuseIdentifier)
+        
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "New Game", style: .plain, target: self, action: #selector(GamesViewController.newGameButtonPressed))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Profile", style: .plain, target: nil, action: #selector(GamesViewController.profileButtonPressed))
     }
     
     override func viewDidLoad() {
@@ -78,6 +81,14 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         self.gamePreviewView.setGameModel(self.gameModels[indexPath.row])
+    }
+    
+    @objc func newGameButtonPressed(_ sender: Any) {
+        
+    }
+    
+    @objc func profileButtonPressed(_ sender: Any) {
+        
     }
     
     required init?(coder: NSCoder) {
