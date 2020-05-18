@@ -554,6 +554,9 @@ class Game(object):
         for player in self.players:
             self.deal_cards_to_player(player)
 
+        for player in self.players:
+            player.calculate_points(self.round)
+
     def deal_cards_to_player(self, player):
         hand = []
         for _ in range(0, 13):

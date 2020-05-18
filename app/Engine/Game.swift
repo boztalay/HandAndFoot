@@ -117,6 +117,10 @@ class Game: JSONEncodable {
         for player in self.players {
             try self.dealCards(to: player)
         }
+        
+        for player in self.players {
+            player.calculatePoints(in: self.round!)
+        }
     }
     
     private func dealCards(to player: Player) throws {
