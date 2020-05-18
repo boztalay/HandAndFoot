@@ -116,7 +116,7 @@ class Game(BaseModel):
         return (len([usergame for usergame in self.usergames if not usergame.user_accepted]) == 0)
 
     def load_initial_state(self):
-        player_names = [usergame.user.email for usergame in self.usergames]
+        player_names = [usergame.fetch_user().email for usergame in self.usergames]
         self.game_engine = engine.Engine(player_names)
 
         initial_game_state_json = json.loads(self.initial_state)
@@ -132,7 +132,7 @@ class Game(BaseModel):
         self.game_engine.apply_action(action.load_content_json())
 
     def update_current_user(self):
-        current_user_email = self.game_engine.current_player
+        current_user_email = self.game_engine.current_player.name
         current_user = User.get_or_none(User.email == current_user_email)
         if current_user is None:
             raise ValueError("Something went terribly wrong")
@@ -164,6 +164,9 @@ class UserGame(BaseModel):
 
         usergame.save()
         return user
+
+    def fetch_user(self):
+        return User.get(User.id == self.user)
 
     def to_json(self):
         return {
