@@ -55,6 +55,7 @@ class ScoreBoardView: UIView {
             let nameLabel = UILabel()
             nameLabel.text = gameModel.user(with: player.name)!.firstName!
             nameLabel.font = UIFont.boldSystemFont(ofSize: nameLabel.font.pointSize)
+            nameLabel.textAlignment = .center
             playerColumnStackView.addArrangedSubview(nameLabel)
             
             for round in Round.allCases {
@@ -62,10 +63,12 @@ class ScoreBoardView: UIView {
                 
                 let booksLabel = UILabel()
                 booksLabel.text = "\(points.inBooks)"
+                booksLabel.textAlignment = .right
                 
                 let nonBooksPoints = points.inHand + points.inFoot + points.laidDown + points.forGoingOut
                 let pointsLabel = UILabel()
                 pointsLabel.text = "\(nonBooksPoints)"
+                pointsLabel.textAlignment = .right
 
                 playerColumnStackView.addArrangedSubview(UIView())
                 playerColumnStackView.addArrangedSubview(UIView())
