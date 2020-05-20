@@ -136,7 +136,7 @@ def login():
     else:
         return error("Could not log user in", 403)
 
-@app.route("/api/logout")
+@app.route("/api/logout", methods=["POST"])
 def logout():
     flask_login.logout_user()
     return success()
