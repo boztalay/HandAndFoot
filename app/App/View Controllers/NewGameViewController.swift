@@ -20,7 +20,7 @@ class NewGameViewController: UIViewController, UITableViewDelegate, UITableViewD
     init() {
         super.init(nibName: nil, bundle: nil)
         
-        self.gameContentTableView = UITableView(frame: CGRect.zero, style: .grouped)
+        self.gameContentTableView = UITableView(frame: CGRect.zero, style: .insetGrouped)
         self.dividerView = UIView()
         self.playerSearchResultsTableViewController = UITableViewController()
         self.playerSearchController = UISearchController(searchResultsController: self.playerSearchResultsTableViewController)

@@ -10,13 +10,14 @@
 		FB5512B424727EDE00814BAF /* ScoreBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5512B324727EDE00814BAF /* ScoreBoardView.swift */; };
 		FB5512B6247289AF00814BAF /* NewGameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5512B5247289AF00814BAF /* NewGameViewController.swift */; };
 		FB5512B82472928200814BAF /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5512B72472928200814BAF /* ProfileViewController.swift */; };
+		FB5512BA2474C33D00814BAF /* GroupedSectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5512B92474C33D00814BAF /* GroupedSectionViewController.swift */; };
 		FB5D037624469FA90044FBC5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037524469FA90044FBC5 /* AppDelegate.swift */; };
 		FB5D037824469FA90044FBC5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037724469FA90044FBC5 /* SceneDelegate.swift */; };
 		FB5D037A24469FA90044FBC5 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037924469FA90044FBC5 /* LoginViewController.swift */; };
 		FB5D038024469FA90044FBC5 /* HandAndFoot.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037E24469FA90044FBC5 /* HandAndFoot.xcdatamodeld */; };
 		FB5D038224469FB10044FBC5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FB5D038124469FB10044FBC5 /* Assets.xcassets */; };
 		FB5D038524469FB10044FBC5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FB5D038324469FB10044FBC5 /* LaunchScreen.storyboard */; };
-		FB5E2C1B244F6CA900210545 /* DateFormatter+BackendFriendly.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5E2C1A244F6CA900210545 /* DateFormatter+BackendFriendly.swift */; };
+		FB5E2C1B244F6CA900210545 /* DateFormatter+CommonFormatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5E2C1A244F6CA900210545 /* DateFormatter+CommonFormatters.swift */; };
 		FB64284A244AA26200FDF34E /* Strongbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB642849244AA26200FDF34E /* Strongbox.swift */; };
 		FB64284C244AAAC600FDF34E /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB64284B244AAAC600FDF34E /* DataManager.swift */; };
 		FB64284E244AB20F00FDF34E /* ModelUpdateable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB64284D244AB20F00FDF34E /* ModelUpdateable.swift */; };
@@ -66,6 +67,7 @@
 		FB5512B324727EDE00814BAF /* ScoreBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreBoardView.swift; sourceTree = "<group>"; };
 		FB5512B5247289AF00814BAF /* NewGameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGameViewController.swift; sourceTree = "<group>"; };
 		FB5512B72472928200814BAF /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		FB5512B92474C33D00814BAF /* GroupedSectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupedSectionViewController.swift; sourceTree = "<group>"; };
 		FB5D037224469FA90044FBC5 /* HandAndFoot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HandAndFoot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB5D037524469FA90044FBC5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FB5D037724469FA90044FBC5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -74,7 +76,7 @@
 		FB5D038124469FB10044FBC5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FB5D038424469FB10044FBC5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FB5D038624469FB10044FBC5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FB5E2C1A244F6CA900210545 /* DateFormatter+BackendFriendly.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+BackendFriendly.swift"; sourceTree = "<group>"; };
+		FB5E2C1A244F6CA900210545 /* DateFormatter+CommonFormatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter+CommonFormatters.swift"; sourceTree = "<group>"; };
 		FB642849244AA26200FDF34E /* Strongbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Strongbox.swift; sourceTree = "<group>"; };
 		FB64284B244AAAC600FDF34E /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		FB64284D244AB20F00FDF34E /* ModelUpdateable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelUpdateable.swift; sourceTree = "<group>"; };
@@ -158,7 +160,7 @@
 		FB5E2C19244F6C7400210545 /* Foundation Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				FB5E2C1A244F6CA900210545 /* DateFormatter+BackendFriendly.swift */,
+				FB5E2C1A244F6CA900210545 /* DateFormatter+CommonFormatters.swift */,
 				FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */,
 				FB7DD37A244FEBFB00BC8AB4 /* UIView+Layout.swift */,
 			);
@@ -238,6 +240,7 @@
 				FBB97EFD2459183E00187CBF /* GamesViewController.swift */,
 				FB5512B5247289AF00814BAF /* NewGameViewController.swift */,
 				FB5512B72472928200814BAF /* ProfileViewController.swift */,
+				FB5512B92474C33D00814BAF /* GroupedSectionViewController.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -343,6 +346,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				FB7DD37D24502B7500BC8AB4 /* UIAlertController+Convenience.swift in Sources */,
+				FB5512BA2474C33D00814BAF /* GroupedSectionViewController.swift in Sources */,
 				FB7DD37B244FEBFB00BC8AB4 /* UIView+Layout.swift in Sources */,
 				FB5512B424727EDE00814BAF /* ScoreBoardView.swift in Sources */,
 				FBDB3BAD2446A066008831FF /* Player.swift in Sources */,
@@ -371,7 +375,7 @@
 				FB64284A244AA26200FDF34E /* Strongbox.swift in Sources */,
 				FBDB3BBA2446A321008831FF /* User+CoreDataClass.swift in Sources */,
 				FB7DD379244FEA1800BC8AB4 /* CardView.swift in Sources */,
-				FB5E2C1B244F6CA900210545 /* DateFormatter+BackendFriendly.swift in Sources */,
+				FB5E2C1B244F6CA900210545 /* DateFormatter+CommonFormatters.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

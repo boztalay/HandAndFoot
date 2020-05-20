@@ -26,11 +26,23 @@ extension DateFormatter {
         return formatter
     }
     
+    // "June 18, 2020"
+    static var friendlyDateFormatter: DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.timeStyle = .none
+        return formatter
+    }
+    
     static func dateForClient(from backendResponseString: String) -> Date? {
         return DateFormatter.fromServerFormatter.date(from: backendResponseString)
     }
     
     static func stringForServer(from date: Date) -> String {
         return DateFormatter.toServerFormatter.string(from: date)
+    }
+    
+    static func friendlyDateString(from date: Date) -> String {
+        return DateFormatter.friendlyDateFormatter.string(from: date)
     }
 }

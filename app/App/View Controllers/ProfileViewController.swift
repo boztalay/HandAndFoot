@@ -8,10 +8,10 @@
 
 import UIKit
 
-class ProfileViewController: UIViewController {
+class ProfileViewController: GroupSectionViewController {
 
     init() {
-        super.init(nibName: nil, bundle: nil)
+        super.init()
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(ProfileViewController.cancelButtonPressed))
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: .done, target: self, action: #selector(ProfileViewController.editButtonPressed))
@@ -19,9 +19,30 @@ class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .white
-        
         self.title = "Profile"
+    }
+    
+    override func sections() -> [Section] {
+        guard let user = DataManager.shared.currentUser else {
+            fatalError("No current user")
+        }
+        
+        return [
+            Section(
+                title: "Profile",
+                rows: [
+                    Row(name: "Email", detail: "\(user.email!)"),
+                    Row(name: "Name", detail: "\(user.firstName!) \(user.lastName!)"),
+                    Row(name: "Joined", detail: "\(DateFormatter.friendlyDateString(from: user.created!))")
+                ]
+            ),
+            Section(
+                title: "Account",
+                rows:[
+                    Row(name: "Log Out", detail: nil, action: #selector(ProfileViewController.logOutButtonPressed), destructive: true)
+                ]
+            )
+        ]
     }
     
     @objc func cancelButtonPressed(_ sender: Any) {
@@ -29,6 +50,10 @@ class ProfileViewController: UIViewController {
     }
     
     @objc func editButtonPressed(_ sender: Any) {
+        
+    }
+    
+    @objc func logOutButtonPressed() {
         
     }
     
