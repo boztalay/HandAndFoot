@@ -13,11 +13,29 @@ typealias DataManagerSyncCallback = (Bool) -> ()
 
 class DataManager {
     
-    static let shared = DataManager()
+    private enum Keys: String {
+        case token
+        case currentUserEmail
+        case lastUpdated
+    }
+
     private static let firstSyncDate = Date(timeIntervalSince1970: 0)
     
+    static let shared = DataManager()
+    
+    private var strongbox: Strongbox
+    private(set) var token: String?
+    
+    init() {
+        self.strongbox = Strongbox()
+        
+        if let token = self.strongbox.unarchive(objectForKey: Keys.token.rawValue) as? String {
+            self.token = token
+        }
+    }
+    
     var currentUser: User? {
-        guard let userEmail = UserDefaults.standard.string(forKey: "currentUserEmail") else {
+        guard let userEmail = UserDefaults.standard.string(forKey: Keys.currentUserEmail.rawValue) else {
             return nil
         }
         
@@ -25,19 +43,34 @@ class DataManager {
     }
     
     func setCurrentUser(with email: String) {
-        UserDefaults.standard.set(email, forKey: "currentUserEmail")
+        UserDefaults.standard.set(email, forKey: Keys.currentUserEmail.rawValue)
+    }
+    
+    func clearLocalData() {
+        UserDefaults.standard.removeObject(forKey: Keys.currentUserEmail.rawValue)
+        UserDefaults.standard.removeObject(forKey: Keys.lastUpdated.rawValue)
+        self.strongbox.remove(key: Keys.token.rawValue)
+        self.deleteAllCoreData()
+    }
+    
+    func setToken(_ token: String) {
+        self.token = token
+
+        if !self.strongbox.archive(self.token, key: Keys.token.rawValue) {
+            fatalError("Couldn't archive token")
+        }
     }
     
     private var lastUpdated: Date? {
         get {
-            guard let object = UserDefaults.standard.object(forKey: "lastUpdated") else {
+            guard let object = UserDefaults.standard.object(forKey: Keys.lastUpdated.rawValue) else {
                 return nil
             }
             
             return (object as! Date)
         }
         set(date) {
-            UserDefaults.standard.set(date, forKey: "lastUpdated")
+            UserDefaults.standard.set(date, forKey: Keys.lastUpdated.rawValue)
         }
     }
 
@@ -216,6 +249,32 @@ class DataManager {
                 let nserror = error as NSError
                 fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
             }
+        }
+    }
+    
+    private func deleteAllCoreData() {
+        self.deleteAllObjects(of: ActionModel.self)
+        self.deleteAllObjects(of: GameModel.self)
+        self.deleteAllObjects(of: User.self)
+        self.deleteAllObjects(of: UserGame.self)
+    }
+    
+    private func deleteAllObjects<T: ModelUpdateable>(of entityType: T.Type) {
+        let context = self.persistentContainer.viewContext
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: T.entityName)
+        fetchRequest.returnsObjectsAsFaults = false
+
+        do {
+            let results = try context.fetch(fetchRequest)
+            for object in results {
+                guard let objectData = object as? NSManagedObject else {continue}
+                context.delete(objectData)
+            }
+
+            try context.save()
+        } catch let error {
+            fatalError("Couldn't delete all objects of \(T.entityName): \(error)")
         }
     }
 }

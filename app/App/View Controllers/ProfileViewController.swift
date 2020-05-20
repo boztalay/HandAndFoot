@@ -9,6 +9,8 @@
 import UIKit
 
 class ProfileViewController: GroupSectionViewController {
+    
+    weak var logOutDelegate: LogOutDelegate?
 
     init() {
         super.init()
@@ -54,7 +56,17 @@ class ProfileViewController: GroupSectionViewController {
     }
     
     @objc func logOutButtonPressed() {
-        
+        Network.shared.sendLogoutRequest() { (success, httpStatusCode, response) in
+            guard success else {
+                UIAlertController.presentErrorAlert(on: self, title: "Couldn't Log Out")
+                return
+            }
+            
+            DataManager.shared.clearLocalData()
+            self.dismiss(animated: true) {
+                self.logOutDelegate?.userLoggedOut()
+            }
+        }
     }
     
     required init?(coder: NSCoder) {

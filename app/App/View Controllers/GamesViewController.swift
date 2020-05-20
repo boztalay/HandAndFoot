@@ -8,13 +8,14 @@
 
 import UIKit
 
-class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, LogOutDelegate {
 
     var gameListTableView: UITableView!
     var dividerView: UIView!
     var gamePreviewView: GamePreviewView!
     
     var gameModels: [GameModel]!
+    weak var logOutDelegate: LogOutDelegate?
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -91,8 +92,14 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     @objc func profileButtonPressed(_ sender: Any) {
         let profileViewController = ProfileViewController()
+        profileViewController.logOutDelegate = self
         let navigationController = UINavigationController(rootViewController: profileViewController)
         self.present(navigationController, animated: true, completion: nil)
+    }
+
+    func userLoggedOut() {
+        self.logOutDelegate?.userLoggedOut()
+        self.dismiss(animated: true, completion: nil)
     }
     
     required init?(coder: NSCoder) {

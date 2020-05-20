@@ -13,20 +13,8 @@ typealias NetworkResponseHandler = (Bool, Int?, JSONDictionary?) -> ()
 class Network {
     
     private static let baseUrl = URL(string: "https://handandfoot-boztalay.structure.sh")!
-    private static let tokenArchiveKey = "token"
     
     static let shared = Network()
-    
-    var token: String?
-    var strongbox: Strongbox
-    
-    init() {
-        self.strongbox = Strongbox()
-        
-        if let token = self.strongbox.unarchive(objectForKey: Network.tokenArchiveKey) as? String {
-            self.token = token
-        }
-    }
     
     func sendLoginRequest(email: String, password: String, responseHandler: @escaping NetworkResponseHandler) {
         self.sendRequest(
@@ -51,8 +39,21 @@ class Network {
         )
     }
     
+    func sendLogoutRequest(responseHandler: @escaping NetworkResponseHandler) {
+        guard DataManager.shared.token != nil else {
+            responseHandler(false, nil, nil)
+            return
+        }
+
+        self.sendRequest(
+            path: "/api/logout",
+            payload: [:],
+            responseHandler: self.loginResponseHandler(originalResponseHandler: responseHandler)
+        )
+    }
+    
     func sendSyncRequest(lastUpdated: Date, responseHandler: @escaping NetworkResponseHandler) {
-        guard self.token != nil else {
+        guard DataManager.shared.token != nil else {
             responseHandler(false, nil, nil)
             return
         }
@@ -69,10 +70,7 @@ class Network {
     private func loginResponseHandler(originalResponseHandler: @escaping NetworkResponseHandler) -> NetworkResponseHandler {
         return { (success, httpStatusCode, response) in
             if success, let token = response?["token"] as? String {
-                self.token = token
-                if !self.strongbox.archive(self.token, key: Network.tokenArchiveKey) {
-                    fatalError("Couldn't archive token")
-                }
+                DataManager.shared.setToken(token)
             }
             
             originalResponseHandler(success, httpStatusCode, response)
@@ -87,37 +85,37 @@ class Network {
         urlRequest.httpBody = try! JSONSerialization.data(withJSONObject: payload, options: [])
         urlRequest.addValue("application/json", forHTTPHeaderField: "Content-Type")
         
-        if let token = self.token {
+        if let token = DataManager.shared.token {
             urlRequest.addValue(token, forHTTPHeaderField: "X-App-Token")
         }
 
         let task = URLSession.shared.dataTask(with: urlRequest) { (data, response, error) in
-            if error != nil {
-                responseHandler(false, nil, nil)
-                return
-            }
-            
-            guard let httpResponse = response as? HTTPURLResponse else {
-                responseHandler(false, nil, nil)
-                return
-            }
-            
-            guard let data = data else {
-                responseHandler(false, httpResponse.statusCode, nil)
-                return
-            }
-            
-            guard let jsonResponse = try? JSONSerialization.jsonObject(with: data, options: []) as? JSONDictionary else {
-                responseHandler(false, httpResponse.statusCode, nil)
-                return
-            }
-            
-            guard let success = jsonResponse["success"] as? Bool else {
-                responseHandler(false, httpResponse.statusCode, jsonResponse)
-                return
-            }
-
             DispatchQueue.main.async {
+                if error != nil {
+                    responseHandler(false, nil, nil)
+                    return
+                }
+                
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    responseHandler(false, nil, nil)
+                    return
+                }
+                
+                guard let data = data else {
+                    responseHandler(false, httpResponse.statusCode, nil)
+                    return
+                }
+                
+                guard let jsonResponse = try? JSONSerialization.jsonObject(with: data, options: []) as? JSONDictionary else {
+                    responseHandler(false, httpResponse.statusCode, nil)
+                    return
+                }
+                
+                guard let success = jsonResponse["success"] as? Bool else {
+                    responseHandler(false, httpResponse.statusCode, jsonResponse)
+                    return
+                }
+
                 responseHandler(success, httpResponse.statusCode, jsonResponse)
             }
         }

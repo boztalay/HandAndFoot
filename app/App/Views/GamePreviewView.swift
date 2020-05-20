@@ -50,7 +50,7 @@ class GamePreviewView: UIView {
         
         self.scoreBoardView.removeFromSuperview()
         self.addSubview(self.scoreBoardView)
-        self.scoreBoardView.pinX(to: self, leading: 100, trailing: -100)
+        self.scoreBoardView.pinX(to: self, leading: 90, trailing: -110)
         self.scoreBoardView.pin(edge: .top, to: .bottom, of: self.playButton, with: 50)
         self.scoreBoardView.update(with: gameModel)
     }

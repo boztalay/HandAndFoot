@@ -13,7 +13,7 @@ enum LoginViewControllerMode: String, CaseIterable {
     case signUp = "Sign Up"
 }
 
-class LoginViewController: UIViewController {
+class LoginViewController: UIViewController, LogOutDelegate {
     
     var modeSegmentedControl: UISegmentedControl!
     var nameTextField: UITextField!
@@ -193,11 +193,20 @@ class LoginViewController: UIViewController {
             }
             
             let gamesViewController = GamesViewController()
+            gamesViewController.logOutDelegate = self
             let navigationController = UINavigationController(rootViewController: gamesViewController)
             navigationController.modalPresentationStyle = .fullScreen
 
             self.present(navigationController, animated: true, completion: nil)
         }
+    }
+    
+    func userLoggedOut() {
+        self.modeSegmentedControlChanged(self)
+        self.nameTextField.text = nil
+        self.emailTextField.text = nil
+        self.passwordTextField.text = nil
+        self.passwordConfirmationTextField.text = nil
     }
     
     required init?(coder: NSCoder) {
