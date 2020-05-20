@@ -16,7 +16,7 @@ class ProfileViewController: GroupSectionViewController {
         super.init()
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(ProfileViewController.cancelButtonPressed))
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: .done, target: self, action: #selector(ProfileViewController.editButtonPressed))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Edit", style: .plain, target: self, action: #selector(ProfileViewController.editButtonPressed))
     }
     
     override func viewDidLoad() {
