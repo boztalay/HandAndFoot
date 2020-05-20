@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FB0E8E6B2475161E0060DAC3 /* UserSearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB0E8E6A2475161E0060DAC3 /* UserSearchViewController.swift */; };
 		FB5512B424727EDE00814BAF /* ScoreBoardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5512B324727EDE00814BAF /* ScoreBoardView.swift */; };
 		FB5512B6247289AF00814BAF /* NewGameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5512B5247289AF00814BAF /* NewGameViewController.swift */; };
 		FB5512B82472928200814BAF /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5512B72472928200814BAF /* ProfileViewController.swift */; };
@@ -65,6 +66,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		FB0E8E6A2475161E0060DAC3 /* UserSearchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSearchViewController.swift; sourceTree = "<group>"; };
 		FB5512B324727EDE00814BAF /* ScoreBoardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreBoardView.swift; sourceTree = "<group>"; };
 		FB5512B5247289AF00814BAF /* NewGameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGameViewController.swift; sourceTree = "<group>"; };
 		FB5512B72472928200814BAF /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
@@ -242,6 +244,7 @@
 				FB5D037924469FA90044FBC5 /* LoginViewController.swift */,
 				FBB97EFD2459183E00187CBF /* GamesViewController.swift */,
 				FB5512B5247289AF00814BAF /* NewGameViewController.swift */,
+				FB0E8E6A2475161E0060DAC3 /* UserSearchViewController.swift */,
 				FB5512B72472928200814BAF /* ProfileViewController.swift */,
 				FB5512B92474C33D00814BAF /* GroupedSectionViewController.swift */,
 			);
@@ -352,6 +355,7 @@
 				FB5512BA2474C33D00814BAF /* GroupedSectionViewController.swift in Sources */,
 				FB7DD37B244FEBFB00BC8AB4 /* UIView+Layout.swift in Sources */,
 				FB5512B424727EDE00814BAF /* ScoreBoardView.swift in Sources */,
+				FB0E8E6B2475161E0060DAC3 /* UserSearchViewController.swift in Sources */,
 				FB9DA0FD2474DEF2003299B3 /* LogOutDelegate.swift in Sources */,
 				FBDB3BAD2446A066008831FF /* Player.swift in Sources */,
 				FB64284C244AAAC600FDF34E /* DataManager.swift in Sources */,

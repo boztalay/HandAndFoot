@@ -8,13 +8,20 @@
 
 import UIKit
 
-class NewGameViewController: UIViewController {
+class NewGameViewController: UIViewController, UserSearchViewControllerDelegate {
 
+    var titleTextField: UITextField!
+    
     init() {
         super.init(nibName: nil, bundle: nil)
+
+        self.titleTextField = UITextField()
+        self.titleTextField.borderStyle = .roundedRect
+        self.titleTextField.textContentType = .name
+        self.titleTextField.placeholder = "Game Title"
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(NewGameViewController.cancelButtonPressed))
-        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(NewGameViewController.doneButtonPressed))
+        self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Next", style: .plain, target: self, action: #selector(NewGameViewController.nextButtonPressed))
     }
     
     override func viewDidLoad() {
@@ -22,14 +29,26 @@ class NewGameViewController: UIViewController {
         self.view.backgroundColor = .white
         
         self.title = "New Game"
+        
+        self.view.addSubview(self.titleTextField)
+        self.titleTextField.pinX(to: self.view.safeAreaLayoutGuide, leading: 40, trailing: -40)
+        self.titleTextField.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 40)
     }
     
     @objc func cancelButtonPressed(_ sender: Any) {
         self.dismiss(animated: true, completion: nil)
     }
     
-    @objc func doneButtonPressed(_ sender: Any) {
+    @objc func nextButtonPressed(_ sender: Any) {
+        // TODO: Check that there's a game title
         
+        let userSearchViewController = UserSearchViewController()
+        userSearchViewController.delegate = self
+        self.navigationController?.pushViewController(userSearchViewController, animated: true)
+    }
+    
+    func userSearchComplete(users: [User]) {
+
     }
     
     required init?(coder: NSCoder) {
