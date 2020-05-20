@@ -12,17 +12,23 @@ protocol UserSearchViewControllerDelegate: AnyObject {
     func userSearchComplete(users: [User])
 }
 
-class UserSearchViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class UserSearchViewController: UIViewController, UITextFieldDelegate, UITableViewDelegate, UITableViewDataSource {
+    
+    private static let reuseIdentifier = "UserSearchViewControllerTableViewCell"
 
     private var searchTermTextField: UITextField!
     private var resultsTableView: UITableView!
     
     weak var delegate: UserSearchViewControllerDelegate?
+
+    private var isSearchInFlight: Bool!
+    private var results: [JSONDictionary]!
     
     init() {
         super.init(nibName: nil, bundle: nil)
         
         self.searchTermTextField = UITextField()
+        self.searchTermTextField.delegate = self
         self.searchTermTextField.borderStyle = .roundedRect
         self.searchTermTextField.textContentType = .name
         self.searchTermTextField.placeholder = "Search for players"
@@ -30,6 +36,9 @@ class UserSearchViewController: UIViewController, UITableViewDelegate, UITableVi
         self.resultsTableView = UITableView()
         self.resultsTableView.delegate = self
         self.resultsTableView.dataSource = self
+        
+        self.isSearchInFlight = false
+        self.results = []
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(UserSearchViewController.doneButtonPressed))
     }
@@ -51,11 +60,52 @@ class UserSearchViewController: UIViewController, UITableViewDelegate, UITableVi
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        0
+        self.results.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        let cell: UITableViewCell
+        if let reusedCell = tableView.dequeueReusableCell(withIdentifier: UserSearchViewController.reuseIdentifier) {
+            cell = reusedCell
+        } else {
+            cell = UITableViewCell(style: .default, reuseIdentifier: UserSearchViewController.reuseIdentifier)
+        }
+        
+        let userJson = self.results[indexPath.row]
+        cell.textLabel!.text = "\(userJson["first_name"]!) \(userJson["last_name"]!)"
+        
+        return cell
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        guard !self.isSearchInFlight else {
+            return true
+        }
+        
+        guard let searchTerm = textField.text, searchTerm.count > 0 else {
+            return true
+        }
+        
+        self.isSearchInFlight = true
+        
+        Network.shared.sendUserSearchRequest(searchTerm: searchTerm) { (success, httpStatusCode, response) in
+            self.isSearchInFlight = false
+            
+            guard success else {
+                UIAlertController.presentErrorAlert(on: self, title: "Couldn't Search")
+                return
+            }
+            
+            guard let userJsons = response?["users"] as? [JSONDictionary] else {
+                UIAlertController.presentErrorAlert(on: self, title: "Bad Search Response")
+                return
+            }
+            
+            self.results = userJsons
+            self.resultsTableView.reloadData()
+        }
+        
+        return true
     }
     
     @objc func doneButtonPressed(_ sender: Any) {

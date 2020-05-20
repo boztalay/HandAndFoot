@@ -67,6 +67,21 @@ class Network {
         )
     }
     
+    func sendUserSearchRequest(searchTerm: String, responseHandler: @escaping NetworkResponseHandler) {
+        guard DataManager.shared.token != nil else {
+            responseHandler(false, nil, nil)
+            return
+        }
+        
+        self.sendRequest(
+            path: "/api/user/search",
+            payload: [
+                "search_term" : searchTerm
+            ],
+            responseHandler: responseHandler
+        )
+    }
+    
     private func loginResponseHandler(originalResponseHandler: @escaping NetworkResponseHandler) -> NetworkResponseHandler {
         return { (success, httpStatusCode, response) in
             if success, let token = response?["token"] as? String {

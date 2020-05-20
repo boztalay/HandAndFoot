@@ -4,6 +4,7 @@ import flask
 import flask_cors
 import flask_login
 import itsdangerous
+import peewee
 
 import engine
 import sekrits
@@ -306,6 +307,33 @@ def add_action_to_game(current_user):
     game.save()
 
     return success()
+
+# Search
+
+@app.route("/api/user/search", methods=["POST"])
+@token_required
+def search_for_user(current_user):
+    if not current_user.is_authenticated:
+        return error("User must be authenticated", 403)
+
+    body = flask.request.get_json()
+    if body is None:
+        return error("Could not decode body as JSON", 400)
+
+    search_term = body.get("search_term")
+    if search_term is None:
+        return error("Game required", 400)
+
+    if len(search_term) == 0:
+        return error("Search term must not be empty", 400)
+
+    full_name = peewee.fn.LOWER(User.first_name.concat(" ").concat(User.last_name))
+    search_term = "%" + search_term.lower() + "%"
+    users = User.select().where(full_name % search_term).order_by(full_name)
+
+    return success(
+        users=[user.to_json() for user in users]
+    )
 
 #
 # Helpers
