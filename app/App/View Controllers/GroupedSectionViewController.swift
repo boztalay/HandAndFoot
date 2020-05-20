@@ -115,7 +115,7 @@ class GroupSectionViewController: UIViewController, UITableViewDelegate, UITable
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell
-        if let reusedCell = tableView.dequeueReusableCell(withIdentifier: GroupSectionViewController.reuseIdentifier) {
+        if let reusedCell = self.tableView.dequeueReusableCell(withIdentifier: GroupSectionViewController.reuseIdentifier) {
             cell = reusedCell
         } else {
             cell = UITableViewCell(style: .value1, reuseIdentifier: GroupSectionViewController.reuseIdentifier)
@@ -144,7 +144,7 @@ class GroupSectionViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
+        self.tableView.deselectRow(at: indexPath, animated: true)
 
         let section = self.cachedSections[indexPath.section]
         let row = section.rows[indexPath.row]

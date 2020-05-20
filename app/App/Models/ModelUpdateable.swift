@@ -22,7 +22,7 @@ protocol ModelUpdateable: NSManagedObject {
 
 extension ModelUpdateable {
 
-    static func updateOrCreate(from json: JSONDictionary) throws {
+    @discardableResult static func updateOrCreate(from json: JSONDictionary) throws -> Self {
         var entity: Self
 
         if let existingEntity: Self = DataManager.shared.fetchEntity(with: json) {
@@ -35,5 +35,6 @@ extension ModelUpdateable {
         }
         
         try entity.update(from: json)
+        return entity
     }
 }

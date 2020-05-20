@@ -329,7 +329,7 @@ def search_for_user(current_user):
 
     full_name = peewee.fn.LOWER(User.first_name.concat(" ").concat(User.last_name))
     search_term = "%" + search_term.lower() + "%"
-    users = User.select().where(full_name % search_term).order_by(full_name)
+    users = User.select().where((User.id != current_user.id) & full_name % search_term).order_by(full_name)
 
     return success(
         users=[user.to_json() for user in users]

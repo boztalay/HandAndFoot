@@ -40,15 +40,34 @@ class NewGameViewController: UIViewController, UserSearchViewControllerDelegate 
     }
     
     @objc func nextButtonPressed(_ sender: Any) {
-        // TODO: Check that there's a game title
+        guard let title = self.titleTextField.text, title.count > 0 else {
+            UIAlertController.presentErrorAlert(on: self, title: "Game Title Required")
+            return
+        }
         
         let userSearchViewController = UserSearchViewController()
         userSearchViewController.delegate = self
-        self.navigationController?.pushViewController(userSearchViewController, animated: true)
+        self.navigationController!.pushViewController(userSearchViewController, animated: true)
     }
     
     func userSearchComplete(users: [User]) {
+        guard let title = self.titleTextField.text, title.count > 0 else {
+            fatalError()
+        }
+        
+        let userEmails = users.map() { $0.email! }
+        
+        Network.shared.sendCreateGameRequest(title: title, userEmails: userEmails) { (success, httpStatusCode, response) in
+            guard success else {
+                UIAlertController.presentErrorAlert(on: self, title: "Couldn't Create Game") {
+                    self.dismiss(animated: true, completion: nil)
+                }
 
+                return
+            }
+            
+            self.dismiss(animated: true, completion: nil)
+        }
     }
     
     required init?(coder: NSCoder) {

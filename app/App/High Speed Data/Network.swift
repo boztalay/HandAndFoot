@@ -52,6 +52,22 @@ class Network {
         )
     }
     
+    func sendCreateGameRequest(title: String, userEmails: [String], responseHandler: @escaping NetworkResponseHandler) {
+        guard DataManager.shared.token != nil else {
+            responseHandler(false, nil, nil)
+            return
+        }
+        
+        self.sendRequest(
+            path: "/api/game/create",
+            payload: [
+                "title" : title,
+                "users" : userEmails
+            ],
+            responseHandler: responseHandler
+        )
+    }
+    
     func sendSyncRequest(lastUpdated: Date, responseHandler: @escaping NetworkResponseHandler) {
         guard DataManager.shared.token != nil else {
             responseHandler(false, nil, nil)

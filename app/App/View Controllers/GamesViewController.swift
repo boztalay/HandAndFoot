@@ -68,9 +68,6 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
             self.gameListTableView.selectRow(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .top)
             self.tableView(self.gameListTableView, didSelectRowAt: IndexPath(item: 0, section: 0))
         }
-        
-        // TODO: REMOVE
-        self.newGameButtonPressed(self)
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

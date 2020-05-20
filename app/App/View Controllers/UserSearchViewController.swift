@@ -23,6 +23,7 @@ class UserSearchViewController: UIViewController, UITextFieldDelegate, UITableVi
 
     private var isSearchInFlight: Bool!
     private var results: [JSONDictionary]!
+    private var selectedResults: [Int : JSONDictionary]!
     
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -39,6 +40,7 @@ class UserSearchViewController: UIViewController, UITextFieldDelegate, UITableVi
         
         self.isSearchInFlight = false
         self.results = []
+        self.selectedResults = [:]
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(UserSearchViewController.doneButtonPressed))
     }
@@ -71,10 +73,39 @@ class UserSearchViewController: UIViewController, UITextFieldDelegate, UITableVi
             cell = UITableViewCell(style: .default, reuseIdentifier: UserSearchViewController.reuseIdentifier)
         }
         
-        let userJson = self.results[indexPath.row]
-        cell.textLabel!.text = "\(userJson["first_name"]!) \(userJson["last_name"]!)"
+        let result = self.results[indexPath.row]
+        guard let userId = result["id"] as? Int,
+              let firstName = result["first_name"] as? String,
+              let lastName = result["last_name"] as? String else {
+            fatalError()
+        }
+
+        cell.textLabel!.text = "\(firstName) \(lastName)"
+        
+        if self.selectedResults[userId] == nil {
+            cell.accessoryType = .none
+        } else {
+            cell.accessoryType = .checkmark
+        }
         
         return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.resultsTableView.deselectRow(at: indexPath, animated: true)
+        
+        let result = self.results[indexPath.row]
+        guard let userId = result["id"] as? Int else {
+            fatalError()
+        }
+        
+        if self.selectedResults[userId] == nil {
+            self.selectedResults[userId] = result
+        } else {
+            self.selectedResults.removeValue(forKey: userId)
+        }
+
+        self.resultsTableView.reloadData()
     }
     
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
@@ -109,7 +140,8 @@ class UserSearchViewController: UIViewController, UITextFieldDelegate, UITableVi
     }
     
     @objc func doneButtonPressed(_ sender: Any) {
-
+        let users: [User] = self.selectedResults.values.map() { try! User.updateOrCreate(from: $0) }
+        self.delegate?.userSearchComplete(users: users)
     }
     
     required init?(coder: NSCoder) {
