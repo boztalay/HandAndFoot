@@ -39,9 +39,9 @@ class Player: JSONEncodable {
 
     let name: String
 
-    private var hand: [Card]
+    private(set) var hand: [Card]
     private var foot: [Card]
-    private var books: [Round : [CardRank : Book]]
+    private(set) var books: [Round : [CardRank : Book]]
     private(set) var points: [Round : Points]
     private var cardsDrawnFromDeck: UInt
     private var cardsDrawnFromDiscardPile: UInt
