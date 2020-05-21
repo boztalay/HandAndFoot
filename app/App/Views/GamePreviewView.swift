@@ -8,12 +8,18 @@
 
 import UIKit
 
+protocol PlayButtonDelegate: AnyObject {
+    func playButtonPressed()
+}
+
 class GamePreviewView: UIView {
 
     var titleLabel: UILabel!
     var turnLabel: UILabel!
     var playButton: UIButton!
     var scoreBoardView: ScoreBoardView!
+    
+    weak var delegate: PlayButtonDelegate?
 
     init() {
         super.init(frame: CGRect.zero)
@@ -22,6 +28,8 @@ class GamePreviewView: UIView {
         self.turnLabel = UILabel()
         self.scoreBoardView = ScoreBoardView()
         self.playButton = UIButton(type: .system)
+        
+        self.playButton.addTarget(self, action: #selector(GamePreviewView.playButtonPressed), for: .touchUpInside)
     }
     
     func setGameModel(_ gameModel: GameModel) {
@@ -53,6 +61,10 @@ class GamePreviewView: UIView {
         self.scoreBoardView.pinX(to: self, leading: 90, trailing: -110)
         self.scoreBoardView.pin(edge: .top, to: .bottom, of: self.playButton, with: 50)
         self.scoreBoardView.update(with: gameModel)
+    }
+    
+    @objc func playButtonPressed(_ sender: Any) {
+        self.delegate?.playButtonPressed()
     }
     
     required init?(coder: NSCoder) {

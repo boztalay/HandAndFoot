@@ -27,6 +27,7 @@
 		FB7DD37B244FEBFB00BC8AB4 /* UIView+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7DD37A244FEBFB00BC8AB4 /* UIView+Layout.swift */; };
 		FB7DD37D24502B7500BC8AB4 /* UIAlertController+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */; };
 		FB9DA0FD2474DEF2003299B3 /* LogOutDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9DA0FC2474DEF2003299B3 /* LogOutDelegate.swift */; };
+		FBB22A9824761494003DB73B /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB22A9724761494003DB73B /* GameViewController.swift */; };
 		FBB97EFE2459183E00187CBF /* GamesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB97EFD2459183E00187CBF /* GamesViewController.swift */; };
 		FBB97F0024591A7700187CBF /* GamePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB97EFF24591A7700187CBF /* GamePreviewView.swift */; };
 		FBDB3BA82446A066008831FF /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9E2446A066008831FF /* Game.swift */; };
@@ -88,6 +89,7 @@
 		FB7DD37A244FEBFB00BC8AB4 /* UIView+Layout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Layout.swift"; sourceTree = "<group>"; };
 		FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Convenience.swift"; sourceTree = "<group>"; };
 		FB9DA0FC2474DEF2003299B3 /* LogOutDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogOutDelegate.swift; sourceTree = "<group>"; };
+		FBB22A9724761494003DB73B /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		FBB97EFD2459183E00187CBF /* GamesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamesViewController.swift; sourceTree = "<group>"; };
 		FBB97EFF24591A7700187CBF /* GamePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamePreviewView.swift; sourceTree = "<group>"; };
 		FBDB3B9C2446A066008831FF /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -246,6 +248,7 @@
 				FB5512B5247289AF00814BAF /* NewGameViewController.swift */,
 				FB0E8E6A2475161E0060DAC3 /* UserSearchViewController.swift */,
 				FB5512B72472928200814BAF /* ProfileViewController.swift */,
+				FBB22A9724761494003DB73B /* GameViewController.swift */,
 				FB5512B92474C33D00814BAF /* GroupedSectionViewController.swift */,
 			);
 			path = "View Controllers";
@@ -357,6 +360,7 @@
 				FB5512B424727EDE00814BAF /* ScoreBoardView.swift in Sources */,
 				FB0E8E6B2475161E0060DAC3 /* UserSearchViewController.swift in Sources */,
 				FB9DA0FD2474DEF2003299B3 /* LogOutDelegate.swift in Sources */,
+				FBB22A9824761494003DB73B /* GameViewController.swift in Sources */,
 				FBDB3BAD2446A066008831FF /* Player.swift in Sources */,
 				FB64284C244AAAC600FDF34E /* DataManager.swift in Sources */,
 				FBB97EFE2459183E00187CBF /* GamesViewController.swift in Sources */,

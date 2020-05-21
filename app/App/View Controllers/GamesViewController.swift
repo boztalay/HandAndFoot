@@ -8,7 +8,7 @@
 
 import UIKit
 
-class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, LogOutDelegate {
+class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, LogOutDelegate, PlayButtonDelegate {
 
     var gameListTableView: UITableView!
     var dividerView: UIView!
@@ -16,6 +16,8 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     
     var gameModels: [GameModel]!
     weak var logOutDelegate: LogOutDelegate?
+    
+    private var selectedGame: GameModel!
 
     init() {
         super.init(nibName: nil, bundle: nil)
@@ -28,6 +30,8 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.gameListTableView.delegate = self
         self.gameListTableView.dataSource = self
         self.gameListTableView.register(GameListTableViewCell.self, forCellReuseIdentifier: GameListTableViewCell.reuseIdentifier)
+        
+        self.gamePreviewView.delegate = self
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "New Game", style: .plain, target: self, action: #selector(GamesViewController.newGameButtonPressed))
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Profile", style: .plain, target: self, action: #selector(GamesViewController.profileButtonPressed))
@@ -59,11 +63,8 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.gamePreviewView.pin(edge: .trailing, to: .trailing, of: self.view.safeAreaLayoutGuide)
         
         self.gameModels = DataManager.shared.fetchEntities(sortedBy: "lastUpdated", ascending: false)!
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
         
+        self.gameListTableView.reloadData()
         if self.gameModels.count > 0 {
             self.gameListTableView.selectRow(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .top)
             self.tableView(self.gameListTableView, didSelectRowAt: IndexPath(item: 0, section: 0))
@@ -81,7 +82,8 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        self.gamePreviewView.setGameModel(self.gameModels[indexPath.row])
+        self.selectedGame = self.gameModels[indexPath.row]
+        self.gamePreviewView.setGameModel(self.selectedGame)
     }
     
     @objc func newGameButtonPressed(_ sender: Any) {
@@ -95,6 +97,11 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         profileViewController.logOutDelegate = self
         let navigationController = UINavigationController(rootViewController: profileViewController)
         self.present(navigationController, animated: true, completion: nil)
+    }
+    
+    func playButtonPressed() {
+        let gameViewController = GameViewController(game: self.selectedGame)
+        self.navigationController?.pushViewController(gameViewController, animated: true)
     }
 
     func userLoggedOut() {
