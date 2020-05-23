@@ -16,15 +16,12 @@ class HandView: UIView {
     private var cardViews: [CardView]!
     
     private var panGestureRecognizer: UIPanGestureRecognizer!
-    
-    private var translation: CGFloat!
 
     init() {
         super.init(frame: CGRect.zero)
 
         self.cardViews = []
         self.panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(HandView.panGestureRecognizerUpdated))
-        self.translation = 0.0
 
         self.backgroundColor = .white
         self.layer.cornerRadius = 10;
@@ -61,10 +58,10 @@ class HandView: UIView {
             cardView.frame = CGRect(x: 0.0, y: cardTopEdgeY, width: cardWidth, height: cardHeight)
         }
         
-        self.arrangeCards()
+        self.arrangeCards(translation: 0.0)
     }
     
-    private func arrangeCards() {
+    private func arrangeCards(translation: CGFloat) {
         let margin = self.frame.height * 0.05
 
         let cardHeight = self.frame.height - (margin * 2.0)
@@ -80,24 +77,64 @@ class HandView: UIView {
             fatalError("Too much sandbagging")
         }
         
-        let idealArrangementWidth = (CGFloat(self.cardViews.count - 1) * maxExposedCardWidth) + cardWidth
-        let excessArrangementWidth = maxCardArrangementWidth - idealArrangementWidth
+        // First pass:
+        //    - Lay out all of the cards with the minimum amount of overlap,
+        //      centered horizontally as a group
+        //    - Translate the group according to the given translation
+        //    - It's expected that some cards will overrun the bounds
         
-        if excessArrangementWidth >= 0.0 {
-            let firstCardLeadingEdgeX = margin + (excessArrangementWidth / 2.0)
+        let fullArrangementWidth = (CGFloat(self.cardViews.count - 1) * maxExposedCardWidth) + cardWidth
+        let excessWidth = maxCardArrangementWidth - fullArrangementWidth
+        let firstCardLeadingEdgeX = margin + (excessWidth / 2.0)
 
-            for (i, cardView) in self.cardViews.enumerated() {
-                cardView.frame = CGRect(
-                    origin: CGPoint(
-                        x: firstCardLeadingEdgeX + (maxExposedCardWidth * CGFloat(i)),
-                        y: cardView.frame.origin.y
-                    ),
-                    size: cardView.frame.size
-                )
-            }
-        } else {
-            // TODO
+        for (i, cardView) in self.cardViews.enumerated() {
+            cardView.frame = CGRect(
+                origin: CGPoint(
+                    x: firstCardLeadingEdgeX + (maxExposedCardWidth * CGFloat(i)) + translation,
+                    y: cardView.frame.origin.y
+                ),
+                size: cardView.frame.size
+            )
         }
+        
+        // Second pass:
+        //    - Move the leftmost card such that it's within the bounds
+        //      (including margin)
+        //    - If the next card is overlapping that card too much, move it such
+        //      that it meets the maximum overlap
+        //    - Repeat until the next card is not overlapping too much
+        
+        var lastCardView: CardView?
+        
+        for cardView in self.cardViews {
+            if let lastCardView = lastCardView {
+                let exposedCardWidth = cardView.frame.minX - lastCardView.frame.minX
+                if exposedCardWidth < minExposedCardWidth {
+                    cardView.frame = CGRect(
+                        origin: CGPoint(
+                            x: lastCardView.frame.minX + minExposedCardWidth,
+                            y: cardView.frame.origin.y
+                        ),
+                        size: cardView.frame.size
+                    )
+                }
+            } else {
+                if cardView.frame.minX < margin {
+                    cardView.frame = CGRect(
+                        origin: CGPoint(
+                            x: margin,
+                            y: cardView.frame.origin.y
+                        ),
+                        size: cardView.frame.size
+                    )
+                }
+            }
+            
+            lastCardView = cardView
+        }
+
+        // Third pass:
+        //    - Same as the second pass, but working from the right side
     }
     
     @objc func panGestureRecognizerUpdated(_ sender: Any) {
