@@ -310,7 +310,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1140;
-				LastUpgradeCheck = 1140;
+				LastUpgradeCheck = 1150;
 				ORGANIZATIONNAME = "Ben Oztalay";
 				TargetAttributes = {
 					FB5D037124469FA90044FBC5 = {
@@ -580,6 +580,7 @@
 		FBDB3BCD2446A43F008831FF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
@@ -592,6 +593,7 @@
 		FBDB3BCE2446A43F008831FF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = "";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
