@@ -88,13 +88,7 @@ class HandView: UIView {
         let firstCardLeadingEdgeX = margin + (excessWidth / 2.0)
 
         for (i, cardView) in self.cardViews.enumerated() {
-            cardView.frame = CGRect(
-                origin: CGPoint(
-                    x: firstCardLeadingEdgeX + (maxExposedCardWidth * CGFloat(i)) + translation,
-                    y: cardView.frame.origin.y
-                ),
-                size: cardView.frame.size
-            )
+            cardView.frame = cardView.frame.setting(x: firstCardLeadingEdgeX + (maxExposedCardWidth * CGFloat(i)) + translation)
         }
         
         // Second pass:
@@ -110,23 +104,11 @@ class HandView: UIView {
             if let lastCardView = lastCardView {
                 let exposedCardWidth = cardView.frame.minX - lastCardView.frame.minX
                 if exposedCardWidth < minExposedCardWidth {
-                    cardView.frame = CGRect(
-                        origin: CGPoint(
-                            x: lastCardView.frame.minX + minExposedCardWidth,
-                            y: cardView.frame.origin.y
-                        ),
-                        size: cardView.frame.size
-                    )
+                    cardView.frame = cardView.frame.setting(x: lastCardView.frame.minX + minExposedCardWidth)
                 }
             } else {
                 if cardView.frame.minX < margin {
-                    cardView.frame = CGRect(
-                        origin: CGPoint(
-                            x: margin,
-                            y: cardView.frame.origin.y
-                        ),
-                        size: cardView.frame.size
-                    )
+                    cardView.frame = cardView.frame.setting(x: margin)
                 }
             }
             
@@ -135,6 +117,23 @@ class HandView: UIView {
 
         // Third pass:
         //    - Same as the second pass, but working from the right side
+        
+        lastCardView = nil
+        
+        for cardView in self.cardViews.reversed() {
+            if let lastCardView = lastCardView {
+                let exposedCardWidth = lastCardView.frame.minX - cardView.frame.minX
+                if exposedCardWidth < minExposedCardWidth {
+                    cardView.frame = cardView.frame.setting(x: lastCardView.frame.minX - minExposedCardWidth)
+                }
+            } else {
+                if cardView.frame.maxX > (self.frame.width - margin) {
+                    cardView.frame = cardView.frame.setting(x: (self.frame.width - margin - cardWidth))
+                }
+            }
+            
+            lastCardView = cardView
+        }
     }
     
     @objc func panGestureRecognizerUpdated(_ sender: Any) {

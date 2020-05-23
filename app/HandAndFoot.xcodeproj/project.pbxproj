@@ -12,6 +12,7 @@
 		FB5512B6247289AF00814BAF /* NewGameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5512B5247289AF00814BAF /* NewGameViewController.swift */; };
 		FB5512B82472928200814BAF /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5512B72472928200814BAF /* ProfileViewController.swift */; };
 		FB5512BA2474C33D00814BAF /* GroupedSectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5512B92474C33D00814BAF /* GroupedSectionViewController.swift */; };
+		FB5C60F72478CB3200A7116B /* CGRect+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5C60F62478CB3200A7116B /* CGRect+Convenience.swift */; };
 		FB5D037624469FA90044FBC5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037524469FA90044FBC5 /* AppDelegate.swift */; };
 		FB5D037824469FA90044FBC5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037724469FA90044FBC5 /* SceneDelegate.swift */; };
 		FB5D037A24469FA90044FBC5 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037924469FA90044FBC5 /* LoginViewController.swift */; };
@@ -73,6 +74,7 @@
 		FB5512B5247289AF00814BAF /* NewGameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGameViewController.swift; sourceTree = "<group>"; };
 		FB5512B72472928200814BAF /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		FB5512B92474C33D00814BAF /* GroupedSectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupedSectionViewController.swift; sourceTree = "<group>"; };
+		FB5C60F62478CB3200A7116B /* CGRect+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Convenience.swift"; sourceTree = "<group>"; };
 		FB5D037224469FA90044FBC5 /* HandAndFoot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HandAndFoot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB5D037524469FA90044FBC5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FB5D037724469FA90044FBC5 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -168,6 +170,7 @@
 		FB5E2C19244F6C7400210545 /* Foundation Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				FB5C60F62478CB3200A7116B /* CGRect+Convenience.swift */,
 				FB5E2C1A244F6CA900210545 /* DateFormatter+CommonFormatters.swift */,
 				FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */,
 				FB7DD37A244FEBFB00BC8AB4 /* UIView+Layout.swift */,
@@ -368,6 +371,7 @@
 				FB64284C244AAAC600FDF34E /* DataManager.swift in Sources */,
 				FBB97EFE2459183E00187CBF /* GamesViewController.swift in Sources */,
 				FB5512B6247289AF00814BAF /* NewGameViewController.swift in Sources */,
+				FB5C60F72478CB3200A7116B /* CGRect+Convenience.swift in Sources */,
 				FBDB3BAE2446A066008831FF /* Action.swift in Sources */,
 				FB5D037A24469FA90044FBC5 /* LoginViewController.swift in Sources */,
 				FBDB3BA82446A066008831FF /* Game.swift in Sources */,
