@@ -36,8 +36,6 @@ class CardView: UIView {
         self.suitLabel.pin(edge: .trailing, to: .trailing, of: self, with: 10.0)
         self.suitLabel.pin(edge: .bottom, to: .bottom, of: self, with: -10.0)
         
-        self.setAspectRatio(to: CGFloat(CardView.aspectRatio))
-        
         self.update(card: card)
     }
     
