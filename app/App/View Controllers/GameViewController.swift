@@ -90,31 +90,11 @@ class GameViewController: UIViewController {
             let bookView = BookView()
             self.booksContainerView.addSubview(bookView)
             bookView.pin(edge: .top, to: .top, of: self.booksContainerView)
-            
-            if rank == .five {
-                let book = try! Book(initialCards: [
-                    Card(suit: .diamonds, rank: .two),
-                    Card(suit: .spades, rank: .joker),
-                    Card(suit: .spades, rank: .five),
-                    Card(suit: .clubs, rank: .five),
-                    Card(suit: .clubs, rank: .five)
-                ])
-                
-                bookView.update(book: book)
-            } else if rank == .eight {
-                let book = try! Book(initialCards: [
-                    Card(suit: .spades, rank: .eight),
-                    Card(suit: .clubs, rank: .eight),
-                    Card(suit: .clubs, rank: .eight)
-                ])
-                
+
+            if let book = currentPlayer.books[game.round!]![rank] {
                 bookView.update(book: book)
             } else {
-                if let book = currentPlayer.books[game.round!]![rank] {
-                    bookView.update(book: book)
-                } else {
-                    bookView.update(rank: rank)
-                }
+                bookView.update(rank: rank)
             }
             
             if let lastBookView = lastBookView {
