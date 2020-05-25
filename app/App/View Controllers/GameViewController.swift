@@ -76,8 +76,7 @@ class GameViewController: UIViewController {
         self.handView.update(cards: currentPlayer.hand)
         
         self.view.addSubview(self.booksContainerView)
-        self.booksContainerView.pin(edge: .leading, to: .leading, of: self.handView)
-        self.booksContainerView.pin(edge: .trailing, to: .trailing, of: self.handView)
+        self.booksContainerView.pinX(to: self.handView)
         self.booksContainerView.pin(edge: .bottom, to: .top, of: self.handView, with: -30)
         
         var lastBookView: BookView?
@@ -99,6 +98,14 @@ class GameViewController: UIViewController {
                     Card(suit: .spades, rank: .five),
                     Card(suit: .clubs, rank: .five),
                     Card(suit: .clubs, rank: .five)
+                ])
+                
+                bookView.update(book: book)
+            } else if rank == .eight {
+                let book = try! Book(initialCards: [
+                    Card(suit: .spades, rank: .eight),
+                    Card(suit: .clubs, rank: .eight),
+                    Card(suit: .clubs, rank: .eight)
                 ])
                 
                 bookView.update(book: book)
@@ -128,7 +135,7 @@ class GameViewController: UIViewController {
             lastBookView = bookView
         }
         
-        self.booksContainerView.pinHeight(toHeightOf: lastBookView!)
+        self.booksContainerView.pinHeight(toHeightOf: tallestBookView!)
         
         self.view.addSubview(self.deckView)
         self.deckView.centerHorizontally(in: self.view)

@@ -20,7 +20,17 @@ class BookView: UIView {
         super.init(frame: .zero)
         
         self.cardViews = []
-
+        self.outlineView = UIView()
+        self.rankLabel = UILabel()
+    }
+    
+    func update(rank: CardRank) {
+        for cardView in self.cardViews {
+            cardView.removeFromSuperview()
+        }
+        
+        self.cardViews = []
+        
         self.outlineView = UIView()
         self.addSubview(self.outlineView)
         self.outlineView.pin(to: self)
@@ -34,20 +44,8 @@ class BookView: UIView {
         self.rankLabel = UILabel()
         self.addSubview(self.rankLabel)
         self.rankLabel.centerVertically(in: self)
-        self.rankLabel.pinX(to: self, leading: 2.0, trailing: 2.0)
+        self.rankLabel.pinX(to: self, leading: 2.0, trailing: -2.0)
         self.rankLabel.textAlignment = .center
-    }
-    
-    func update(rank: CardRank) {
-        for cardView in self.cardViews {
-            cardView.removeFromSuperview()
-        }
-        
-        self.cardViews = []
-
-        self.outlineView.isHidden = false
-        self.rankLabel.isHidden = false
-        
         self.rankLabel.text = rank.rawValue
     }
     
@@ -61,6 +59,9 @@ class BookView: UIView {
                 return (cardA.rank > cardB.rank)
             }
         }
+        
+        self.outlineView.removeFromSuperview()
+        self.rankLabel.removeFromSuperview()
         
         for cardView in self.cardViews {
             cardView.removeFromSuperview()
@@ -79,7 +80,7 @@ class BookView: UIView {
             if let lastCardView = lastCardView {
                 let lastCardViewTopToCardViewTop = lastCardView.topAnchor.anchorWithOffset(to: cardView.topAnchor)
                 let cardViewTopToLastCardViewBottom = cardView.topAnchor.anchorWithOffset(to: lastCardView.bottomAnchor)
-                cardViewTopToLastCardViewBottom.constraint(equalTo: lastCardViewTopToCardViewTop, multiplier: CGFloat(1.0 / BookView.cardOverlapProportion)).isActive = true
+                cardViewTopToLastCardViewBottom.constraint(equalTo: lastCardViewTopToCardViewTop, multiplier: CGFloat(BookView.cardOverlapProportion / (1.0 - BookView.cardOverlapProportion))).isActive = true
             } else {
                 cardView.pin(edge: .top, to: .top, of: self)
             }

@@ -37,7 +37,7 @@ class DeckView: UIView {
         self.deckStatusLabel = UILabel()
         self.addSubview(self.deckStatusLabel)
         self.deckStatusLabel.centerVertically(in: self.deckOutlineView)
-        self.deckStatusLabel.pinX(to: self.deckOutlineView, leading: 2.0, trailing: 2.0)
+        self.deckStatusLabel.pinX(to: self.deckOutlineView, leading: 2.0, trailing: -2.0)
         self.deckStatusLabel.textAlignment = .center
         
         self.discardPileCardView = CardView()
@@ -50,7 +50,7 @@ class DeckView: UIView {
         self.discardPileEmptyLabel = UILabel()
         self.addSubview(self.discardPileEmptyLabel)
         self.discardPileEmptyLabel.centerVertically(in: self.discardPileCardView)
-        self.discardPileEmptyLabel.pinX(to: self.discardPileCardView, leading: 2.0, trailing: 2.0)
+        self.discardPileEmptyLabel.pinX(to: self.discardPileCardView, leading: 2.0, trailing: -2.0)
         self.sendSubviewToBack(self.discardPileEmptyLabel)
         self.discardPileEmptyLabel.textAlignment = .center
         self.discardPileEmptyLabel.text = "❌"
