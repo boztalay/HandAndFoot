@@ -16,12 +16,18 @@ class HandView: UIView {
     private var cardViews: [CardView]!
     
     private var panGestureRecognizer: UIPanGestureRecognizer!
+    private var minTranslation: CGFloat!
+    private var maxTranslation: CGFloat!
+    private var translation: CGFloat!
 
     init() {
         super.init(frame: CGRect.zero)
 
         self.cardViews = []
         self.panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(HandView.panGestureRecognizerUpdated))
+        self.minTranslation = 0.0
+        self.maxTranslation = 0.0
+        self.translation = 0.0
 
         self.backgroundColor = .white
         self.layer.cornerRadius = 10;
@@ -58,10 +64,10 @@ class HandView: UIView {
             cardView.frame = CGRect(x: 0.0, y: cardTopEdgeY, width: cardWidth, height: cardHeight)
         }
         
-        self.arrangeCards(translation: 0.0)
+        self.arrangeCards(panTranslation: 0.0)
     }
     
-    private func arrangeCards(translation: CGFloat) {
+    private func arrangeCards(panTranslation: CGFloat) {
         let margin = self.frame.height * 0.05
 
         let cardHeight = self.frame.height - (margin * 2.0)
@@ -88,7 +94,7 @@ class HandView: UIView {
         let firstCardLeadingEdgeX = margin + (excessWidth / 2.0)
 
         for (i, cardView) in self.cardViews.enumerated() {
-            cardView.frame = cardView.frame.setting(x: firstCardLeadingEdgeX + (maxExposedCardWidth * CGFloat(i)) + translation)
+            cardView.frame = cardView.frame.setting(x: firstCardLeadingEdgeX + (maxExposedCardWidth * CGFloat(i)) + self.translation + panTranslation)
         }
         
         // Second pass:
@@ -137,7 +143,18 @@ class HandView: UIView {
     }
     
     @objc func panGestureRecognizerUpdated(_ sender: Any) {
-        print(self.panGestureRecognizer.state.rawValue)
+        let panTranslation = self.panGestureRecognizer.translation(in: self).x
+        
+        switch (self.panGestureRecognizer.state) {
+            case .began:
+                break
+            case .changed:
+                self.arrangeCards(panTranslation: panTranslation)
+            case .ended, .cancelled, .failed:
+                self.translation += panTranslation
+            default:
+                break
+        }
     }
     
     required init?(coder: NSCoder) {
