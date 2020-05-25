@@ -111,7 +111,7 @@ class DataManager {
         }
     }
     
-    private func fetchUser(with email: String) -> User? {
+    func fetchUser(with email: String) -> User? {
         let fetchRequest = NSFetchRequest<User>(entityName: User.entityName)
         fetchRequest.predicate = NSPredicate(format: "email == %@", email)
         

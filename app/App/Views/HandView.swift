@@ -30,8 +30,8 @@ class HandView: UIView {
         self.translation = 0.0
 
         self.backgroundColor = .white
-        self.layer.cornerRadius = 10;
-        self.layer.masksToBounds = true;
+        self.layer.cornerRadius = 10
+        self.layer.masksToBounds = true
         self.layer.borderWidth = 1
         self.layer.borderColor = UIColor.black.cgColor
         

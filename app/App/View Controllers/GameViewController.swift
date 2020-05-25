@@ -10,28 +10,50 @@ import UIKit
 
 class GameViewController: UIViewController {
     
+    private var playerPreviewViews: [String : PlayerPreviewView]!
     private var footView: FootView!
     private var handView: HandView!
     
-    private var game: GameModel!
+    private var gameModel: GameModel!
     
     init(game: GameModel) {
         super.init(nibName: nil, bundle: nil)
         
+        self.playerPreviewViews = [:]
         self.footView = FootView()
         self.handView = HandView()
         
-        self.game = game
+        self.gameModel = game
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
         
-        self.title = self.game.title!
+        self.title = self.gameModel.title!
         
-        let game = self.game.game!
-        let player = game.getPlayer(named: DataManager.shared.currentUser!.email!)!
+        let game = self.gameModel.game!
+        let currentPlayer = game.getPlayer(named: DataManager.shared.currentUser!.email!)!
+        
+        var lastPlayerPreviewView: PlayerPreviewView?
+        
+        for player in game.players.filter({ $0.name != currentPlayer.name }) {
+            let playerPreviewView = PlayerPreviewView()
+            self.view.addSubview(playerPreviewView)
+            playerPreviewView.pin(edge: .leading, to: .leading, of: self.view.safeAreaLayoutGuide, with: 40)
+            playerPreviewView.setAspectRatio(to: 1.0)
+            playerPreviewView.pinHeight(toHeightOf: self.view, multiplier: 0.10, constant: 0.0)
+            
+            if let lastPlayerPreviewView = lastPlayerPreviewView {
+                playerPreviewView.pin(edge: .top, to: .bottom, of: lastPlayerPreviewView, with: 20)
+            } else {
+                playerPreviewView.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 40)
+            }
+            
+            let user = DataManager.shared.fetchUser(with: player.name)!
+            playerPreviewView.update(user: user, player: player, game: game)
+            lastPlayerPreviewView = playerPreviewView
+        }
         
         self.view.addSubview(self.footView)
         self.footView.pin(edge: .leading, to: .leading, of: self.view.safeAreaLayoutGuide, with: 40)
@@ -45,7 +67,7 @@ class GameViewController: UIViewController {
         self.handView.pin(edge: .top, to: .top, of: self.footView)
         self.handView.pin(edge: .bottom, to: .bottom, of: self.view, with: -40)
         
-        self.handView.update(cards: player.hand)
+        self.handView.update(cards: currentPlayer.hand)
     }
     
     required init?(coder: NSCoder) {

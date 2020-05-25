@@ -15,20 +15,19 @@ class FootView: UIView {
     init() {
         super.init(frame: .zero)
         
-        self.footLabel = UILabel()
-        self.footLabel.font = UIFont.systemFont(ofSize: 24.0)
-        self.footLabel.textAlignment = .center
-        
         self.backgroundColor = .white
         self.layer.cornerRadius = 10;
-        self.layer.masksToBounds = true;
+        self.layer.masksToBounds = true
         self.layer.borderWidth = 1
         self.layer.borderColor = UIColor.black.cgColor
         
+        self.footLabel = UILabel()
         self.addSubview(self.footLabel)
         self.footLabel.centerHorizontally(in: self)
         self.footLabel.centerVertically(in: self)
         self.footLabel.pinX(to: self)
+        self.footLabel.font = UIFont.systemFont(ofSize: 24.0)
+        self.footLabel.textAlignment = .center
         
         self.update(footPresent: false)
     }

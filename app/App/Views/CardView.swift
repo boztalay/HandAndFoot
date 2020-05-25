@@ -19,8 +19,8 @@ class CardView: UIView {
         super.init(frame: CGRect.zero)
         self.backgroundColor = .white
         
-        self.layer.cornerRadius = 10;
-        self.layer.masksToBounds = true;
+        self.layer.cornerRadius = 10
+        self.layer.masksToBounds = true
         self.layer.borderWidth = 1
         self.layer.borderColor = UIColor.black.cgColor
         

@@ -28,6 +28,7 @@
 		FB7DD37B244FEBFB00BC8AB4 /* UIView+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7DD37A244FEBFB00BC8AB4 /* UIView+Layout.swift */; };
 		FB7DD37D24502B7500BC8AB4 /* UIAlertController+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */; };
 		FB885C1C247C69BC00614E1E /* FootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C1B247C69BC00614E1E /* FootView.swift */; };
+		FB885C1E247C6DBC00614E1E /* PlayerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C1D247C6DBC00614E1E /* PlayerPreviewView.swift */; };
 		FB9DA0FD2474DEF2003299B3 /* LogOutDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9DA0FC2474DEF2003299B3 /* LogOutDelegate.swift */; };
 		FBB22A9824761494003DB73B /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB22A9724761494003DB73B /* GameViewController.swift */; };
 		FBB22A9A24763A2D003DB73B /* HandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB22A9924763A2D003DB73B /* HandView.swift */; };
@@ -93,6 +94,7 @@
 		FB7DD37A244FEBFB00BC8AB4 /* UIView+Layout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Layout.swift"; sourceTree = "<group>"; };
 		FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Convenience.swift"; sourceTree = "<group>"; };
 		FB885C1B247C69BC00614E1E /* FootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootView.swift; sourceTree = "<group>"; };
+		FB885C1D247C6DBC00614E1E /* PlayerPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerPreviewView.swift; sourceTree = "<group>"; };
 		FB9DA0FC2474DEF2003299B3 /* LogOutDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogOutDelegate.swift; sourceTree = "<group>"; };
 		FBB22A9724761494003DB73B /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		FBB22A9924763A2D003DB73B /* HandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandView.swift; sourceTree = "<group>"; };
@@ -189,6 +191,7 @@
 				FB7DD378244FEA1800BC8AB4 /* CardView.swift */,
 				FBB22A9924763A2D003DB73B /* HandView.swift */,
 				FB885C1B247C69BC00614E1E /* FootView.swift */,
+				FB885C1D247C6DBC00614E1E /* PlayerPreviewView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -391,6 +394,7 @@
 				FBDB3BAC2446A066008831FF /* Errors.swift in Sources */,
 				FB5D037624469FA90044FBC5 /* AppDelegate.swift in Sources */,
 				FB64284E244AB20F00FDF34E /* ModelUpdateable.swift in Sources */,
+				FB885C1E247C6DBC00614E1E /* PlayerPreviewView.swift in Sources */,
 				FB885C1C247C69BC00614E1E /* FootView.swift in Sources */,
 				FB5D038024469FA90044FBC5 /* HandAndFoot.xcdatamodeld in Sources */,
 				FBB22A9A24763A2D003DB73B /* HandView.swift in Sources */,
