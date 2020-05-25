@@ -15,7 +15,7 @@ class CardView: UIView {
     var rankLabel: UILabel!
     var suitLabel: UILabel!
     
-    init(card: Card) {
+    init(card: Card? = nil) {
         super.init(frame: CGRect.zero)
         self.backgroundColor = .white
         
@@ -36,7 +36,9 @@ class CardView: UIView {
         self.suitLabel.pin(edge: .trailing, to: .trailing, of: self, with: 10.0)
         self.suitLabel.pin(edge: .bottom, to: .bottom, of: self, with: -10.0)
         
-        self.update(card: card)
+        if let card = card {
+            self.update(card: card)
+        }
     }
     
     func update(card: Card) {

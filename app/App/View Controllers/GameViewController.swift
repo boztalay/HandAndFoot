@@ -13,6 +13,7 @@ class GameViewController: UIViewController {
     private var playerPreviewViews: [String : PlayerPreviewView]!
     private var footView: FootView!
     private var handView: HandView!
+    private var deckView: DeckView!
     
     private var gameModel: GameModel!
     
@@ -22,6 +23,7 @@ class GameViewController: UIViewController {
         self.playerPreviewViews = [:]
         self.footView = FootView()
         self.handView = HandView()
+        self.deckView = DeckView()
         
         self.gameModel = game
     }
@@ -60,14 +62,20 @@ class GameViewController: UIViewController {
         self.footView.pin(edge: .bottom, to: .bottom, of: self.view.safeAreaLayoutGuide, with: -40)
         self.footView.pinHeight(toHeightOf: self.view, multiplier: 0.2, constant: 0.0)
         self.footView.setAspectRatio(to: CGFloat(CardView.aspectRatio))
+        self.footView.update(footPresent: !currentPlayer.isInFoot)
         
         self.view.addSubview(self.handView)
         self.handView.pin(edge: .leading, to: .trailing, of: self.footView, with: 30)
         self.handView.pin(edge: .trailing, to: .trailing, of: self.view.safeAreaLayoutGuide, with: -40)
         self.handView.pin(edge: .top, to: .top, of: self.footView)
         self.handView.pin(edge: .bottom, to: .bottom, of: self.view, with: -40)
-        
         self.handView.update(cards: currentPlayer.hand)
+        
+        self.view.addSubview(self.deckView)
+        self.deckView.centerHorizontally(in: self.view)
+        self.deckView.centerVertically(in: self.view)
+        self.deckView.pinHeight(toHeightOf: self.view, multiplier: 0.2, constant: 0.0)
+        self.deckView.update(deck: game.deck, discardPile: game.discardPile)
     }
     
     required init?(coder: NSCoder) {

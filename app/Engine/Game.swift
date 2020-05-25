@@ -83,7 +83,7 @@ struct PlayerIterator {
 class Game: JSONEncodable {
     
     private var decks: [Round : Deck]
-    private var discardPile: [Card]
+    private(set) var discardPile: [Card]
     private(set) var players: [Player]
     private(set) var round: Round?
     private var playerIterator: PlayerIterator

@@ -29,6 +29,7 @@
 		FB7DD37D24502B7500BC8AB4 /* UIAlertController+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */; };
 		FB885C1C247C69BC00614E1E /* FootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C1B247C69BC00614E1E /* FootView.swift */; };
 		FB885C1E247C6DBC00614E1E /* PlayerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C1D247C6DBC00614E1E /* PlayerPreviewView.swift */; };
+		FB885C20247C774B00614E1E /* DeckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C1F247C774B00614E1E /* DeckView.swift */; };
 		FB9DA0FD2474DEF2003299B3 /* LogOutDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9DA0FC2474DEF2003299B3 /* LogOutDelegate.swift */; };
 		FBB22A9824761494003DB73B /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB22A9724761494003DB73B /* GameViewController.swift */; };
 		FBB22A9A24763A2D003DB73B /* HandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB22A9924763A2D003DB73B /* HandView.swift */; };
@@ -95,6 +96,7 @@
 		FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Convenience.swift"; sourceTree = "<group>"; };
 		FB885C1B247C69BC00614E1E /* FootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootView.swift; sourceTree = "<group>"; };
 		FB885C1D247C6DBC00614E1E /* PlayerPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerPreviewView.swift; sourceTree = "<group>"; };
+		FB885C1F247C774B00614E1E /* DeckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckView.swift; sourceTree = "<group>"; };
 		FB9DA0FC2474DEF2003299B3 /* LogOutDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogOutDelegate.swift; sourceTree = "<group>"; };
 		FBB22A9724761494003DB73B /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		FBB22A9924763A2D003DB73B /* HandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandView.swift; sourceTree = "<group>"; };
@@ -192,6 +194,7 @@
 				FBB22A9924763A2D003DB73B /* HandView.swift */,
 				FB885C1B247C69BC00614E1E /* FootView.swift */,
 				FB885C1D247C6DBC00614E1E /* PlayerPreviewView.swift */,
+				FB885C1F247C774B00614E1E /* DeckView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -404,6 +407,7 @@
 				FBDB3BBA2446A321008831FF /* User+CoreDataClass.swift in Sources */,
 				FB7DD379244FEA1800BC8AB4 /* CardView.swift in Sources */,
 				FB5E2C1B244F6CA900210545 /* DateFormatter+CommonFormatters.swift in Sources */,
+				FB885C20247C774B00614E1E /* DeckView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
