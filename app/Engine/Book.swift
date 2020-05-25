@@ -12,7 +12,7 @@ class Book: JSONEncodable {
 
     let rank: CardRank
 
-    private var cards: [Card]
+    private(set) var cards: [Card]
     
     // MARK: Initialization
     

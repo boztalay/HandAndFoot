@@ -13,6 +13,8 @@ class GameViewController: UIViewController {
     private var playerPreviewViews: [String : PlayerPreviewView]!
     private var footView: FootView!
     private var handView: HandView!
+    private var booksContainerView: UIView!
+    private var bookViews: [BookView]!
     private var deckView: DeckView!
     
     private var gameModel: GameModel!
@@ -23,6 +25,8 @@ class GameViewController: UIViewController {
         self.playerPreviewViews = [:]
         self.footView = FootView()
         self.handView = HandView()
+        self.booksContainerView = UIView()
+        self.bookViews = []
         self.deckView = DeckView()
         
         self.gameModel = game
@@ -71,9 +75,64 @@ class GameViewController: UIViewController {
         self.handView.pin(edge: .bottom, to: .bottom, of: self.view, with: -40)
         self.handView.update(cards: currentPlayer.hand)
         
+        self.view.addSubview(self.booksContainerView)
+        self.booksContainerView.pin(edge: .leading, to: .leading, of: self.handView)
+        self.booksContainerView.pin(edge: .trailing, to: .trailing, of: self.handView)
+        self.booksContainerView.pin(edge: .bottom, to: .top, of: self.handView, with: -30)
+        
+        var lastBookView: BookView?
+        var tallestBookView: BookView?
+        
+        for rank in CardRank.allCases {
+            guard rank != .two && rank != .three && rank != .joker else {
+                continue
+            }
+            
+            let bookView = BookView()
+            self.booksContainerView.addSubview(bookView)
+            bookView.pin(edge: .top, to: .top, of: self.booksContainerView)
+            
+            if rank == .five {
+                let book = try! Book(initialCards: [
+                    Card(suit: .diamonds, rank: .two),
+                    Card(suit: .spades, rank: .joker),
+                    Card(suit: .spades, rank: .five),
+                    Card(suit: .clubs, rank: .five),
+                    Card(suit: .clubs, rank: .five)
+                ])
+                
+                bookView.update(book: book)
+            } else {
+                if let book = currentPlayer.books[game.round!]![rank] {
+                    bookView.update(book: book)
+                } else {
+                    bookView.update(rank: rank)
+                }
+            }
+            
+            if let lastBookView = lastBookView {
+                bookView.pinWidth(toWidthOf: lastBookView)
+                bookView.pin(edge: .leading, to: .trailing, of: lastBookView, with: 10.0)
+
+                if rank == .ace {
+                    bookView.pin(edge: .trailing, to: .trailing, of: self.booksContainerView)
+                }
+            } else {
+                bookView.pin(edge: .leading, to: .leading, of: self.booksContainerView)
+            }
+            
+            if tallestBookView == nil || bookView.cardViews.count > tallestBookView!.cardViews.count {
+                tallestBookView = bookView
+            }
+            
+            lastBookView = bookView
+        }
+        
+        self.booksContainerView.pinHeight(toHeightOf: lastBookView!)
+        
         self.view.addSubview(self.deckView)
         self.deckView.centerHorizontally(in: self.view)
-        self.deckView.centerVertically(in: self.view)
+        self.deckView.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 100.0)
         self.deckView.pinHeight(toHeightOf: self.view, multiplier: 0.2, constant: 0.0)
         self.deckView.update(deck: game.deck, discardPile: game.discardPile)
     }
