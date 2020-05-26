@@ -28,11 +28,10 @@ class OpponentPreviewView: UIView {
     init() {
         super.init(frame: .zero)
         
-        self.backgroundColor = .white
-        
         self.circleView = UIView()
         self.addSubview(self.circleView)
         self.circleView.pin(to: self)
+        self.circleView.backgroundColor = .white
         self.circleView.layer.borderWidth = 1
         self.circleView.layer.borderColor = UIColor.black.cgColor
         
@@ -82,9 +81,9 @@ class OpponentPreviewView: UIView {
         self.nameLabel.text = user.firstName!
         
         if player.isInFoot {
-            self.inFootBadge.text = "🦶"
-        } else {
             self.inFootBadge.text = "❌"
+        } else {
+            self.inFootBadge.text = "🦶"
         }
         
         if player.hasNaturalBook(in: game.round!) {
