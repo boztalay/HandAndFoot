@@ -8,13 +8,22 @@
 
 import UIKit
 
+protocol OpponentPreviewViewDelegate: AnyObject {
+    func opponentPreviewViewTapped(player: Player)
+}
+
 class OpponentPreviewView: UIView {
 
-    var circleView: UIView!
-    var nameLabel: UILabel!
-    var inFootBadge: UILabel!
-    var hasNaturalBadge: UILabel!
-    var hasUnnaturalBadge: UILabel!
+    private var circleView: UIView!
+    private var nameLabel: UILabel!
+    private var inFootBadge: UILabel!
+    private var hasNaturalBadge: UILabel!
+    private var hasUnnaturalBadge: UILabel!
+    
+    private var player: Player?
+    private var tapGestureRecognizer: UITapGestureRecognizer!
+    
+    weak var delegate: OpponentPreviewViewDelegate?
     
     init() {
         super.init(frame: .zero)
@@ -64,6 +73,9 @@ class OpponentPreviewView: UIView {
         self.hasUnnaturalBadge.font = UIFont.systemFont(ofSize: 12.0)
         self.hasUnnaturalBadge.textAlignment = .center
         self.hasUnnaturalBadge.adjustsFontSizeToFitWidth = true
+        
+        self.tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(OpponentPreviewView.tapGestureRecognizerChanged))
+        self.addGestureRecognizer(self.tapGestureRecognizer)
     }
     
     func update(user: User, player: Player, game: Game) {
@@ -86,11 +98,19 @@ class OpponentPreviewView: UIView {
         } else {
             self.hasUnnaturalBadge.text = "⬜️"
         }
+        
+        self.player = player
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         self.circleView.layer.cornerRadius = self.frame.width / 2.0
+    }
+    
+    @objc func tapGestureRecognizerChanged(_ sender: Any) {
+        if self.tapGestureRecognizer.state == .ended {
+            self.delegate?.opponentPreviewViewTapped(player: self.player!)
+        }
     }
     
     required init?(coder: NSCoder) {

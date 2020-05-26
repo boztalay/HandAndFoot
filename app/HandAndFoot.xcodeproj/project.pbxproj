@@ -28,9 +28,11 @@
 		FB7DD37B244FEBFB00BC8AB4 /* UIView+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7DD37A244FEBFB00BC8AB4 /* UIView+Layout.swift */; };
 		FB7DD37D24502B7500BC8AB4 /* UIAlertController+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */; };
 		FB885C1C247C69BC00614E1E /* FootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C1B247C69BC00614E1E /* FootView.swift */; };
-		FB885C1E247C6DBC00614E1E /* PlayerPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C1D247C6DBC00614E1E /* PlayerPreviewView.swift */; };
+		FB885C1E247C6DBC00614E1E /* OpponentPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C1D247C6DBC00614E1E /* OpponentPreviewView.swift */; };
 		FB885C20247C774B00614E1E /* DeckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C1F247C774B00614E1E /* DeckView.swift */; };
 		FB885C22247C80E400614E1E /* BookView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C21247C80E400614E1E /* BookView.swift */; };
+		FB885C24247C936700614E1E /* OpponentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C23247C936700614E1E /* OpponentView.swift */; };
+		FB885C26247C941200614E1E /* OpponentHandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C25247C941200614E1E /* OpponentHandView.swift */; };
 		FB9DA0FD2474DEF2003299B3 /* LogOutDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9DA0FC2474DEF2003299B3 /* LogOutDelegate.swift */; };
 		FBB22A9824761494003DB73B /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB22A9724761494003DB73B /* GameViewController.swift */; };
 		FBB22A9A24763A2D003DB73B /* HandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB22A9924763A2D003DB73B /* HandView.swift */; };
@@ -96,9 +98,11 @@
 		FB7DD37A244FEBFB00BC8AB4 /* UIView+Layout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Layout.swift"; sourceTree = "<group>"; };
 		FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Convenience.swift"; sourceTree = "<group>"; };
 		FB885C1B247C69BC00614E1E /* FootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootView.swift; sourceTree = "<group>"; };
-		FB885C1D247C6DBC00614E1E /* PlayerPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerPreviewView.swift; sourceTree = "<group>"; };
+		FB885C1D247C6DBC00614E1E /* OpponentPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentPreviewView.swift; sourceTree = "<group>"; };
 		FB885C1F247C774B00614E1E /* DeckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckView.swift; sourceTree = "<group>"; };
 		FB885C21247C80E400614E1E /* BookView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookView.swift; sourceTree = "<group>"; };
+		FB885C23247C936700614E1E /* OpponentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentView.swift; sourceTree = "<group>"; };
+		FB885C25247C941200614E1E /* OpponentHandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentHandView.swift; sourceTree = "<group>"; };
 		FB9DA0FC2474DEF2003299B3 /* LogOutDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogOutDelegate.swift; sourceTree = "<group>"; };
 		FBB22A9724761494003DB73B /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		FBB22A9924763A2D003DB73B /* HandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandView.swift; sourceTree = "<group>"; };
@@ -195,9 +199,11 @@
 				FB7DD378244FEA1800BC8AB4 /* CardView.swift */,
 				FBB22A9924763A2D003DB73B /* HandView.swift */,
 				FB885C1B247C69BC00614E1E /* FootView.swift */,
-				FB885C1D247C6DBC00614E1E /* PlayerPreviewView.swift */,
 				FB885C1F247C774B00614E1E /* DeckView.swift */,
 				FB885C21247C80E400614E1E /* BookView.swift */,
+				FB885C1D247C6DBC00614E1E /* OpponentPreviewView.swift */,
+				FB885C23247C936700614E1E /* OpponentView.swift */,
+				FB885C25247C941200614E1E /* OpponentHandView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -384,6 +390,7 @@
 				FBB97EFE2459183E00187CBF /* GamesViewController.swift in Sources */,
 				FB5512B6247289AF00814BAF /* NewGameViewController.swift in Sources */,
 				FB5C60F72478CB3200A7116B /* CGRect+Convenience.swift in Sources */,
+				FB885C24247C936700614E1E /* OpponentView.swift in Sources */,
 				FBDB3BAE2446A066008831FF /* Action.swift in Sources */,
 				FB5D037A24469FA90044FBC5 /* LoginViewController.swift in Sources */,
 				FBDB3BA82446A066008831FF /* Game.swift in Sources */,
@@ -400,11 +407,12 @@
 				FBDB3BAC2446A066008831FF /* Errors.swift in Sources */,
 				FB5D037624469FA90044FBC5 /* AppDelegate.swift in Sources */,
 				FB64284E244AB20F00FDF34E /* ModelUpdateable.swift in Sources */,
-				FB885C1E247C6DBC00614E1E /* PlayerPreviewView.swift in Sources */,
+				FB885C1E247C6DBC00614E1E /* OpponentPreviewView.swift in Sources */,
 				FB885C1C247C69BC00614E1E /* FootView.swift in Sources */,
 				FB5D038024469FA90044FBC5 /* HandAndFoot.xcdatamodeld in Sources */,
 				FBB22A9A24763A2D003DB73B /* HandView.swift in Sources */,
 				FB5D037824469FA90044FBC5 /* SceneDelegate.swift in Sources */,
+				FB885C26247C941200614E1E /* OpponentHandView.swift in Sources */,
 				FBDB3BB62446A2D8008831FF /* GameModel+CoreDataClass.swift in Sources */,
 				FB64284A244AA26200FDF34E /* Strongbox.swift in Sources */,
 				FBDB3BBA2446A321008831FF /* User+CoreDataClass.swift in Sources */,

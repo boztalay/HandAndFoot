@@ -8,9 +8,9 @@
 
 import UIKit
 
-class GameViewController: UIViewController {
+class GameViewController: UIViewController, OpponentPreviewViewDelegate {
     
-    private var playerPreviewViews: [String : PlayerPreviewView]!
+    private var opponentPreviewViews: [String : OpponentPreviewView]!
     private var footView: FootView!
     private var handView: HandView!
     private var booksContainerView: UIView!
@@ -22,7 +22,7 @@ class GameViewController: UIViewController {
     init(game: GameModel) {
         super.init(nibName: nil, bundle: nil)
         
-        self.playerPreviewViews = [:]
+        self.opponentPreviewViews = [:]
         self.footView = FootView()
         self.handView = HandView()
         self.booksContainerView = UIView()
@@ -41,24 +41,27 @@ class GameViewController: UIViewController {
         let game = self.gameModel.game!
         let currentPlayer = game.getPlayer(named: DataManager.shared.currentUser!.email!)!
         
-        var lastPlayerPreviewView: PlayerPreviewView?
+        var lastOpponentPreviewView: OpponentPreviewView?
         
         for player in game.players.filter({ $0.name != currentPlayer.name }) {
-            let playerPreviewView = PlayerPreviewView()
-            self.view.addSubview(playerPreviewView)
-            playerPreviewView.pin(edge: .leading, to: .leading, of: self.view.safeAreaLayoutGuide, with: 40)
-            playerPreviewView.setAspectRatio(to: 1.0)
-            playerPreviewView.pinHeight(toHeightOf: self.view, multiplier: 0.10, constant: 0.0)
+            let opponentPreviewView = OpponentPreviewView()
+            self.view.addSubview(opponentPreviewView)
+            opponentPreviewView.pin(edge: .leading, to: .leading, of: self.view.safeAreaLayoutGuide, with: 40)
+            opponentPreviewView.setAspectRatio(to: 1.0)
+            opponentPreviewView.pinHeight(toHeightOf: self.view, multiplier: 0.10, constant: 0.0)
+            opponentPreviewView.delegate = self
             
-            if let lastPlayerPreviewView = lastPlayerPreviewView {
-                playerPreviewView.pin(edge: .top, to: .bottom, of: lastPlayerPreviewView, with: 20)
+            if let lastPlayerPreviewView = lastOpponentPreviewView {
+                opponentPreviewView.pin(edge: .top, to: .bottom, of: lastPlayerPreviewView, with: 20)
             } else {
-                playerPreviewView.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 40)
+                opponentPreviewView.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 40)
             }
             
+            self.opponentPreviewViews[player.name] = opponentPreviewView
+            
             let user = DataManager.shared.fetchUser(with: player.name)!
-            playerPreviewView.update(user: user, player: player, game: game)
-            lastPlayerPreviewView = playerPreviewView
+            opponentPreviewView.update(user: user, player: player, game: game)
+            lastOpponentPreviewView = opponentPreviewView
         }
         
         self.view.addSubview(self.footView)
@@ -122,6 +125,17 @@ class GameViewController: UIViewController {
         self.deckView.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 100.0)
         self.deckView.pinHeight(toHeightOf: self.view, multiplier: 0.2, constant: 0.0)
         self.deckView.update(deck: game.deck, discardPile: game.discardPile)
+    }
+
+    func opponentPreviewViewTapped(player: Player) {
+        let opponentView = OpponentView()
+        self.view.addSubview(opponentView)
+        opponentView.pin(edge: .leading, to: .trailing, of: self.opponentPreviewViews.values.first!, with: 30.0)
+        opponentView.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 40.0)
+        opponentView.pinHeight(toHeightOf: self.view, multiplier: 0.40, constant: 0.0)
+        opponentView.pinWidth(toWidthOf: self.view, multiplier: 0.70, constant: 0.0)
+        
+        opponentView.update(player: player, game: self.gameModel.game!)
     }
     
     required init?(coder: NSCoder) {
