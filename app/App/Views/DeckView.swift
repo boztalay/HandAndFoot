@@ -10,8 +10,7 @@ import UIKit
 
 class DeckView: UIView {
 
-    var deckOutlineView: UIView!
-    var deckStatusLabel: UILabel!
+    var deckCardView: FaceDownCardView!
     var discardPileCardView: CardView!
     var discardPileEmptyLabel: UILabel!
     
@@ -24,25 +23,15 @@ class DeckView: UIView {
         self.layer.borderWidth = 1
         self.layer.borderColor = UIColor.black.cgColor
         
-        self.deckOutlineView = UIView()
-        self.addSubview(self.deckOutlineView)
-        self.deckOutlineView.pin(edge: .leading, to: .leading, of: self, with: 10.0)
-        self.deckOutlineView.pinY(to: self, top: 10.0, bottom: -10.0)
-        self.deckOutlineView.setAspectRatio(to: CGFloat(CardView.aspectRatio))
-        self.deckOutlineView.layer.cornerRadius = 10
-        self.deckOutlineView.layer.masksToBounds = true
-        self.deckOutlineView.layer.borderWidth = 1
-        self.deckOutlineView.layer.borderColor = UIColor.black.cgColor
-        
-        self.deckStatusLabel = UILabel()
-        self.addSubview(self.deckStatusLabel)
-        self.deckStatusLabel.centerVertically(in: self.deckOutlineView)
-        self.deckStatusLabel.pinX(to: self.deckOutlineView, leading: 2.0, trailing: -2.0)
-        self.deckStatusLabel.textAlignment = .center
+        self.deckCardView = FaceDownCardView()
+        self.addSubview(self.deckCardView)
+        self.deckCardView.pin(edge: .leading, to: .leading, of: self, with: 10.0)
+        self.deckCardView.pinY(to: self, top: 10.0, bottom: -10.0)
+        self.deckCardView.setAspectRatio(to: CGFloat(CardView.aspectRatio))
         
         self.discardPileCardView = CardView()
         self.addSubview(self.discardPileCardView)
-        self.discardPileCardView.pin(edge: .leading, to: .trailing, of: self.deckOutlineView, with: 10.0)
+        self.discardPileCardView.pin(edge: .leading, to: .trailing, of: self.deckCardView, with: 10.0)
         self.discardPileCardView.pinY(to: self, top: 10.0, bottom: -10.0)
         self.discardPileCardView.pin(edge: .trailing, to: .trailing, of: self, with: -10.0)
         self.discardPileCardView.setAspectRatio(to: CGFloat(CardView.aspectRatio))
@@ -57,11 +46,7 @@ class DeckView: UIView {
     }
     
     func update(deck: Deck, discardPile: [Card]) {
-        if deck.isEmpty {
-            self.deckStatusLabel.text = "❌"
-        } else {
-            self.deckStatusLabel.text = "🂠"
-        }
+        self.deckCardView.isHidden = deck.isEmpty
         
         if discardPile.count == 0 {
             self.discardPileCardView.isHidden = true

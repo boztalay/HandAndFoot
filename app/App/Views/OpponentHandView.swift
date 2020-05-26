@@ -12,7 +12,7 @@ class OpponentHandView: UIView {
     
     private static let cardOverlapProportion = 0.9
 
-    private var cardViews: [CardView]!
+    private var cardViews: [FaceDownCardView]!
     
     init() {
         super.init(frame: .zero)
@@ -26,10 +26,10 @@ class OpponentHandView: UIView {
         }
         
         self.cardViews = []
-        var lastCardView: CardView?
+        var lastCardView: FaceDownCardView?
         
-        for card in cards {
-            let cardView = CardView(card: card)
+        for _ in cards {
+            let cardView = FaceDownCardView()
             self.addSubview(cardView)
             cardView.pinY(to: self)
             cardView.setAspectRatio(to: CGFloat(CardView.aspectRatio))

@@ -93,7 +93,7 @@ class OpponentPreviewView: UIView {
         }
 
         if player.hasUnnaturalBook(in: game.round!) {
-            self.hasUnnaturalBadge.text = "🟥"
+            self.hasUnnaturalBadge.text = "⬛️"
         } else {
             self.hasUnnaturalBadge.text = "⬜️"
         }
