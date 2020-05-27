@@ -8,7 +8,7 @@
 
 import UIKit
 
-class GameViewController: UIViewController, OpponentPreviewViewDelegate {
+class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckViewDelegate {
     
     private var opponentPreviewViews: [String : OpponentPreviewView]!
     private var footView: FootView!
@@ -23,6 +23,10 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
     private var opponentView: OpponentView?
 
     private var gameModel: GameModel!
+    
+    private var currentPlayer: Player {
+        return self.gameModel.game!.getPlayer(named: DataManager.shared.currentUser!.email!)!
+    }
     
     init(game: GameModel) {
         super.init(nibName: nil, bundle: nil)
@@ -44,11 +48,9 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
         self.title = self.gameModel.title!
         
         let game = self.gameModel.game!
-        let currentPlayer = game.getPlayer(named: DataManager.shared.currentUser!.email!)!
-        
         var lastOpponentPreviewView: OpponentPreviewView?
         
-        for player in game.players.filter({ $0.name != currentPlayer.name }) {
+        for player in game.players.filter({ $0.name != self.currentPlayer.name }) {
             let opponentPreviewView = OpponentPreviewView()
             self.view.addSubview(opponentPreviewView)
             opponentPreviewView.pin(edge: .leading, to: .leading, of: self.view.safeAreaLayoutGuide, with: 40)
@@ -77,14 +79,14 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
         self.footView.pin(edge: .bottom, to: .bottom, of: self.view.safeAreaLayoutGuide, with: -40)
         self.footView.pinHeight(toHeightOf: self.view, multiplier: 0.2, constant: 0.0)
         self.footView.setAspectRatio(to: CGFloat(CardView.aspectRatio))
-        self.footView.update(footPresent: !currentPlayer.isInFoot)
+        self.footView.update(footPresent: !self.currentPlayer.isInFoot)
 
         self.view.insertSubview(self.handView, belowSubview: self.lowestOpponentPreviewView!)
         self.handView.pin(edge: .leading, to: .trailing, of: self.footView, with: 30)
         self.handView.pin(edge: .trailing, to: .trailing, of: self.view.safeAreaLayoutGuide, with: -40)
         self.handView.pin(edge: .top, to: .top, of: self.footView)
         self.handView.pin(edge: .bottom, to: .bottom, of: self.view, with: -40)
-        self.handView.update(cards: currentPlayer.hand)
+        self.handView.update(cards: self.currentPlayer.hand)
         
         self.view.insertSubview(self.booksContainerView, belowSubview: self.lowestOpponentPreviewView!)
         self.booksContainerView.pinX(to: self.handView)
@@ -102,7 +104,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
             self.booksContainerView.addSubview(bookView)
             bookView.pin(edge: .top, to: .top, of: self.booksContainerView)
 
-            if let book = currentPlayer.books[game.round!]![rank] {
+            if let book = self.currentPlayer.books[game.round!]![rank] {
                 bookView.update(book: book)
             } else {
                 bookView.update(rank: rank)
@@ -133,6 +135,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
         self.deckView.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 100.0)
         self.deckView.pinHeight(toHeightOf: self.view, multiplier: 0.2, constant: 0.0)
         self.deckView.update(deck: game.deck, discardPile: game.discardPile)
+        self.deckView.delegate = self
     }
 
     func opponentPreviewViewTapped(player: Player) {
@@ -164,6 +167,24 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
             self.dimmerView?.removeFromSuperview()
             self.dimmerView = nil
         }
+    }
+    
+    func deckTapped() {
+        Network.shared.sendAddActionRequest(
+            game: self.gameModel,
+            action: .drawFromDeck(self.currentPlayer.name)
+        ) { (success, httpStatusCode, response) in
+            guard success else {
+                UIAlertController.presentErrorAlert(on: self, title: "Couldn't add action!")
+                return
+            }
+            
+            // TODO: Re-sync? iunno
+        }
+    }
+    
+    func discardPileTapped() {
+
     }
     
     required init?(coder: NSCoder) {

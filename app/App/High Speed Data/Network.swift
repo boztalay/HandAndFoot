@@ -98,6 +98,22 @@ class Network {
         )
     }
     
+    func sendAddActionRequest(game: GameModel, action: Action, responseHandler: @escaping NetworkResponseHandler) {
+        guard DataManager.shared.token != nil else {
+            responseHandler(false, nil, nil)
+            return
+        }
+        
+        self.sendRequest(
+            path: "/api/game/add_action",
+            payload: [
+                "game": game.id,
+                "action": action.toJSON()
+            ],
+            responseHandler: responseHandler
+        )
+    }
+    
     private func loginResponseHandler(originalResponseHandler: @escaping NetworkResponseHandler) -> NetworkResponseHandler {
         return { (success, httpStatusCode, response) in
             if success, let token = response?["token"] as? String {

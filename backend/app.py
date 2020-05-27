@@ -153,7 +153,7 @@ def sync_user(current_user):
     body = flask.request.get_json()
     if body is None:
         return error("Could not decode body as JSON", 400)
-    
+
     last_updated_string = body.get("last_updated")
     if last_updated_string is None:
         return error("Last updated date and time is required", 400)

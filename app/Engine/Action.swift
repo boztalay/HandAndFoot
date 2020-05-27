@@ -8,7 +8,7 @@
 
 import Foundation
 
-enum Action: JSONDecodable {
+enum Action: JSONCodable {
 
     case drawFromDeck(String)
     case drawFromDiscardPileAndAddToBook(String, CardRank)
@@ -42,7 +42,7 @@ enum Action: JSONDecodable {
         }
     }
     
-    // MARK: JSONDecodable
+    // MARK: JSONCodable
     
     init?(with json: JSONDictionary) {
         guard let type = json["type"] as? String else {
@@ -184,5 +184,59 @@ enum Action: JSONDecodable {
         }
         
         return CardRank.init(rawValue: bookRankJson)
+    }
+    
+    func toJSON() -> JSONDictionary {
+        switch (self) {
+            case let .drawFromDeck(playerName):
+                return [
+                    "type": "draw_from_deck",
+                    "player": playerName
+                ]
+            case let .drawFromDiscardPileAndAddToBook(playerName, bookRank):
+                return [
+                    "type": "draw_from_deck",
+                    "player": playerName,
+                    "book_rank": bookRank.rawValue
+                ]
+            case let .drawFromDiscardPileAndCreateBook(playerName, cards):
+                return [
+                    "type": "draw_from_deck",
+                    "player": playerName,
+                    "cards" : cards.map({ $0.toJSON() })
+                ]
+            case let .discardCard(playerName, card):
+                return [
+                    "type": "draw_from_deck",
+                    "player": playerName,
+                    "card": card.toJSON()
+                ]
+            case let .layDownInitialBooks(playerName, books):
+                return [
+                    "type": "draw_from_deck",
+                    "player": playerName,
+                    "books": books.map({ $0.map({ $0.toJSON() }) })
+                ]
+            case let .drawFromDiscardPileAndLayDownInitialBooks(playerName, partialBook, books):
+                return [
+                    "type": "draw_from_deck",
+                    "player": playerName,
+                    "partial_book" : partialBook.map({ $0.toJSON() }),
+                    "books": books.map({ $0.map({ $0.toJSON() }) })
+                ]
+            case let .startBook(playerName, cards):
+                return [
+                    "type": "draw_from_deck",
+                    "player": playerName,
+                    "cards" : cards.map({ $0.toJSON() })
+                ]
+            case let .addCardFromHandToBook(playerName, card, bookRank):
+                return [
+                    "type": "draw_from_deck",
+                    "player": playerName,
+                    "card": card.toJSON(),
+                    "book_rank": bookRank.rawValue
+                ]
+        }
     }
 }

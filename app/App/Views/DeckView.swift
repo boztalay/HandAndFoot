@@ -8,11 +8,21 @@
 
 import UIKit
 
+protocol DeckViewDelegate: AnyObject {
+    func deckTapped()
+    func discardPileTapped()
+}
+
 class DeckView: UIView {
 
-    var deckCardView: FaceDownCardView!
-    var discardPileCardView: CardView!
-    var discardPileEmptyLabel: UILabel!
+    private var deckCardView: FaceDownCardView!
+    private var discardPileCardView: CardView!
+    private var discardPileEmptyLabel: UILabel!
+    
+    private var deckTapGestureRecognizer: UITapGestureRecognizer!
+    private var discardPileTapGestureRecognizer: UITapGestureRecognizer!
+    
+    weak var delegate: DeckViewDelegate?
     
     init() {
         super.init(frame: .zero)
@@ -43,6 +53,12 @@ class DeckView: UIView {
         self.sendSubviewToBack(self.discardPileEmptyLabel)
         self.discardPileEmptyLabel.textAlignment = .center
         self.discardPileEmptyLabel.text = "❌"
+        
+        self.deckTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(DeckView.deckTapGestureRecognizerChanged))
+        self.deckCardView.addGestureRecognizer(self.deckTapGestureRecognizer)
+        
+        self.discardPileTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(DeckView.discardPileTapGestureRecognizerChanged))
+        self.discardPileCardView.addGestureRecognizer(self.discardPileTapGestureRecognizer)
     }
     
     func update(deck: Deck, discardPile: [Card]) {
@@ -53,6 +69,18 @@ class DeckView: UIView {
         } else {
             self.discardPileCardView.isHidden = false
             self.discardPileCardView.update(card: discardPile.last!)
+        }
+    }
+    
+    @objc func deckTapGestureRecognizerChanged(_ sender: Any) {
+        if self.deckTapGestureRecognizer.state == .ended {
+            self.delegate?.deckTapped()
+        }
+    }
+    
+    @objc func discardPileTapGestureRecognizerChanged(_ sender: Any) {
+        if self.discardPileTapGestureRecognizer.state == .ended {
+            self.delegate?.discardPileTapped()
         }
     }
     
