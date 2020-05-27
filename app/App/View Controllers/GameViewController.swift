@@ -14,7 +14,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
     private var footView: FootView!
     private var handView: HandView!
     private var booksContainerView: UIView!
-    private var bookViews: [BookView]!
+    private var bookViews: [CardRank: BookView]!
     private var deckView: DeckView!
     
     private var lowestOpponentPreviewView: OpponentPreviewView?
@@ -28,17 +28,22 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         return self.gameModel.game!.getPlayer(named: DataManager.shared.currentUser!.email!)!
     }
     
-    init(game: GameModel) {
+    init(gameModel: GameModel) {
         super.init(nibName: nil, bundle: nil)
         
         self.opponentPreviewViews = [:]
         self.footView = FootView()
         self.handView = HandView()
         self.booksContainerView = UIView()
-        self.bookViews = []
+        self.bookViews = [:]
         self.deckView = DeckView()
 
-        self.gameModel = game
+        self.gameModel = gameModel
+        
+        Network.shared.subscribeToSyncEvents() {
+            self.gameModel.loadGame()
+            self.updateViews()
+        }
     }
     
     override func viewDidLoad() {
@@ -68,9 +73,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
             if self.lowestOpponentPreviewView == nil {
                 self.lowestOpponentPreviewView = opponentPreviewView
             }
-            
-            let user = DataManager.shared.fetchUser(with: player.name)!
-            opponentPreviewView.update(user: user, player: player, game: game)
+
             lastOpponentPreviewView = opponentPreviewView
         }
         
@@ -79,14 +82,12 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         self.footView.pin(edge: .bottom, to: .bottom, of: self.view.safeAreaLayoutGuide, with: -40)
         self.footView.pinHeight(toHeightOf: self.view, multiplier: 0.2, constant: 0.0)
         self.footView.setAspectRatio(to: CGFloat(CardView.aspectRatio))
-        self.footView.update(footPresent: !self.currentPlayer.isInFoot)
 
         self.view.insertSubview(self.handView, belowSubview: self.lowestOpponentPreviewView!)
         self.handView.pin(edge: .leading, to: .trailing, of: self.footView, with: 30)
         self.handView.pin(edge: .trailing, to: .trailing, of: self.view.safeAreaLayoutGuide, with: -40)
         self.handView.pin(edge: .top, to: .top, of: self.footView)
         self.handView.pin(edge: .bottom, to: .bottom, of: self.view, with: -40)
-        self.handView.update(cards: self.currentPlayer.hand)
         
         self.view.insertSubview(self.booksContainerView, belowSubview: self.lowestOpponentPreviewView!)
         self.booksContainerView.pinX(to: self.handView)
@@ -103,12 +104,6 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
             let bookView = BookView()
             self.booksContainerView.addSubview(bookView)
             bookView.pin(edge: .top, to: .top, of: self.booksContainerView)
-
-            if let book = self.currentPlayer.books[game.round!]![rank] {
-                bookView.update(book: book)
-            } else {
-                bookView.update(rank: rank)
-            }
             
             if let lastBookView = lastBookView {
                 bookView.pinWidth(toWidthOf: lastBookView)
@@ -125,6 +120,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
                 tallestBookView = bookView
             }
             
+            self.bookViews[rank] = bookView
             lastBookView = bookView
         }
         
@@ -134,8 +130,38 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         self.deckView.centerHorizontally(in: self.view)
         self.deckView.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 100.0)
         self.deckView.pinHeight(toHeightOf: self.view, multiplier: 0.2, constant: 0.0)
-        self.deckView.update(deck: game.deck, discardPile: game.discardPile)
         self.deckView.delegate = self
+        
+        self.updateViews()
+    }
+    
+    func updateViews() {
+        let game = self.gameModel.game!
+        
+        for (playerName, opponentPreviewView) in self.opponentPreviewViews {
+            let user = DataManager.shared.fetchUser(with: playerName)!
+            let player = game.players.filter({ $0.name == playerName }).first!
+            opponentPreviewView.update(user: user, player: player, game: game)
+        }
+        
+        self.footView.update(footPresent: !self.currentPlayer.isInFoot)
+        self.handView.update(cards: self.currentPlayer.hand)
+        
+        for rank in CardRank.allCases {
+            guard rank != .two && rank != .three && rank != .joker else {
+                continue
+            }
+            
+            let bookView = self.bookViews[rank]!
+            
+            if let book = self.currentPlayer.books[game.round!]![rank] {
+                bookView.update(book: book)
+            } else {
+                bookView.update(rank: rank)
+            }
+        }
+        
+        self.deckView.update(deck: game.deck, discardPile: game.discardPile)
     }
 
     func opponentPreviewViewTapped(player: Player) {
@@ -174,12 +200,10 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
             game: self.gameModel,
             action: .drawFromDeck(self.currentPlayer.name)
         ) { (success, httpStatusCode, response) in
-            guard success else {
+            if !success {
                 UIAlertController.presentErrorAlert(on: self, title: "Couldn't add action!")
                 return
             }
-            
-            // TODO: Re-sync? iunno
         }
     }
     

@@ -10,6 +10,7 @@ import Foundation
 import PusherSwift
 
 typealias NetworkResponseHandler = (Bool, Int?, JSONDictionary?) -> ()
+typealias NetworkSyncEventCallback = () -> ()
 
 class Network: PusherDelegate {
     
@@ -17,9 +18,12 @@ class Network: PusherDelegate {
     
     static let shared = Network()
     
+    private var syncEventCallbacks: [NetworkSyncEventCallback]
     private var pusher: Pusher
     
     init() {
+        self.syncEventCallbacks = []
+
         self.pusher = Pusher(
             key: Secrets.pusherKey,
             options: PusherClientOptions(host: .cluster("us2"))
@@ -34,7 +38,20 @@ class Network: PusherDelegate {
     }
     
     func pusherSyncEventHappened() {
-        // TODO
+        DataManager.shared.sync() { (success) in
+            guard success else {
+                print("Failed to sync")
+                return
+            }
+            
+            for callback in self.syncEventCallbacks {
+                callback()
+            }
+        }
+    }
+    
+    func subscribeToSyncEvents(callback: @escaping NetworkSyncEventCallback) {
+        self.syncEventCallbacks.append(callback)
     }
     
     func sendLoginRequest(email: String, password: String, responseHandler: @escaping NetworkResponseHandler) {

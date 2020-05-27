@@ -31,8 +31,8 @@ class User(BaseModel, flask_login.UserMixin):
     last_name = peewee.CharField()
     email = peewee.CharField(unique=True)
     password_hash = peewee.CharField()
-    created = peewee.DateTimeField(default=datetime.datetime.now)
-    last_updated = peewee.DateTimeField(default=datetime.datetime.now)
+    created = peewee.DateTimeField(default=lambda: datetime.datetime.now(datetime.timezone.utc))
+    last_updated = peewee.DateTimeField(default=lambda: datetime.datetime.now(datetime.timezone.utc))
 
     @staticmethod
     def login(email, password):
@@ -91,8 +91,8 @@ class Game(BaseModel):
     initial_state = peewee.TextField()
     title = peewee.CharField()
     current_user = peewee.ForeignKeyField(User, lazy_load=False)
-    created = peewee.DateTimeField(default=datetime.datetime.now)
-    last_updated = peewee.DateTimeField(default=datetime.datetime.now)
+    created = peewee.DateTimeField(default=lambda: datetime.datetime.now(datetime.timezone.utc))
+    last_updated = peewee.DateTimeField(default=lambda: datetime.datetime.now(datetime.timezone.utc))
 
     @staticmethod
     def create(title, users):
@@ -180,7 +180,7 @@ class UserGame(BaseModel):
 class Action(BaseModel):
     content = peewee.TextField()
     game = peewee.ForeignKeyField(Game, lazy_load=False)
-    created = peewee.DateTimeField(default=datetime.datetime.now)
+    created = peewee.DateTimeField(default=lambda: datetime.datetime.now(datetime.timezone.utc))
 
     @staticmethod
     def create_without_saving(content_json, game):

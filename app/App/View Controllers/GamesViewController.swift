@@ -35,6 +35,10 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "New Game", style: .plain, target: self, action: #selector(GamesViewController.newGameButtonPressed))
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Profile", style: .plain, target: self, action: #selector(GamesViewController.profileButtonPressed))
+        
+        Network.shared.subscribeToSyncEvents() {
+            self.reloadGameModels()
+        }
     }
     
     override func viewDidLoad() {
@@ -62,9 +66,13 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
         self.gamePreviewView.pin(edge: .bottom, to: .bottom, of: self.view.safeAreaLayoutGuide)
         self.gamePreviewView.pin(edge: .trailing, to: .trailing, of: self.view.safeAreaLayoutGuide)
         
+        self.reloadGameModels()
+    }
+    
+    func reloadGameModels() {
         self.gameModels = DataManager.shared.fetchEntities(sortedBy: "lastUpdated", ascending: false)!
-        
         self.gameListTableView.reloadData()
+
         if self.gameModels.count > 0 {
             self.gameListTableView.selectRow(at: IndexPath(item: 0, section: 0), animated: false, scrollPosition: .top)
             self.tableView(self.gameListTableView, didSelectRowAt: IndexPath(item: 0, section: 0))
@@ -100,7 +108,7 @@ class GamesViewController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     func playButtonPressed() {
-        let gameViewController = GameViewController(game: self.selectedGame)
+        let gameViewController = GameViewController(gameModel: self.selectedGame)
         self.navigationController?.pushViewController(gameViewController, animated: true)
     }
 
