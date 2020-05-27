@@ -7,14 +7,35 @@
 //
 
 import Foundation
+import PusherSwift
 
 typealias NetworkResponseHandler = (Bool, Int?, JSONDictionary?) -> ()
 
-class Network {
+class Network: PusherDelegate {
     
     private static let baseUrl = URL(string: "https://handandfoot-boztalay.structure.sh")!
     
     static let shared = Network()
+    
+    private var pusher: Pusher
+    
+    init() {
+        self.pusher = Pusher(
+            key: Secrets.pusherKey,
+            options: PusherClientOptions(host: .cluster("us2"))
+        )
+
+        self.pusher.delegate = self
+        self.pusher.subscribe("sync").bind(eventName: "sync") { (event: PusherEvent) in
+            self.pusherSyncEventHappened()
+        }
+
+        self.pusher.connect()
+    }
+    
+    func pusherSyncEventHappened() {
+        // TODO
+    }
     
     func sendLoginRequest(email: String, password: String, responseHandler: @escaping NetworkResponseHandler) {
         self.sendRequest(
@@ -39,6 +60,16 @@ class Network {
         )
     }
     
+    private func loginResponseHandler(originalResponseHandler: @escaping NetworkResponseHandler) -> NetworkResponseHandler {
+        return { (success, httpStatusCode, response) in
+            if success, let token = response?["token"] as? String {
+                DataManager.shared.setToken(token)
+            }
+            
+            originalResponseHandler(success, httpStatusCode, response)
+        }
+    }
+    
     func sendLogoutRequest(responseHandler: @escaping NetworkResponseHandler) {
         guard DataManager.shared.token != nil else {
             responseHandler(false, nil, nil)
@@ -48,7 +79,7 @@ class Network {
         self.sendRequest(
             path: "/api/logout",
             payload: [:],
-            responseHandler: self.loginResponseHandler(originalResponseHandler: responseHandler)
+            responseHandler: responseHandler
         )
     }
     
@@ -112,16 +143,6 @@ class Network {
             ],
             responseHandler: responseHandler
         )
-    }
-    
-    private func loginResponseHandler(originalResponseHandler: @escaping NetworkResponseHandler) -> NetworkResponseHandler {
-        return { (success, httpStatusCode, response) in
-            if success, let token = response?["token"] as? String {
-                DataManager.shared.setToken(token)
-            }
-            
-            originalResponseHandler(success, httpStatusCode, response)
-        }
     }
     
     private func sendRequest(path: String, payload: JSONDictionary, responseHandler: @escaping NetworkResponseHandler) {

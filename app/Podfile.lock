@@ -1,0 +1,24 @@
+PODS:
+  - PusherSwift (8.0.0):
+    - ReachabilitySwift (~> 5.0)
+    - Starscream (~> 3.1)
+  - ReachabilitySwift (5.0.0)
+  - Starscream (3.1.1)
+
+DEPENDENCIES:
+  - PusherSwift (~> 8.0.0)
+
+SPEC REPOS:
+  trunk:
+    - PusherSwift
+    - ReachabilitySwift
+    - Starscream
+
+SPEC CHECKSUMS:
+  PusherSwift: 8f18b7beaf383e0475607ab6a3f89f477637fb21
+  ReachabilitySwift: 985039c6f7b23a1da463388634119492ff86c825
+  Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
+
+PODFILE CHECKSUM: 5b39cf117fc483f0cd7c5e96a217445d03766d9c
+
+COCOAPODS: 1.9.2
