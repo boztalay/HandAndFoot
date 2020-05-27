@@ -4,3 +4,4 @@ PyMySQL
 pyyaml
 Flask-Cors
 flask-login
+pusher

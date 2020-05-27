@@ -5,6 +5,7 @@ import flask_cors
 import flask_login
 import itsdangerous
 import peewee
+import pusher
 
 import engine
 import sekrits
@@ -24,6 +25,14 @@ app = flask.Flask(__name__)
 app.secret_key = sekrits.app_secrets["secret_key"]
 
 flask_cors.CORS(app)
+
+pusher_client = pusher.Pusher(
+    app_id=sekrits.pusher_secrets["app_id"],
+    key=sekrits.pusher_secrets["key"],
+    secret=sekrits.pusher_secrets["secret"],
+    cluster="us2",
+    ssl=True
+)
 
 #
 # Flask-Login
@@ -306,6 +315,7 @@ def add_action_to_game(current_user):
     game.last_updated = datetime.datetime.now(datetime.timezone.utc)
     game.save()
 
+    pusher_client.trigger("sync", "sync", {})
     return success()
 
 # Search
