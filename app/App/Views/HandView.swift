@@ -43,7 +43,11 @@ class HandView: UIView {
             cardView.removeFromSuperview()
         }
         
-        self.cardViews = cards.map() { CardView(card: $0) }
+        let sortedCards = cards.sorted() { (cardA, cardB) in
+            return cardA.rank < cardB.rank
+        }
+        
+        self.cardViews = sortedCards.map() { CardView(card: $0) }
         
         for cardView in self.cardViews {
             self.addSubview(cardView)
