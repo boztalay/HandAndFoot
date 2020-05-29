@@ -315,7 +315,10 @@ def add_action_to_game(current_user):
     game.last_updated = datetime.datetime.now(datetime.timezone.utc)
     game.save()
 
-    pusher_client.trigger("sync", "sync", {})
+    for usergame in game.usergames:
+        channel = "user-%d" % usergame.user_id
+        pusher_client.trigger(channel, "sync", {})
+
     return success()
 
 # Search

@@ -30,7 +30,10 @@ class Network: PusherDelegate {
         )
 
         self.pusher.delegate = self
-        self.pusher.subscribe("sync").bind(eventName: "sync") { (event: PusherEvent) in
+    }
+    
+    func subscribeToPusherChannel(for user: User) {
+        self.pusher.subscribe("user-\(user.id)").bind(eventName: "sync") { (event: PusherEvent) in
             self.pusherSyncEventHappened()
         }
 

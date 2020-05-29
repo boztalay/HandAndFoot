@@ -192,6 +192,8 @@ class LoginViewController: UIViewController, LogOutDelegate {
                 return
             }
             
+            Network.shared.subscribeToPusherChannel(for: DataManager.shared.currentUser!)
+            
             let gamesViewController = GamesViewController()
             gamesViewController.logOutDelegate = self
             let navigationController = UINavigationController(rootViewController: gamesViewController)
