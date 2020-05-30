@@ -167,6 +167,9 @@ def sync_user(current_user):
     if last_updated_string is None:
         return error("Last updated date and time is required", 400)
 
+    # "Mon, 13 Apr 2020 22:46:09 GMT"
+    server_sync_time_string = datetime.datetime.now(datetime.timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT")
+
     try:
         # "2020-04-06 18:07:22 -0000"
         last_updated = datetime.datetime.strptime(last_updated_string, "%Y-%m-%d %H:%M:%S %z")
@@ -192,7 +195,8 @@ def sync_user(current_user):
         games=[game.to_json() for game in games],
         usergames=[usergame.to_json() for usergame in usergames],
         actions=[action.to_json() for action in actions],
-        users=[user.to_json() for user in users]
+        users=[user.to_json() for user in users],
+        server_sync_time=server_sync_time_string
     )
 
 # Game Management

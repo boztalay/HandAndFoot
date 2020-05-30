@@ -206,7 +206,8 @@ class DataManager {
             guard let gameJsons = response["games"] as? [JSONDictionary],
                   let usergameJsons = response["usergames"] as? [JSONDictionary],
                   let actionJsons = response["actions"] as? [JSONDictionary],
-                  let userJsons = response["users"] as? [JSONDictionary] else {
+                  let userJsons = response["users"] as? [JSONDictionary],
+                  let serverSyncTimeString = response["server_sync_time"] as? String else {
 
                 callback(false)
                 return
@@ -233,8 +234,13 @@ class DataManager {
                 return
             }
             
+            guard let serverSyncTime = DateFormatter.dateForClient(from: serverSyncTimeString) else {
+                callback(false)
+                return
+            }
+            
             self.saveContext()
-            self.lastUpdated = Date()
+            self.lastUpdated = serverSyncTime
             
             callback(true)
         }
