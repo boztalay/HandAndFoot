@@ -27,8 +27,26 @@ class LoginViewController: UIViewController, LogOutDelegate {
     
     init() {
         super.init(nibName: nil, bundle: nil)
+    }
 
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.view.backgroundColor = .white
+        
+        self.setUpViews()
+        self.setMode(.logIn)
+        
+        if let currentUser = DataManager.shared.currentUser {
+            self.handleLogin(with: currentUser.email!, true)
+        }
+    }
+    
+    func setUpViews() {
         self.modeSegmentedControl = UISegmentedControl(items: LoginViewControllerMode.allCases.map({ $0.rawValue }))
+        self.view.addSubview(self.modeSegmentedControl)
+        self.modeSegmentedControl.centerHorizontally(in: self.view)
+        self.modeSegmentedControl.pin(edge: .top, to: .top, of: self.view, with: 250.0)
+        self.modeSegmentedControl.addTarget(self, action: #selector(LoginViewController.modeSegmentedControlChanged), for: .valueChanged)
         self.modeSegmentedControl.selectedSegmentIndex = 0
         
         self.emailTextField = UITextField()
@@ -60,31 +78,11 @@ class LoginViewController: UIViewController, LogOutDelegate {
         
         self.logInButton = UIButton(type: .system)
         self.logInButton.setTitle(LoginViewControllerMode.logIn.rawValue, for: .normal)
+        self.logInButton.addTarget(self, action: #selector(LoginViewController.logInOrSignUpButtonPressed), for: .touchUpInside)
         
         self.signUpButton = UIButton(type: .system)
         self.signUpButton.setTitle(LoginViewControllerMode.signUp.rawValue, for: .normal)
-
-        self.mode = .logIn
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.view.backgroundColor = .white
-        
-        self.view.addSubview(self.modeSegmentedControl)
-        self.modeSegmentedControl.addTarget(self, action: #selector(LoginViewController.modeSegmentedControlChanged), for: .valueChanged)
-        self.modeSegmentedControl.centerHorizontally(in: self.view)
-        self.modeSegmentedControl.pin(edge: .top, to: .top, of: self.view, with: 250.0)
-
-        self.logInButton.addTarget(self, action: #selector(LoginViewController.logInOrSignUpButtonPressed), for: .touchUpInside)
         self.signUpButton.addTarget(self, action: #selector(LoginViewController.logInOrSignUpButtonPressed), for: .touchUpInside)
-        
-        self.setMode(.logIn)
-        
-        // TODO: REMOVE
-        self.emailTextField.text = "ben@ben.com"
-        self.passwordTextField.text = "password"
-        self.logInOrSignUpButtonPressed(self)
     }
 
     @objc func modeSegmentedControlChanged(_ sender: Any) {
