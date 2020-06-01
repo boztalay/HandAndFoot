@@ -8,7 +8,7 @@
 
 import UIKit
 
-class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckViewDelegate {
+class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckViewDelegate, HandViewDelegate {
     
     private var opponentPreviewViews: [String : OpponentPreviewView]!
     private var footView: FootView!
@@ -84,6 +84,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         self.handView.pin(edge: .trailing, to: .trailing, of: self.view.safeAreaLayoutGuide, with: -40)
         self.handView.pin(edge: .top, to: .top, of: self.footView)
         self.handView.pin(edge: .bottom, to: .bottom, of: self.view, with: -40)
+        self.handView.delegate = self
         
         self.view.insertSubview(self.booksContainerView, belowSubview: self.lowestOpponentPreviewView!)
         self.booksContainerView.pinX(to: self.handView)
@@ -231,6 +232,10 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
 //        }
         
         // TODO: All discard-pile-related actions
+    }
+    
+    func cardSelectionChanged(cards: [Card]) {
+        // TODO
     }
     
     required init?(coder: NSCoder) {

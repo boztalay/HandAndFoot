@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol HandViewDelegate: AnyObject {
+    func cardSelectionChanged(cards: [Card])
+}
+
 class HandView: UIView {
     
     private static let minCardOverlapProportion = 0.52
@@ -15,11 +19,12 @@ class HandView: UIView {
 
     private var borderView: UIView!
     private var cardViews: [CardView]!
-    
-    private var panGestureRecognizer: UIPanGestureRecognizer!
+
     private var minTranslation: CGFloat!
     private var maxTranslation: CGFloat!
     private var translation: CGFloat!
+    
+    weak var delegate: HandViewDelegate?
 
     init() {
         super.init(frame: CGRect.zero)
@@ -34,12 +39,12 @@ class HandView: UIView {
         self.borderView.layer.borderColor = UIColor.black.cgColor
         
         self.cardViews = []
-        self.panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(HandView.panGestureRecognizerUpdated))
         self.minTranslation = 0.0
         self.maxTranslation = 0.0
         self.translation = 0.0
         
-        self.addGestureRecognizer(self.panGestureRecognizer)
+        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(HandView.panGestureRecognizerUpdated))
+        self.addGestureRecognizer(panGestureRecognizer)
     }
     
     func update(cards: [Card]) {
@@ -157,10 +162,10 @@ class HandView: UIView {
         }
     }
     
-    @objc func panGestureRecognizerUpdated(_ sender: Any) {
-        let panTranslation = self.panGestureRecognizer.translation(in: self).x
+    @objc func panGestureRecognizerUpdated(_ sender: UIPanGestureRecognizer) {
+        let panTranslation = sender.translation(in: self).x
         
-        switch (self.panGestureRecognizer.state) {
+        switch (sender.state) {
             case .began:
                 break
             case .changed:
@@ -183,6 +188,9 @@ class HandView: UIView {
         
         cardView.isSelected = !cardView.isSelected
         self.setNeedsLayout()
+        
+        let selectedCards = self.cardViews.filter({ $0.isSelected }).map({ $0.card! })
+        self.delegate?.cardSelectionChanged(cards: selectedCards)
     }
     
     required init?(coder: NSCoder) {

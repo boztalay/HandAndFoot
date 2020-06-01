@@ -12,8 +12,10 @@ class CardView: UIView {
     
     static let aspectRatio = (2.5 / 3.5)
     
-    var rankLabel: UILabel!
-    var suitLabel: UILabel!
+    private var rankLabel: UILabel!
+    private var suitLabel: UILabel!
+    
+    private(set) var card: Card?
 
     var isSelected: Bool {
         get {
@@ -58,6 +60,8 @@ class CardView: UIView {
     func update(card: Card) {
         self.rankLabel.text = card.rank.rawValue
         self.suitLabel.text = card.suit.rawValue
+        self.isSelected = false
+        self.card = card
     }
     
     required init?(coder: NSCoder) {
