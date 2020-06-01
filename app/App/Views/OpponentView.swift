@@ -33,6 +33,7 @@ class OpponentView: UIView {
         self.addSubview(self.opponentHandView)
         self.opponentHandView.pin(edge: .leading, to: .trailing, of: self.footView, with: 20.0)
         self.opponentHandView.pin(edge: .top, to: .top, of: self, with: 30.0)
+        self.opponentHandView.pin(edge: .trailing, to: .trailing, of: self, with: -30.0)
         self.opponentHandView.pinHeight(toHeightOf: self.footView)
         
         self.bookViews = [:]

@@ -30,6 +30,7 @@ class OpponentHandView: UIView {
         
         for _ in cards {
             let cardView = FaceDownCardView()
+            self.cardViews.append(cardView)
             self.addSubview(cardView)
             cardView.pinY(to: self)
             cardView.setAspectRatio(to: CGFloat(CardView.aspectRatio))
@@ -44,8 +45,6 @@ class OpponentHandView: UIView {
             
             lastCardView = cardView
         }
-        
-        lastCardView!.pin(edge: .trailing, to: .trailing, of: self)
     }
     
     required init?(coder: NSCoder) {

@@ -21,6 +21,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
     private var dimmerView: UIView?
     private var dimmerViewTapGestureRecognizer: UITapGestureRecognizer?
     private var opponentView: OpponentView?
+    private var opponentPlayerName: String?
 
     private var gameModel: GameModel!
     
@@ -172,6 +173,11 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         }
         
         self.deckView.update(deck: game.deck, discardPile: game.discardPile)
+        
+        if let opponentPlayerName = self.opponentPlayerName {
+            let opponentPlayer = game.getPlayer(named: opponentPlayerName)!
+            self.opponentView!.update(player: opponentPlayer, game: game)
+        }
     }
 
     func opponentPreviewViewTapped(player: Player) {
@@ -193,12 +199,14 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         }
         
         self.opponentView!.update(player: player, game: self.gameModel.game!)
+        self.opponentPlayerName = player.name
     }
     
     @objc func dimmerViewTapped(_ sender: Any) {
         if self.dimmerViewTapGestureRecognizer!.state == .ended {
             self.opponentView?.removeFromSuperview()
             self.opponentView = nil
+            self.opponentPlayerName = nil
 
             self.dimmerView?.removeFromSuperview()
             self.dimmerView = nil
