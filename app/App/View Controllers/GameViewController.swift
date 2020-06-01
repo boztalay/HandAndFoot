@@ -226,7 +226,11 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
     }
     
     func discardPileTapped() {
-
+//        guard let card = self.gameModel.game!.discardPile.last else {
+//            return
+//        }
+        
+        // TODO: All discard-pile-related actions
     }
     
     required init?(coder: NSCoder) {

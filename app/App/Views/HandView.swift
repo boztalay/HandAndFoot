@@ -10,9 +10,10 @@ import UIKit
 
 class HandView: UIView {
     
-    private static let minCardOverlapProportion = 0.50
+    private static let minCardOverlapProportion = 0.52
     private static let maxCardOverlapProportion = 0.90
 
+    private var borderView: UIView!
     private var cardViews: [CardView]!
     
     private var panGestureRecognizer: UIPanGestureRecognizer!
@@ -22,18 +23,21 @@ class HandView: UIView {
 
     init() {
         super.init(frame: CGRect.zero)
+        self.backgroundColor = .white
 
+        self.borderView = UIView()
+        self.addSubview(self.borderView)
+        self.borderView.pin(to: self)
+        self.borderView.layer.cornerRadius = 10
+        self.borderView.layer.masksToBounds = true
+        self.borderView.layer.borderWidth = 1
+        self.borderView.layer.borderColor = UIColor.black.cgColor
+        
         self.cardViews = []
         self.panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(HandView.panGestureRecognizerUpdated))
         self.minTranslation = 0.0
         self.maxTranslation = 0.0
         self.translation = 0.0
-
-        self.backgroundColor = .white
-        self.layer.cornerRadius = 10
-        self.layer.masksToBounds = true
-        self.layer.borderWidth = 1
-        self.layer.borderColor = UIColor.black.cgColor
         
         self.addGestureRecognizer(self.panGestureRecognizer)
     }
@@ -50,6 +54,8 @@ class HandView: UIView {
         self.cardViews = sortedCards.map() { CardView(card: $0) }
         
         for cardView in self.cardViews {
+            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(HandView.cardTapGestureRecognizerChanged))
+            cardView.addGestureRecognizer(tapGestureRecognizer)
             self.addSubview(cardView)
         }
 
@@ -62,10 +68,15 @@ class HandView: UIView {
         let cardHeight = self.frame.height - (margin * 2.0)
         let cardWidth = cardHeight * CGFloat(CardView.aspectRatio)
 
-        let cardTopEdgeY = (self.frame.height / 2.0) - (cardHeight / 2.0)
+        let unselectedCardTopEdgeY = (self.frame.height / 2.0) - (cardHeight / 2.0)
+        let selectedCardTopEdgeY = unselectedCardTopEdgeY - (self.frame.height * 0.2)
         
         for cardView in self.cardViews {
-            cardView.frame = CGRect(x: 0.0, y: cardTopEdgeY, width: cardWidth, height: cardHeight)
+            if cardView.isSelected {
+                cardView.frame = CGRect(x: 0.0, y: selectedCardTopEdgeY, width: cardWidth, height: cardHeight)
+            } else {
+                cardView.frame = CGRect(x: 0.0, y: unselectedCardTopEdgeY, width: cardWidth, height: cardHeight)
+            }
         }
         
         self.arrangeCards(panTranslation: 0.0)
@@ -159,6 +170,19 @@ class HandView: UIView {
             default:
                 break
         }
+    }
+    
+    @objc func cardTapGestureRecognizerChanged(_ sender: UITapGestureRecognizer) {
+        guard sender.state == .ended else {
+            return
+        }
+        
+        guard let cardView = sender.view as? CardView else {
+            fatalError()
+        }
+        
+        cardView.isSelected = !cardView.isSelected
+        self.setNeedsLayout()
     }
     
     required init?(coder: NSCoder) {

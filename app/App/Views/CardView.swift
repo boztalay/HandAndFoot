@@ -14,6 +14,19 @@ class CardView: UIView {
     
     var rankLabel: UILabel!
     var suitLabel: UILabel!
+
+    var isSelected: Bool {
+        get {
+            return (self.layer.borderColor == UIColor.systemRed.cgColor)
+        }
+        set {
+            if newValue {
+                self.layer.borderColor = UIColor.systemRed.cgColor
+            } else {
+                self.layer.borderColor = UIColor.black.cgColor
+            }
+        }
+    }
     
     init(card: Card? = nil) {
         super.init(frame: CGRect.zero)
@@ -22,7 +35,6 @@ class CardView: UIView {
         self.layer.cornerRadius = 10
         self.layer.masksToBounds = true
         self.layer.borderWidth = 1
-        self.layer.borderColor = UIColor.black.cgColor
         
         self.rankLabel = UILabel()
         self.addSubview(self.rankLabel)
@@ -35,6 +47,8 @@ class CardView: UIView {
         self.suitLabel.pin(edge: .leading, to: .leading, of: self, with: 10.0)
         self.suitLabel.pin(edge: .trailing, to: .trailing, of: self, with: 10.0)
         self.suitLabel.pin(edge: .bottom, to: .bottom, of: self, with: -10.0)
+
+        self.isSelected = false
         
         if let card = card {
             self.update(card: card)
