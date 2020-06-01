@@ -214,28 +214,28 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         }
     }
     
-    func deckTapped() {
-        Network.shared.sendAddActionRequest(
-            game: self.gameModel,
-            action: .drawFromDeck(self.currentPlayer.name)
-        ) { (success, httpStatusCode, response) in
-            if !success {
-                UIAlertController.presentErrorAlert(on: self, title: "Couldn't add action!")
-                return
-            }
-        }
-    }
-    
-    func discardPileTapped() {
-//        guard let card = self.gameModel.game!.discardPile.last else {
-//            return
+    func deckSelectionChanged(selected: Bool) {
+//        Network.shared.sendAddActionRequest(
+//            game: self.gameModel,
+//            action: .drawFromDeck(self.currentPlayer.name)
+//        ) { (success, httpStatusCode, response) in
+//            if !success {
+//                UIAlertController.presentErrorAlert(on: self, title: "Couldn't add action!")
+//                return
+//            }
 //        }
-        
-        // TODO: All discard-pile-related actions
+
+        // TODO
+        print("Deck selection: \(selected)")
+    }
+
+    func discardPileSelectionChanged(card: Card?) {
+        // TODO
+        print("Discard pile selection: \(String(describing: card))")
     }
     
     func cardSelectionChanged(cards: [Card]) {
-        // TODO
+        print("Card selection: \(cards)")
     }
     
     required init?(coder: NSCoder) {

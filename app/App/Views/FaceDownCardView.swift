@@ -13,6 +13,19 @@ class FaceDownCardView: UIView {
     var handLabel: UILabel!
     var footLabel: UILabel!
     
+    var isSelected: Bool {
+        get {
+            return (self.layer.borderColor == UIColor.systemRed.cgColor)
+        }
+        set {
+            if newValue {
+                self.layer.borderColor = UIColor.systemRed.cgColor
+            } else {
+                self.layer.borderColor = UIColor.black.cgColor
+            }
+        }
+    }
+    
     init() {
         super.init(frame: .zero)
         self.backgroundColor = UIColor(white: 0.95, alpha: 1.0)
@@ -39,6 +52,8 @@ class FaceDownCardView: UIView {
         self.footLabel.pinHeight(toHeightOf: self, multiplier: 0.5, constant: 0.0)
         self.footLabel.textAlignment = .center
         self.footLabel.text = "🦶"
+        
+        self.isSelected = false
     }
     
     required init?(coder: NSCoder) {

@@ -9,8 +9,8 @@
 import UIKit
 
 protocol DeckViewDelegate: AnyObject {
-    func deckTapped()
-    func discardPileTapped()
+    func deckSelectionChanged(selected: Bool)
+    func discardPileSelectionChanged(card: Card?)
 }
 
 class DeckView: UIView {
@@ -19,10 +19,9 @@ class DeckView: UIView {
     private var discardPileCardView: CardView!
     private var discardPileEmptyLabel: UILabel!
     
-    private var deckTapGestureRecognizer: UITapGestureRecognizer!
-    private var discardPileTapGestureRecognizer: UITapGestureRecognizer!
-    
     weak var delegate: DeckViewDelegate?
+    
+    private var discardPileCard: Card?
     
     init() {
         super.init(frame: .zero)
@@ -54,11 +53,11 @@ class DeckView: UIView {
         self.discardPileEmptyLabel.textAlignment = .center
         self.discardPileEmptyLabel.text = "❌"
         
-        self.deckTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(DeckView.deckTapGestureRecognizerChanged))
-        self.deckCardView.addGestureRecognizer(self.deckTapGestureRecognizer)
+        let deckTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(DeckView.deckTapGestureRecognizerChanged))
+        self.deckCardView.addGestureRecognizer(deckTapGestureRecognizer)
         
-        self.discardPileTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(DeckView.discardPileTapGestureRecognizerChanged))
-        self.discardPileCardView.addGestureRecognizer(self.discardPileTapGestureRecognizer)
+        let discardPileTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(DeckView.discardPileTapGestureRecognizerChanged))
+        self.discardPileCardView.addGestureRecognizer(discardPileTapGestureRecognizer)
     }
     
     func update(deck: Deck, discardPile: [Card]) {
@@ -70,17 +69,34 @@ class DeckView: UIView {
             self.discardPileCardView.isHidden = false
             self.discardPileCardView.update(card: discardPile.last!)
         }
+        
+        self.discardPileCard = discardPile.last
     }
     
-    @objc func deckTapGestureRecognizerChanged(_ sender: Any) {
-        if self.deckTapGestureRecognizer.state == .ended {
-            self.delegate?.deckTapped()
+    @objc func deckTapGestureRecognizerChanged(_ sender: UITapGestureRecognizer) {
+        guard sender.state == .ended else {
+            return
         }
+
+        self.deckCardView.isSelected = !self.deckCardView.isSelected
+        self.delegate?.deckSelectionChanged(selected: self.deckCardView.isSelected)
     }
     
-    @objc func discardPileTapGestureRecognizerChanged(_ sender: Any) {
-        if self.discardPileTapGestureRecognizer.state == .ended {
-            self.delegate?.discardPileTapped()
+    @objc func discardPileTapGestureRecognizerChanged(_ sender: UITapGestureRecognizer) {
+        guard sender.state == .ended else {
+            return
+        }
+        
+        guard let card = self.discardPileCard else {
+            return
+        }
+
+        self.discardPileCardView.isSelected = !self.discardPileCardView.isSelected
+        
+        if self.discardPileCardView.isSelected {
+            self.delegate?.discardPileSelectionChanged(card: card)
+        } else {
+            self.delegate?.discardPileSelectionChanged(card: nil)
         }
     }
     
