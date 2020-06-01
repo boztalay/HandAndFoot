@@ -33,9 +33,7 @@ class GamePreviewView: UIView {
     }
     
     func setGameModel(_ gameModel: GameModel) {
-        if gameModel.game == nil {
-            gameModel.loadGame()
-        }
+        gameModel.loadGame()
         
         self.titleLabel.removeFromSuperview()
         self.addSubview(self.titleLabel)

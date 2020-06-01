@@ -39,11 +39,6 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         self.deckView = DeckView()
 
         self.gameModel = gameModel
-        
-        Network.shared.subscribeToSyncEvents() {
-            self.gameModel.loadGame()
-            self.updateViews()
-        }
     }
     
     override func viewDidLoad() {
@@ -133,6 +128,21 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         self.deckView.delegate = self
         
         self.updateViews()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        Network.shared.subscribeToSyncEvents(label: "GameViewController") {
+            self.gameModel.loadGame()
+            self.updateViews()
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        Network.shared.unsubscribeFromSyncEvents(label: "GameViewController")
     }
     
     func updateViews() {

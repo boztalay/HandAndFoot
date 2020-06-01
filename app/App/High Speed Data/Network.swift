@@ -18,11 +18,11 @@ class Network: PusherDelegate {
     
     static let shared = Network()
     
-    private var syncEventCallbacks: [NetworkSyncEventCallback]
+    private var syncEventCallbacks: [String : NetworkSyncEventCallback]
     private var pusher: Pusher
     
     init() {
-        self.syncEventCallbacks = []
+        self.syncEventCallbacks = [:]
 
         self.pusher = Pusher(
             key: Secrets.pusherKey,
@@ -33,6 +33,9 @@ class Network: PusherDelegate {
     }
     
     func subscribeToPusherChannel(for user: User) {
+        self.pusher.unsubscribeAll()
+        self.pusher.disconnect()
+
         self.pusher.subscribe("user-\(user.id)").bind(eventName: "sync") { (event: PusherEvent) in
             self.pusherSyncEventHappened()
         }
@@ -40,21 +43,25 @@ class Network: PusherDelegate {
         self.pusher.connect()
     }
     
-    func pusherSyncEventHappened() {
+    private func pusherSyncEventHappened() {
         DataManager.shared.sync() { (success) in
             guard success else {
                 print("Failed to sync")
                 return
             }
             
-            for callback in self.syncEventCallbacks {
+            for callback in self.syncEventCallbacks.values {
                 callback()
             }
         }
     }
     
-    func subscribeToSyncEvents(callback: @escaping NetworkSyncEventCallback) {
-        self.syncEventCallbacks.append(callback)
+    func subscribeToSyncEvents(label: String, callback: @escaping NetworkSyncEventCallback) {
+        self.syncEventCallbacks[label] = callback
+    }
+    
+    func unsubscribeFromSyncEvents(label: String) {
+        self.syncEventCallbacks.removeValue(forKey: label)
     }
     
     func sendLoginRequest(email: String, password: String, responseHandler: @escaping NetworkResponseHandler) {
