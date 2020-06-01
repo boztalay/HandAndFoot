@@ -237,6 +237,9 @@ def create_game(current_user):
     for user in users[1:]:
         UserGame.create(user, game, UserRole.PLAYER)
 
+    for usergame in game.usergames:
+        send_sync_notification(usergame.user_id)
+
     return success(game_id=game.id)
 
 @app.route("/api/game/accept", methods=["POST"])
@@ -266,6 +269,9 @@ def accept_game_invite(current_user):
 
     game.last_updated = datetime.datetime.now(datetime.timezone.utc)
     game.save()
+
+    for usergame in game.usergames:
+        send_sync_notification(usergame.user_id)
 
     return success()
 
@@ -320,8 +326,7 @@ def add_action_to_game(current_user):
     game.save()
 
     for usergame in game.usergames:
-        channel = "user-%d" % usergame.user_id
-        pusher_client.trigger(channel, "sync", {})
+        send_sync_notification(usergame.user_id)
 
     return success()
 
@@ -355,6 +360,10 @@ def search_for_user(current_user):
 #
 # Helpers
 #
+
+def send_sync_notification(user_id):
+    channel = "user-%d" % user_id
+    pusher_client.trigger(channel, "sync", {})
 
 def error(message, code):
     return (flask.jsonify({"success": False, "message": message}), code)
