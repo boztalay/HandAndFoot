@@ -42,6 +42,27 @@ enum Action: JSONCodable {
         }
     }
     
+    var friendlyDescription: String {
+        switch (self) {
+            case .drawFromDeck:
+                return "Draw from deck"
+            case .drawFromDiscardPileAndAddToBook:
+                return "Draw from discard and add to book"
+            case .drawFromDiscardPileAndCreateBook:
+                return "Draw from discard and create book"
+            case .discardCard:
+                return "Discard"
+            case .layDownInitialBooks:
+                return "Go down"
+            case .drawFromDiscardPileAndLayDownInitialBooks:
+                return "Draw from discard to go down"
+            case .startBook:
+                return "Start book"
+            case .addCardFromHandToBook:
+                return "Add card to book"
+        }
+    }
+    
     // MARK: JSONCodable
     
     init?(with json: JSONDictionary) {

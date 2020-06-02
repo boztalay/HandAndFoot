@@ -10,7 +10,7 @@ import UIKit
 
 protocol DeckViewDelegate: AnyObject {
     func deckSelectionChanged(selected: Bool)
-    func discardPileSelectionChanged(card: Card?)
+    func discardPileSelectionChanged(selected: Bool)
 }
 
 class DeckView: UIView {
@@ -20,8 +20,6 @@ class DeckView: UIView {
     private var discardPileEmptyLabel: UILabel!
     
     weak var delegate: DeckViewDelegate?
-    
-    private var discardPileCard: Card?
     
     init() {
         super.init(frame: .zero)
@@ -69,8 +67,6 @@ class DeckView: UIView {
             self.discardPileCardView.isHidden = false
             self.discardPileCardView.update(card: discardPile.last!)
         }
-        
-        self.discardPileCard = discardPile.last
     }
     
     @objc func deckTapGestureRecognizerChanged(_ sender: UITapGestureRecognizer) {
@@ -87,17 +83,12 @@ class DeckView: UIView {
             return
         }
         
-        guard let card = self.discardPileCard else {
+        guard !self.discardPileCardView.isHidden else {
             return
         }
 
         self.discardPileCardView.isSelected = !self.discardPileCardView.isSelected
-        
-        if self.discardPileCardView.isSelected {
-            self.delegate?.discardPileSelectionChanged(card: card)
-        } else {
-            self.delegate?.discardPileSelectionChanged(card: nil)
-        }
+        self.delegate?.discardPileSelectionChanged(selected: self.discardPileCardView.isSelected)
     }
     
     required init?(coder: NSCoder) {

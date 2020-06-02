@@ -8,7 +8,7 @@
 
 import UIKit
 
-class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckViewDelegate, HandViewDelegate, BookViewDelegate {
+class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckViewDelegate, HandViewDelegate, BookViewDelegate, ActionMenuViewDelegate {
     
     private var opponentPreviewViews: [String : OpponentPreviewView]!
     private var footView: FootView!
@@ -16,6 +16,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
     private var booksContainerView: UIView!
     private var bookViews: [CardRank: BookView]!
     private var deckView: DeckView!
+    private var actionMenuView: ActionMenuView!
     
     private var lowestOpponentPreviewView: OpponentPreviewView?
     private var dimmerView: UIView?
@@ -23,6 +24,11 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
     private var opponentPlayerName: String?
 
     private var gameModel: GameModel!
+
+    private var deckSelected: Bool!
+    private var discardPileSelected: Bool!
+    private var handSelection: [Card]!
+    private var bookSelection: CardRank?
     
     private var currentPlayer: Player {
         return self.gameModel.game!.getPlayer(named: DataManager.shared.currentUser!.email!)!
@@ -37,8 +43,22 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         self.booksContainerView = UIView()
         self.bookViews = [:]
         self.deckView = DeckView()
+        self.actionMenuView = ActionMenuView()
 
         self.gameModel = gameModel
+        
+        self.deckSelected = false
+        self.discardPileSelected = false
+        self.handSelection = []
+        self.bookSelection = nil
+        
+        self.actionMenuView.update(
+            playerName: self.currentPlayer.name,
+            deckSelected: self.deckSelected,
+            discardPileSelected: self.discardPileSelected,
+            handSelection: self.handSelection,
+            bookSelection: self.bookSelection
+        )
     }
     
     override func viewDidLoad() {
@@ -129,6 +149,13 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         self.deckView.pinHeight(toHeightOf: self.view, multiplier: 0.2, constant: 0.0)
         self.deckView.delegate = self
         
+        self.view.insertSubview(self.actionMenuView, belowSubview: self.lowestOpponentPreviewView!)
+        self.actionMenuView.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 40.0)
+        self.actionMenuView.pin(edge: .trailing, to: .trailing, of: self.view.safeAreaLayoutGuide, with: -40.0)
+        self.actionMenuView.pin(edge: .bottom, to: .top, of: self.booksContainerView, with: -30.0)
+        self.actionMenuView.pinWidth(toWidthOf: self.view, multiplier: 0.25, constant: 0.0)
+        self.actionMenuView.delegate = self
+        
         self.updateViews()
     }
     
@@ -217,27 +244,39 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
     }
     
     func deckSelectionChanged(selected: Bool) {
-//        Network.shared.sendAddActionRequest(
-//            game: self.gameModel,
-//            action: .drawFromDeck(self.currentPlayer.name)
-//        ) { (success, httpStatusCode, response) in
-//            if !success {
-//                UIAlertController.presentErrorAlert(on: self, title: "Couldn't add action!")
-//                return
-//            }
-//        }
+        self.deckSelected = selected
 
-        // TODO
-        print("Deck selection: \(selected)")
+        self.actionMenuView.update(
+            playerName: self.currentPlayer.name,
+            deckSelected: self.deckSelected,
+            discardPileSelected: self.discardPileSelected,
+            handSelection: self.handSelection,
+            bookSelection: self.bookSelection
+        )
     }
 
-    func discardPileSelectionChanged(card: Card?) {
-        // TODO
-        print("Discard pile selection: \(String(describing: card))")
+    func discardPileSelectionChanged(selected: Bool) {
+        self.discardPileSelected = selected
+
+        self.actionMenuView.update(
+            playerName: self.currentPlayer.name,
+            deckSelected: self.deckSelected,
+            discardPileSelected: self.discardPileSelected,
+            handSelection: self.handSelection,
+            bookSelection: self.bookSelection
+        )
     }
     
     func cardSelectionChanged(cards: [Card]) {
-        print("Card selection: \(cards)")
+        self.handSelection = cards
+
+        self.actionMenuView.update(
+            playerName: self.currentPlayer.name,
+            deckSelected: self.deckSelected,
+            discardPileSelected: self.discardPileSelected,
+            handSelection: self.handSelection,
+            bookSelection: self.bookSelection
+        )
     }
     
     func bookSelectionChanged(rank: CardRank, isSelected: Bool) {
@@ -247,7 +286,23 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
             }
         }
         
-        print("Book selection (\(rank)): \(isSelected)")
+        if isSelected {
+            self.bookSelection = rank
+        } else {
+            self.bookSelection = nil
+        }
+
+        self.actionMenuView.update(
+            playerName: self.currentPlayer.name,
+            deckSelected: self.deckSelected,
+            discardPileSelected: self.discardPileSelected,
+            handSelection: self.handSelection,
+            bookSelection: self.bookSelection
+        )
+    }
+    
+    func actionSelected(_ action: Action) {
+        print("Action selected: \(action)")
     }
     
     required init?(coder: NSCoder) {
