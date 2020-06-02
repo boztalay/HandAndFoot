@@ -53,9 +53,9 @@ enum Action: JSONCodable {
             case .discardCard:
                 return "Discard"
             case .layDownInitialBooks:
-                return "Go down"
+                return "Lay down"
             case .drawFromDiscardPileAndLayDownInitialBooks:
-                return "Draw from discard to go down"
+                return "Draw from discard to lay down"
             case .startBook:
                 return "Start book"
             case .addCardFromHandToBook:

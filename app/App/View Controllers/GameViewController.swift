@@ -221,7 +221,11 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
     func actionSelected(_ action: Action) {
         print("Action selected: \(action)")
     }
-    
+
+    func layDownRequested() {
+
+    }
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

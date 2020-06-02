@@ -10,6 +10,7 @@ import UIKit
 
 protocol ActionMenuViewDelegate: AnyObject {
     func actionSelected(_ action: Action)
+    func layDownRequested()
 }
 
 class ActionMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
@@ -18,6 +19,7 @@ class ActionMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
     
     private var titleLabel: UILabel!
     private var tableView: UITableView!
+    private var layDownButton: UIButton!
     
     weak var delegate: ActionMenuViewDelegate?
     
@@ -45,9 +47,17 @@ class ActionMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
         self.addSubview(self.tableView)
         self.tableView.pin(edge: .top, to: .bottom, of: self.titleLabel)
         self.tableView.pinX(to: self)
-        self.tableView.pin(edge: .bottom, to: .bottom, of: self)
         self.tableView.dataSource = self
         self.tableView.delegate = self
+        
+        self.layDownButton = UIButton(type: .system)
+        self.addSubview(self.layDownButton)
+        self.layDownButton.pin(edge: .top, to: .bottom, of: self.tableView)
+        self.layDownButton.pinX(to: self)
+        self.layDownButton.pin(edge: .bottom, to: .bottom, of: self)
+        self.layDownButton.pinHeight(toHeightOf: self, multiplier: 0.15, constant: 0.0)
+        self.layDownButton.setTitle("Lay Down...", for: .normal)
+        self.layDownButton.addTarget(self, action: #selector(ActionMenuView.layDownButtonTapped), for: .touchUpInside)
 
         self.possibleActions = []
     }
@@ -84,8 +94,8 @@ class ActionMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
             }
         }
 
-        self.isHidden = (self.possibleActions.count == 0)
         self.tableView.reloadData()
+        self.layDownButton.isEnabled = !player.hasLaidDownThisRound
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -107,8 +117,14 @@ class ActionMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.tableView.deselectRow(at: indexPath, animated: true)
+
         let action = self.possibleActions[indexPath.row]
         self.delegate?.actionSelected(action)
+    }
+    
+    @objc func layDownButtonTapped(_ sender: Any) {
+        self.delegate?.layDownRequested()
     }
     
     required init?(coder: NSCoder) {

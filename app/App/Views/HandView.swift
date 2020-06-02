@@ -74,7 +74,7 @@ class HandView: UIView {
         let cardWidth = cardHeight * CGFloat(CardView.aspectRatio)
 
         let unselectedCardTopEdgeY = (self.frame.height / 2.0) - (cardHeight / 2.0)
-        let selectedCardTopEdgeY = unselectedCardTopEdgeY - (self.frame.height * 0.2)
+        let selectedCardTopEdgeY = unselectedCardTopEdgeY - (self.frame.height * 0.15)
         
         for cardView in self.cardViews {
             if cardView.isSelected {
