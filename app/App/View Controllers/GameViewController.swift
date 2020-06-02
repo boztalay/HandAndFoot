@@ -8,13 +8,12 @@
 
 import UIKit
 
-class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckViewDelegate, HandViewDelegate, BookViewDelegate, ActionMenuViewDelegate {
+class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckViewDelegate, HandViewDelegate, BooksViewDelegate, ActionMenuViewDelegate {
     
     private var opponentPreviewViews: [String : OpponentPreviewView]!
     private var footView: FootView!
     private var handView: HandView!
-    private var booksContainerView: UIView!
-    private var bookViews: [CardRank: BookView]!
+    private var booksView: BooksView!
     private var deckView: DeckView!
     private var actionMenuView: ActionMenuView!
     
@@ -40,8 +39,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         self.opponentPreviewViews = [:]
         self.footView = FootView()
         self.handView = HandView()
-        self.booksContainerView = UIView()
-        self.bookViews = [:]
+        self.booksView = BooksView()
         self.deckView = DeckView()
         self.actionMenuView = ActionMenuView()
 
@@ -51,14 +49,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         self.discardPileSelected = false
         self.handSelection = []
         self.bookSelection = nil
-        
-        self.actionMenuView.update(
-            playerName: self.currentPlayer.name,
-            deckSelected: self.deckSelected,
-            discardPileSelected: self.discardPileSelected,
-            handSelection: self.handSelection,
-            bookSelection: self.bookSelection
-        )
+
+        self.updateActionMenuView()
     }
     
     override func viewDidLoad() {
@@ -105,43 +97,10 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         self.handView.pin(edge: .bottom, to: .bottom, of: self.view, with: -40)
         self.handView.delegate = self
         
-        self.view.insertSubview(self.booksContainerView, belowSubview: self.lowestOpponentPreviewView!)
-        self.booksContainerView.pinX(to: self.handView)
-        self.booksContainerView.pin(edge: .bottom, to: .top, of: self.handView, with: -30)
-        
-        var lastBookView: BookView?
-        var tallestBookView: BookView?
-        
-        for rank in CardRank.allCases {
-            guard rank != .two && rank != .three && rank != .joker else {
-                continue
-            }
-            
-            let bookView = BookView()
-            self.booksContainerView.addSubview(bookView)
-            bookView.pin(edge: .top, to: .top, of: self.booksContainerView)
-            bookView.delegate = self
-            
-            if let lastBookView = lastBookView {
-                bookView.pinWidth(toWidthOf: lastBookView)
-                bookView.pin(edge: .leading, to: .trailing, of: lastBookView, with: 10.0)
-
-                if rank == .ace {
-                    bookView.pin(edge: .trailing, to: .trailing, of: self.booksContainerView)
-                }
-            } else {
-                bookView.pin(edge: .leading, to: .leading, of: self.booksContainerView)
-            }
-            
-            if tallestBookView == nil || bookView.cardViews.count > tallestBookView!.cardViews.count {
-                tallestBookView = bookView
-            }
-            
-            self.bookViews[rank] = bookView
-            lastBookView = bookView
-        }
-        
-        self.booksContainerView.pinHeight(toHeightOf: tallestBookView!)
+        self.view.insertSubview(self.booksView, belowSubview: self.lowestOpponentPreviewView!)
+        self.booksView.pinX(to: self.handView)
+        self.booksView.pin(edge: .bottom, to: .top, of: self.handView, with: -30)
+        self.booksView.delegate = self
 
         self.view.insertSubview(self.deckView, belowSubview: self.lowestOpponentPreviewView!)
         self.deckView.centerHorizontally(in: self.view)
@@ -152,7 +111,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         self.view.insertSubview(self.actionMenuView, belowSubview: self.lowestOpponentPreviewView!)
         self.actionMenuView.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 40.0)
         self.actionMenuView.pin(edge: .trailing, to: .trailing, of: self.view.safeAreaLayoutGuide, with: -40.0)
-        self.actionMenuView.pin(edge: .bottom, to: .top, of: self.booksContainerView, with: -30.0)
+        self.actionMenuView.pin(edge: .bottom, to: .top, of: self.booksView, with: -30.0)
         self.actionMenuView.pinWidth(toWidthOf: self.view, multiplier: 0.25, constant: 0.0)
         self.actionMenuView.delegate = self
         
@@ -185,21 +144,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         
         self.footView.update(footPresent: !self.currentPlayer.isInFoot)
         self.handView.update(cards: self.currentPlayer.hand)
-        
-        for rank in CardRank.allCases {
-            guard rank != .two && rank != .three && rank != .joker else {
-                continue
-            }
-            
-            let bookView = self.bookViews[rank]!
-
-            if let book = self.currentPlayer.books[game.round!]![rank] {
-                bookView.update(book: book)
-            } else {
-                bookView.update(rank: rank)
-            }
-        }
-        
+        self.booksView.update(books: self.currentPlayer.books[game.round!]!)
         self.deckView.update(deck: game.deck, discardPile: game.discardPile)
         
         if let opponentPlayerName = self.opponentPlayerName {
@@ -245,55 +190,27 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
     
     func deckSelectionChanged(selected: Bool) {
         self.deckSelected = selected
-
-        self.actionMenuView.update(
-            playerName: self.currentPlayer.name,
-            deckSelected: self.deckSelected,
-            discardPileSelected: self.discardPileSelected,
-            handSelection: self.handSelection,
-            bookSelection: self.bookSelection
-        )
+        self.updateActionMenuView()
     }
 
     func discardPileSelectionChanged(selected: Bool) {
         self.discardPileSelected = selected
-
-        self.actionMenuView.update(
-            playerName: self.currentPlayer.name,
-            deckSelected: self.deckSelected,
-            discardPileSelected: self.discardPileSelected,
-            handSelection: self.handSelection,
-            bookSelection: self.bookSelection
-        )
+        self.updateActionMenuView()
     }
     
     func cardSelectionChanged(cards: [Card]) {
         self.handSelection = cards
-
-        self.actionMenuView.update(
-            playerName: self.currentPlayer.name,
-            deckSelected: self.deckSelected,
-            discardPileSelected: self.discardPileSelected,
-            handSelection: self.handSelection,
-            bookSelection: self.bookSelection
-        )
+        self.updateActionMenuView()
     }
     
-    func bookSelectionChanged(rank: CardRank, isSelected: Bool) {
-        for (bookViewRank, bookView) in self.bookViews {
-            if bookViewRank != rank {
-                bookView.isSelected = false
-            }
-        }
-        
-        if isSelected {
-            self.bookSelection = rank
-        } else {
-            self.bookSelection = nil
-        }
-
+    func bookSelectionChanged(bookRank: CardRank?) {
+        self.bookSelection = bookRank
+        self.updateActionMenuView()
+    }
+    
+    private func updateActionMenuView() {
         self.actionMenuView.update(
-            playerName: self.currentPlayer.name,
+            player: self.currentPlayer,
             deckSelected: self.deckSelected,
             discardPileSelected: self.discardPileSelected,
             handSelection: self.handSelection,

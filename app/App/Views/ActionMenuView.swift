@@ -52,20 +52,20 @@ class ActionMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
         self.possibleActions = []
     }
     
-    func update(playerName: String, deckSelected: Bool, discardPileSelected: Bool, handSelection: [Card], bookSelection: CardRank?) {
+    func update(player: Player, deckSelected: Bool, discardPileSelected: Bool, handSelection: [Card], bookSelection: CardRank?) {
         self.possibleActions = []
         
         if deckSelected {
-            self.possibleActions.append(.drawFromDeck(playerName))
+            self.possibleActions.append(.drawFromDeck(player.name))
         }
         
         if discardPileSelected {
             if let bookRank = bookSelection {
-                self.possibleActions.append(.drawFromDiscardPileAndAddToBook(playerName, bookRank))
+                self.possibleActions.append(.drawFromDiscardPileAndAddToBook(player.name, bookRank))
             }
             
             if handSelection.count >= 2 {
-                self.possibleActions.append(.drawFromDiscardPileAndCreateBook(playerName, handSelection))
+                self.possibleActions.append(.drawFromDiscardPileAndCreateBook(player.name, handSelection))
             }
         }
         
@@ -73,14 +73,14 @@ class ActionMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
         // TODO: Also includes drawing from the discard pile to lay down initial books
         
         if handSelection.count >= 3 {
-            self.possibleActions.append(.startBook(playerName, handSelection))
+            self.possibleActions.append(.startBook(player.name, handSelection))
         }
         
         if handSelection.count == 1 {
-            self.possibleActions.append(.discardCard(playerName, handSelection.first!))
+            self.possibleActions.append(.discardCard(player.name, handSelection.first!))
             
             if let bookRank = bookSelection {
-                self.possibleActions.append(.addCardFromHandToBook(playerName, handSelection.first!, bookRank))
+                self.possibleActions.append(.addCardFromHandToBook(player.name, handSelection.first!, bookRank))
             }
         }
 

@@ -42,6 +42,7 @@
 		FBB97EFE2459183E00187CBF /* GamesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB97EFD2459183E00187CBF /* GamesViewController.swift */; };
 		FBB97F0024591A7700187CBF /* GamePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB97EFF24591A7700187CBF /* GamePreviewView.swift */; };
 		FBD240AD2485D3B80049E09F /* ActionMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD240AC2485D3B80049E09F /* ActionMenuView.swift */; };
+		FBD240AF2486135D0049E09F /* BooksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD240AE2486135D0049E09F /* BooksView.swift */; };
 		FBDB3BA82446A066008831FF /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9E2446A066008831FF /* Game.swift */; };
 		FBDB3BA92446A066008831FF /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9F2446A066008831FF /* Card.swift */; };
 		FBDB3BAA2446A066008831FF /* Deck.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA02446A066008831FF /* Deck.swift */; };
@@ -118,6 +119,7 @@
 		FBB97EFD2459183E00187CBF /* GamesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamesViewController.swift; sourceTree = "<group>"; };
 		FBB97EFF24591A7700187CBF /* GamePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamePreviewView.swift; sourceTree = "<group>"; };
 		FBD240AC2485D3B80049E09F /* ActionMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionMenuView.swift; sourceTree = "<group>"; };
+		FBD240AE2486135D0049E09F /* BooksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooksView.swift; sourceTree = "<group>"; };
 		FBDB3B9C2446A066008831FF /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		FBDB3B9E2446A066008831FF /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		FBDB3B9F2446A066008831FF /* Card.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
@@ -237,6 +239,7 @@
 				FB885C25247C941200614E1E /* OpponentHandView.swift */,
 				FB885C27247DD20000614E1E /* FaceDownCardView.swift */,
 				FBD240AC2485D3B80049E09F /* ActionMenuView.swift */,
+				FBD240AE2486135D0049E09F /* BooksView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -496,6 +499,7 @@
 				FB64284A244AA26200FDF34E /* Strongbox.swift in Sources */,
 				FBDB3BBA2446A321008831FF /* User+CoreDataClass.swift in Sources */,
 				FBD240AD2485D3B80049E09F /* ActionMenuView.swift in Sources */,
+				FBD240AF2486135D0049E09F /* BooksView.swift in Sources */,
 				FB7DD379244FEA1800BC8AB4 /* CardView.swift in Sources */,
 				FB5E2C1B244F6CA900210545 /* DateFormatter+CommonFormatters.swift in Sources */,
 				FB885C20247C774B00614E1E /* DeckView.swift in Sources */,
