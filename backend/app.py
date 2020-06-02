@@ -178,7 +178,11 @@ def sync_user(current_user):
     except ValueError:
         return error("Invalid last updated date and time", 400)
 
-    games = Game.select().where(Game.last_updated > last_updated)
+    # TODO: This is gross and I'm sure there's a better way to do this directly
+    #       in a database query
+    initial_usergames = UserGame.select().where(UserGame.user == current_user)
+    game_ids = [usergame.game_id for usergame in initial_usergames]
+    games = Game.select().where(Game.id.in_(game_ids) & (Game.last_updated > last_updated))
     usergames = UserGame.select().where(UserGame.game.in_(games))
     actions = Action.select().where(Action.game.in_(games) & (Action.created > last_updated))
 
