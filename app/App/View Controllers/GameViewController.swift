@@ -8,7 +8,7 @@
 
 import UIKit
 
-class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckViewDelegate, HandViewDelegate {
+class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckViewDelegate, HandViewDelegate, BookViewDelegate {
     
     private var opponentPreviewViews: [String : OpponentPreviewView]!
     private var footView: FootView!
@@ -19,7 +19,6 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
     
     private var lowestOpponentPreviewView: OpponentPreviewView?
     private var dimmerView: UIView?
-    private var dimmerViewTapGestureRecognizer: UITapGestureRecognizer?
     private var opponentView: OpponentView?
     private var opponentPlayerName: String?
 
@@ -101,6 +100,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
             let bookView = BookView()
             self.booksContainerView.addSubview(bookView)
             bookView.pin(edge: .top, to: .top, of: self.booksContainerView)
+            bookView.delegate = self
             
             if let lastBookView = lastBookView {
                 bookView.pinWidth(toWidthOf: lastBookView)
@@ -165,7 +165,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
             }
             
             let bookView = self.bookViews[rank]!
-            
+
             if let book = self.currentPlayer.books[game.round!]![rank] {
                 bookView.update(book: book)
             } else {
@@ -189,8 +189,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
             self.dimmerView!.backgroundColor = .black
             self.dimmerView!.alpha = 0.5
 
-            self.dimmerViewTapGestureRecognizer = UITapGestureRecognizer(target:self, action: #selector(GameViewController.dimmerViewTapped))
-            self.dimmerView!.addGestureRecognizer(self.dimmerViewTapGestureRecognizer!)
+            let dimmerViewTapGestureRecognizer = UITapGestureRecognizer(target:self, action: #selector(GameViewController.dimmerViewTapped))
+            self.dimmerView!.addGestureRecognizer(dimmerViewTapGestureRecognizer)
             
             self.opponentView = OpponentView()
             self.view.insertSubview(self.opponentView!, aboveSubview: self.dimmerView!)
@@ -203,15 +203,17 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         self.opponentPlayerName = player.name
     }
     
-    @objc func dimmerViewTapped(_ sender: Any) {
-        if self.dimmerViewTapGestureRecognizer!.state == .ended {
-            self.opponentView?.removeFromSuperview()
-            self.opponentView = nil
-            self.opponentPlayerName = nil
-
-            self.dimmerView?.removeFromSuperview()
-            self.dimmerView = nil
+    @objc func dimmerViewTapped(_ sender: UITapGestureRecognizer) {
+        guard sender.state == .ended else {
+            return
         }
+
+        self.opponentView?.removeFromSuperview()
+        self.opponentView = nil
+        self.opponentPlayerName = nil
+
+        self.dimmerView?.removeFromSuperview()
+        self.dimmerView = nil
     }
     
     func deckSelectionChanged(selected: Bool) {
@@ -236,6 +238,16 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
     
     func cardSelectionChanged(cards: [Card]) {
         print("Card selection: \(cards)")
+    }
+    
+    func bookSelectionChanged(rank: CardRank, isSelected: Bool) {
+        for (bookViewRank, bookView) in self.bookViews {
+            if bookViewRank != rank {
+                bookView.isSelected = false
+            }
+        }
+        
+        print("Book selection (\(rank)): \(isSelected)")
     }
     
     required init?(coder: NSCoder) {

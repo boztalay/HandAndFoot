@@ -8,6 +8,10 @@
 
 import UIKit
 
+protocol BookViewDelegate: AnyObject {
+    func bookSelectionChanged(rank: CardRank, isSelected: Bool)
+}
+
 class BookView: UIView {
 
     private static let cardOverlapProportion = 0.9
@@ -16,15 +20,41 @@ class BookView: UIView {
     private var outlineView: UIView!
     private var rankLabel: UILabel!
     
+    weak var delegate: BookViewDelegate?
+    
+    private var rank: CardRank!
+    
+    var isSelected: Bool {
+        get {
+            return self.outlineView.layer.borderColor == UIColor.systemRed.cgColor
+        }
+        set {
+            if newValue {
+                self.outlineView.layer.borderColor = UIColor.systemRed.cgColor
+            } else {
+                self.outlineView.layer.borderColor = UIColor.black.cgColor
+            }
+            
+            for cardView in self.cardViews {
+                cardView.isSelected = newValue
+            }
+        }
+    }
+    
     init() {
         super.init(frame: .zero)
         
         self.cardViews = []
         self.outlineView = UIView()
         self.rankLabel = UILabel()
+        
+        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(BookView.tapGestureRecognizerChanged))
+        self.addGestureRecognizer(tapGestureRecognizer)
     }
     
     func update(rank: CardRank) {
+        self.rank = rank
+
         for cardView in self.cardViews {
             cardView.removeFromSuperview()
         }
@@ -50,6 +80,8 @@ class BookView: UIView {
     }
     
     func update(book: Book) {
+        self.rank = book.rank
+        
         let sortedCards = book.cards.sorted() { (cardA, cardB) in
             if cardA.isWild && !cardB.isWild {
                 return true
@@ -89,6 +121,15 @@ class BookView: UIView {
         }
         
         lastCardView!.pin(edge: .bottom, to: .bottom, of: self)
+    }
+    
+    @objc func tapGestureRecognizerChanged(_ sender: UITapGestureRecognizer) {
+        guard sender.state == .ended else {
+            return
+        }
+        
+        self.isSelected = !self.isSelected
+        self.delegate?.bookSelectionChanged(rank: self.rank, isSelected: self.isSelected)
     }
     
     required init?(coder: NSCoder) {
