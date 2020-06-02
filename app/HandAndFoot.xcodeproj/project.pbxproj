@@ -43,6 +43,7 @@
 		FBB97F0024591A7700187CBF /* GamePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB97EFF24591A7700187CBF /* GamePreviewView.swift */; };
 		FBD240AD2485D3B80049E09F /* ActionMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD240AC2485D3B80049E09F /* ActionMenuView.swift */; };
 		FBD240AF2486135D0049E09F /* BooksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD240AE2486135D0049E09F /* BooksView.swift */; };
+		FBD240B1248627560049E09F /* LayDownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD240B0248627560049E09F /* LayDownViewController.swift */; };
 		FBDB3BA82446A066008831FF /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9E2446A066008831FF /* Game.swift */; };
 		FBDB3BA92446A066008831FF /* Card.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9F2446A066008831FF /* Card.swift */; };
 		FBDB3BAA2446A066008831FF /* Deck.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3BA02446A066008831FF /* Deck.swift */; };
@@ -120,6 +121,7 @@
 		FBB97EFF24591A7700187CBF /* GamePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamePreviewView.swift; sourceTree = "<group>"; };
 		FBD240AC2485D3B80049E09F /* ActionMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionMenuView.swift; sourceTree = "<group>"; };
 		FBD240AE2486135D0049E09F /* BooksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooksView.swift; sourceTree = "<group>"; };
+		FBD240B0248627560049E09F /* LayDownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayDownViewController.swift; sourceTree = "<group>"; };
 		FBDB3B9C2446A066008831FF /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		FBDB3B9E2446A066008831FF /* Game.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Game.swift; sourceTree = "<group>"; };
 		FBDB3B9F2446A066008831FF /* Card.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Card.swift; sourceTree = "<group>"; };
@@ -310,6 +312,7 @@
 				FB5512B72472928200814BAF /* ProfileViewController.swift */,
 				FBB22A9724761494003DB73B /* GameViewController.swift */,
 				FB5512B92474C33D00814BAF /* GroupedSectionViewController.swift */,
+				FBD240B0248627560049E09F /* LayDownViewController.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -498,6 +501,7 @@
 				FBDB3BB62446A2D8008831FF /* GameModel+CoreDataClass.swift in Sources */,
 				FB64284A244AA26200FDF34E /* Strongbox.swift in Sources */,
 				FBDB3BBA2446A321008831FF /* User+CoreDataClass.swift in Sources */,
+				FBD240B1248627560049E09F /* LayDownViewController.swift in Sources */,
 				FBD240AD2485D3B80049E09F /* ActionMenuView.swift in Sources */,
 				FBD240AF2486135D0049E09F /* BooksView.swift in Sources */,
 				FB7DD379244FEA1800BC8AB4 /* CardView.swift in Sources */,

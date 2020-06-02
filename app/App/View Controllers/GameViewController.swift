@@ -8,7 +8,7 @@
 
 import UIKit
 
-class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckViewDelegate, HandViewDelegate, BooksViewDelegate, ActionMenuViewDelegate {
+class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckViewDelegate, HandViewDelegate, BooksViewDelegate, ActionMenuViewDelegate, LayDownViewControllerDelegate {
     
     private var opponentPreviewViews: [String : OpponentPreviewView]!
     private var footView: FootView!
@@ -219,6 +219,28 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
     }
     
     func actionSelected(_ action: Action) {
+        self.tryAddingAction(action)
+    }
+
+    func layDownRequested(with cardsFromHand: [Card], includingDiscardPile: Bool) {
+        let cardFromDiscardPile = includingDiscardPile ? self.gameModel.game!.discardPile.last! : nil
+
+        let layDownViewController = LayDownViewController(
+            playerName: self.currentPlayer.name,
+            cardsFromHand: cardsFromHand,
+            cardFromDiscardPile: cardFromDiscardPile
+        )
+        
+        layDownViewController.delegate = self
+        let navigationController = UINavigationController(rootViewController: layDownViewController)
+        self.present(navigationController, animated: true, completion: nil)
+    }
+    
+    func layDownSelectionComplete(action: Action) {
+        self.tryAddingAction(action)
+    }
+    
+    private func tryAddingAction(_ action: Action) {
         Network.shared.sendAddActionRequest(game: self.gameModel, action: action) { (success, httpStatusCode, response) in
             guard success else {
                 if let errorMessage = response?["message"] as? String {
@@ -230,10 +252,6 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
                 return
             }
         }
-    }
-
-    func layDownRequested(with cardsFromHand: [Card], includingDiscardPile: Bool) {
-        print("Lay down requested")
     }
 
     required init?(coder: NSCoder) {
