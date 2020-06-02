@@ -81,9 +81,9 @@ class OpponentPreviewView: UIView {
         self.nameLabel.text = user.firstName!
         
         if player.isInFoot {
-            self.inFootBadge.text = "❌"
-        } else {
             self.inFootBadge.text = "🦶"
+        } else {
+            self.inFootBadge.text = "✋"
         }
         
         if player.hasNaturalBook(in: game.round!) {

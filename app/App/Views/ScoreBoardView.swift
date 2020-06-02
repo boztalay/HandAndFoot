@@ -62,10 +62,10 @@ class ScoreBoardView: UIView {
                 let points = player.points[round]!
                 
                 let booksLabel = UILabel()
-                booksLabel.text = "\(points.inBooks)"
+                booksLabel.text = "\(points.inBooks + points.forGoingOut)"
                 booksLabel.textAlignment = .right
                 
-                let nonBooksPoints = points.inHand + points.inFoot + points.laidDown + points.forGoingOut
+                let nonBooksPoints = points.inHand + points.inFoot + points.laidDown
                 let pointsLabel = UILabel()
                 pointsLabel.text = "\(nonBooksPoints)"
                 pointsLabel.textAlignment = .right
