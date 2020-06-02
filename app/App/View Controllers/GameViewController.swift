@@ -222,8 +222,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         print("Action selected: \(action)")
     }
 
-    func layDownRequested() {
-
+    func layDownRequested(with cardsFromHand: [Card], includingDiscardPile: Bool) {
+        print("Lay down requested")
     }
 
     required init?(coder: NSCoder) {

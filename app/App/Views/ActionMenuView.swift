@@ -10,7 +10,7 @@ import UIKit
 
 protocol ActionMenuViewDelegate: AnyObject {
     func actionSelected(_ action: Action)
-    func layDownRequested()
+    func layDownRequested(with cardsFromHand: [Card], includingDiscardPile: Bool)
 }
 
 class ActionMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
@@ -19,7 +19,6 @@ class ActionMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
     
     private var titleLabel: UILabel!
     private var tableView: UITableView!
-    private var layDownButton: UIButton!
     
     weak var delegate: ActionMenuViewDelegate?
     
@@ -47,17 +46,9 @@ class ActionMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
         self.addSubview(self.tableView)
         self.tableView.pin(edge: .top, to: .bottom, of: self.titleLabel)
         self.tableView.pinX(to: self)
+        self.tableView.pin(edge: .bottom, to: .bottom, of: self)
         self.tableView.dataSource = self
         self.tableView.delegate = self
-        
-        self.layDownButton = UIButton(type: .system)
-        self.addSubview(self.layDownButton)
-        self.layDownButton.pin(edge: .top, to: .bottom, of: self.tableView)
-        self.layDownButton.pinX(to: self)
-        self.layDownButton.pin(edge: .bottom, to: .bottom, of: self)
-        self.layDownButton.pinHeight(toHeightOf: self, multiplier: 0.15, constant: 0.0)
-        self.layDownButton.setTitle("Lay Down...", for: .normal)
-        self.layDownButton.addTarget(self, action: #selector(ActionMenuView.layDownButtonTapped), for: .touchUpInside)
 
         self.possibleActions = []
     }
@@ -65,37 +56,41 @@ class ActionMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
     func update(player: Player, deckSelected: Bool, discardPileSelected: Bool, handSelection: [Card], bookSelection: CardRank?) {
         self.possibleActions = []
         
-        if deckSelected {
+        if player.canDrawFromDeck, deckSelected {
             self.possibleActions.append(.drawFromDeck(player.name))
         }
         
-        if discardPileSelected {
-            if let bookRank = bookSelection {
-                self.possibleActions.append(.drawFromDiscardPileAndAddToBook(player.name, bookRank))
-            }
-            
-            if handSelection.count >= 2 {
-                self.possibleActions.append(.drawFromDiscardPileAndCreateBook(player.name, handSelection))
-            }
+        if player.canDrawFromDiscardPile, discardPileSelected, let bookRank = bookSelection {
+            self.possibleActions.append(.drawFromDiscardPileAndAddToBook(player.name, bookRank))
         }
         
-        // TODO: Laying down initial books (need a way to figure out (or be told) which books are being started)
-        // TODO: Also includes drawing from the discard pile to lay down initial books
+        if player.canDrawFromDiscardPile, discardPileSelected, handSelection.count >= 2 {
+            self.possibleActions.append(.drawFromDiscardPileAndCreateBook(player.name, handSelection))
+        }
         
-        if handSelection.count >= 3 {
+        if player.canEndTurn, handSelection.count == 1 {
+            self.possibleActions.append(.discardCard(player.name, handSelection.first!))
+        }
+        
+        if !player.hasLaidDownThisRound, handSelection.count >= 3 {
+            // NOTE: Kind of a hack, this is a placeholder Action
+            self.possibleActions.append(.layDownInitialBooks(player.name, []))
+        }
+        
+        if !player.hasLaidDownThisRound, player.canDrawFromDiscardPile, discardPileSelected, handSelection.count >= 3 {
+            // NOTE: Kind of a hack, this is a placeholder Action
+            self.possibleActions.append(.drawFromDiscardPileAndLayDownInitialBooks(player.name, [], []))
+        }
+        
+        if player.hasLaidDownThisRound, handSelection.count >= 3 {
             self.possibleActions.append(.startBook(player.name, handSelection))
         }
         
-        if handSelection.count == 1 {
-            self.possibleActions.append(.discardCard(player.name, handSelection.first!))
-            
-            if let bookRank = bookSelection {
-                self.possibleActions.append(.addCardFromHandToBook(player.name, handSelection.first!, bookRank))
-            }
+        if player.hasLaidDownThisRound, handSelection.count == 1, let bookRank = bookSelection {
+            self.possibleActions.append(.addCardFromHandToBook(player.name, handSelection.first!, bookRank))
         }
 
         self.tableView.reloadData()
-        self.layDownButton.isEnabled = !player.hasLaidDownThisRound
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -121,10 +116,6 @@ class ActionMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
 
         let action = self.possibleActions[indexPath.row]
         self.delegate?.actionSelected(action)
-    }
-    
-    @objc func layDownButtonTapped(_ sender: Any) {
-        self.delegate?.layDownRequested()
     }
     
     required init?(coder: NSCoder) {

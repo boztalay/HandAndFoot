@@ -234,12 +234,12 @@
 				FB885C1B247C69BC00614E1E /* FootView.swift */,
 				FB885C1F247C774B00614E1E /* DeckView.swift */,
 				FB885C21247C80E400614E1E /* BookView.swift */,
+				FBD240AE2486135D0049E09F /* BooksView.swift */,
+				FBD240AC2485D3B80049E09F /* ActionMenuView.swift */,
 				FB885C1D247C6DBC00614E1E /* OpponentPreviewView.swift */,
 				FB885C23247C936700614E1E /* OpponentView.swift */,
 				FB885C25247C941200614E1E /* OpponentHandView.swift */,
 				FB885C27247DD20000614E1E /* FaceDownCardView.swift */,
-				FBD240AC2485D3B80049E09F /* ActionMenuView.swift */,
-				FBD240AE2486135D0049E09F /* BooksView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
