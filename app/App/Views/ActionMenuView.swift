@@ -74,12 +74,12 @@ class ActionMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
         
         if !player.hasLaidDownThisRound, handSelection.count >= 3 {
             // NOTE: Kind of a hack, this is a placeholder Action
-            self.possibleActions.append(.layDownInitialBooks(player.name, []))
+            self.possibleActions.append(.layDownInitialBooks(player.name, [handSelection]))
         }
         
         if !player.hasLaidDownThisRound, player.canDrawFromDiscardPile, discardPileSelected, handSelection.count >= 3 {
             // NOTE: Kind of a hack, this is a placeholder Action
-            self.possibleActions.append(.drawFromDiscardPileAndLayDownInitialBooks(player.name, [], []))
+            self.possibleActions.append(.drawFromDiscardPileAndLayDownInitialBooks(player.name, [], [handSelection]))
         }
         
         if player.hasLaidDownThisRound, handSelection.count >= 3 {
@@ -115,7 +115,15 @@ class ActionMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
         self.tableView.deselectRow(at: indexPath, animated: true)
 
         let action = self.possibleActions[indexPath.row]
-        self.delegate?.actionSelected(action)
+        
+        switch (action) {
+            case let .layDownInitialBooks(_, cards):
+                self.delegate?.layDownRequested(with: cards[0], includingDiscardPile: false)
+            case let .drawFromDiscardPileAndLayDownInitialBooks(_, _, cards):
+                self.delegate?.layDownRequested(with: cards[0], includingDiscardPile: true)
+            default:
+                self.delegate?.actionSelected(action)
+        }
     }
     
     required init?(coder: NSCoder) {

@@ -216,44 +216,44 @@ enum Action: JSONCodable {
                 ]
             case let .drawFromDiscardPileAndAddToBook(playerName, bookRank):
                 return [
-                    "type": "draw_from_deck",
+                    "type": "draw_from_discard_pile_and_add_to_book",
                     "player": playerName,
                     "book_rank": bookRank.rawValue
                 ]
             case let .drawFromDiscardPileAndCreateBook(playerName, cards):
                 return [
-                    "type": "draw_from_deck",
+                    "type": "draw_from_discard_pile_and_create_book",
                     "player": playerName,
                     "cards" : cards.map({ $0.toJSON() })
                 ]
             case let .discardCard(playerName, card):
                 return [
-                    "type": "draw_from_deck",
+                    "type": "discard_card",
                     "player": playerName,
                     "card": card.toJSON()
                 ]
             case let .layDownInitialBooks(playerName, books):
                 return [
-                    "type": "draw_from_deck",
+                    "type": "lay_down_initial_books",
                     "player": playerName,
                     "books": books.map({ $0.map({ $0.toJSON() }) })
                 ]
             case let .drawFromDiscardPileAndLayDownInitialBooks(playerName, partialBook, books):
                 return [
-                    "type": "draw_from_deck",
+                    "type": "draw_from_discard_pile_and_lay_down_initial_books",
                     "player": playerName,
                     "partial_book" : partialBook.map({ $0.toJSON() }),
                     "books": books.map({ $0.map({ $0.toJSON() }) })
                 ]
             case let .startBook(playerName, cards):
                 return [
-                    "type": "draw_from_deck",
+                    "type": "start_book",
                     "player": playerName,
                     "cards" : cards.map({ $0.toJSON() })
                 ]
             case let .addCardFromHandToBook(playerName, card, bookRank):
                 return [
-                    "type": "draw_from_deck",
+                    "type": "add_card_from_hand_to_book",
                     "player": playerName,
                     "card": card.toJSON(),
                     "book_rank": bookRank.rawValue

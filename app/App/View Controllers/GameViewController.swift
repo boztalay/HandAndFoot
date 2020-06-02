@@ -49,8 +49,6 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         self.discardPileSelected = false
         self.handSelection = []
         self.bookSelection = nil
-
-        self.updateActionMenuView()
     }
     
     override func viewDidLoad() {
@@ -151,6 +149,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
             let opponentPlayer = game.getPlayer(named: opponentPlayerName)!
             self.opponentView!.update(player: opponentPlayer, game: game)
         }
+        
+        self.updateActionMenuView()
     }
 
     func opponentPreviewViewTapped(player: Player) {
@@ -219,7 +219,17 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
     }
     
     func actionSelected(_ action: Action) {
-        print("Action selected: \(action)")
+        Network.shared.sendAddActionRequest(game: self.gameModel, action: action) { (success, httpStatusCode, response) in
+            guard success else {
+                if let errorMessage = response?["message"] as? String {
+                    UIAlertController.presentErrorAlert(on: self, title: "Couldn't Add Action", message: errorMessage, okAction: nil)
+                } else {
+                    UIAlertController.presentErrorAlert(on: self, title: "Couldn't Add Action")
+                }
+                
+                return
+            }
+        }
     }
 
     func layDownRequested(with cardsFromHand: [Card], includingDiscardPile: Bool) {
