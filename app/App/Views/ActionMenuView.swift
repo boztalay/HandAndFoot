@@ -64,7 +64,7 @@ class ActionMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
             self.possibleActions.append(.drawFromDiscardPileAndAddToBook(player.name, bookRank))
         }
         
-        if player.canDrawFromDiscardPile, discardPileSelected, handSelection.count >= 2 {
+        if player.hasLaidDownThisRound, player.canDrawFromDiscardPile, discardPileSelected, handSelection.count >= 2 {
             self.possibleActions.append(.drawFromDiscardPileAndCreateBook(player.name, handSelection))
         }
         
@@ -77,7 +77,7 @@ class ActionMenuView: UIView, UITableViewDataSource, UITableViewDelegate {
             self.possibleActions.append(.layDownInitialBooks(player.name, [handSelection]))
         }
         
-        if !player.hasLaidDownThisRound, player.canDrawFromDiscardPile, discardPileSelected, handSelection.count >= 3 {
+        if !player.hasLaidDownThisRound, player.canDrawFromDiscardPile, discardPileSelected, handSelection.count >= 2 {
             // NOTE: Kind of a hack, this is a placeholder Action
             self.possibleActions.append(.drawFromDiscardPileAndLayDownInitialBooks(player.name, [], [handSelection]))
         }
