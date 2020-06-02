@@ -56,6 +56,7 @@ class LayDownViewController: UIViewController, UITableViewDataSource, UITableVie
         
         self.title = "Select Books"
         
+        self.view.addSubview(self.tableView)
         self.tableView.pin(to: self.view.safeAreaLayoutGuide)
         
         self.tableView.reloadData()
@@ -118,8 +119,11 @@ class LayDownViewController: UIViewController, UITableViewDataSource, UITableVie
             } else {
                 cardsInBook.append(card)
             }
-            
-            self.cards.remove(at: index)
+        }
+
+        // This is some EECS 280 shit right now
+        for (i, index) in self.selectedCards.keys.sorted().enumerated() {
+            self.cards.remove(at: (index - i))
         }
         
         if includesDiscardPileCard {
