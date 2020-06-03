@@ -41,7 +41,6 @@
 		FBB22A9A24763A2D003DB73B /* HandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB22A9924763A2D003DB73B /* HandView.swift */; };
 		FBB97EFE2459183E00187CBF /* GamesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB97EFD2459183E00187CBF /* GamesViewController.swift */; };
 		FBB97F0024591A7700187CBF /* GamePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB97EFF24591A7700187CBF /* GamePreviewView.swift */; };
-		FBD240AD2485D3B80049E09F /* ActionMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD240AC2485D3B80049E09F /* ActionMenuView.swift */; };
 		FBD240AF2486135D0049E09F /* BooksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD240AE2486135D0049E09F /* BooksView.swift */; };
 		FBD240B1248627560049E09F /* LayDownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD240B0248627560049E09F /* LayDownViewController.swift */; };
 		FBDB3BA82446A066008831FF /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9E2446A066008831FF /* Game.swift */; };
@@ -119,7 +118,6 @@
 		FBB22A9924763A2D003DB73B /* HandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandView.swift; sourceTree = "<group>"; };
 		FBB97EFD2459183E00187CBF /* GamesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamesViewController.swift; sourceTree = "<group>"; };
 		FBB97EFF24591A7700187CBF /* GamePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamePreviewView.swift; sourceTree = "<group>"; };
-		FBD240AC2485D3B80049E09F /* ActionMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionMenuView.swift; sourceTree = "<group>"; };
 		FBD240AE2486135D0049E09F /* BooksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooksView.swift; sourceTree = "<group>"; };
 		FBD240B0248627560049E09F /* LayDownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayDownViewController.swift; sourceTree = "<group>"; };
 		FBDB3B9C2446A066008831FF /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -237,7 +235,6 @@
 				FB885C1F247C774B00614E1E /* DeckView.swift */,
 				FB885C21247C80E400614E1E /* BookView.swift */,
 				FBD240AE2486135D0049E09F /* BooksView.swift */,
-				FBD240AC2485D3B80049E09F /* ActionMenuView.swift */,
 				FB885C1D247C6DBC00614E1E /* OpponentPreviewView.swift */,
 				FB885C23247C936700614E1E /* OpponentView.swift */,
 				FB885C25247C941200614E1E /* OpponentHandView.swift */,
@@ -502,7 +499,6 @@
 				FB64284A244AA26200FDF34E /* Strongbox.swift in Sources */,
 				FBDB3BBA2446A321008831FF /* User+CoreDataClass.swift in Sources */,
 				FBD240B1248627560049E09F /* LayDownViewController.swift in Sources */,
-				FBD240AD2485D3B80049E09F /* ActionMenuView.swift in Sources */,
 				FBD240AF2486135D0049E09F /* BooksView.swift in Sources */,
 				FB7DD379244FEA1800BC8AB4 /* CardView.swift in Sources */,
 				FB5E2C1B244F6CA900210545 /* DateFormatter+CommonFormatters.swift in Sources */,

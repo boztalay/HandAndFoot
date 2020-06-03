@@ -8,14 +8,26 @@
 
 import UIKit
 
-class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckViewDelegate, HandViewDelegate, BooksViewDelegate, ActionMenuViewDelegate, LayDownViewControllerDelegate {
+enum DragDropTransactionEndpoint {
+    case deck
+    case discardPile
+    case book(CardRank)
+    case hand
+}
+
+struct DragDropTransaction {
+    let source: DragDropTransactionEndpoint
+    let destination: DragDropTransactionEndpoint
+    let cards: [Card]
+}
+
+class GameViewController: UIViewController, OpponentPreviewViewDelegate {
     
     private var opponentPreviewViews: [String : OpponentPreviewView]!
     private var footView: FootView!
     private var handView: HandView!
     private var booksView: BooksView!
     private var deckView: DeckView!
-    private var actionMenuView: ActionMenuView!
     
     private var lowestOpponentPreviewView: OpponentPreviewView?
     private var dimmerView: UIView?
@@ -23,11 +35,6 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
     private var opponentPlayerName: String?
 
     private var gameModel: GameModel!
-
-    private var deckSelected: Bool!
-    private var discardPileSelected: Bool!
-    private var handSelection: [Card]!
-    private var bookSelection: CardRank?
     
     private var currentPlayer: Player {
         return self.gameModel.game!.getPlayer(named: DataManager.shared.currentUser!.email!)!
@@ -41,14 +48,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         self.handView = HandView()
         self.booksView = BooksView()
         self.deckView = DeckView()
-        self.actionMenuView = ActionMenuView()
 
         self.gameModel = gameModel
-        
-        self.deckSelected = false
-        self.discardPileSelected = false
-        self.handSelection = []
-        self.bookSelection = nil
     }
     
     override func viewDidLoad() {
@@ -93,25 +94,15 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         self.handView.pin(edge: .trailing, to: .trailing, of: self.view.safeAreaLayoutGuide, with: -40)
         self.handView.pin(edge: .top, to: .top, of: self.footView)
         self.handView.pin(edge: .bottom, to: .bottom, of: self.view, with: -40)
-        self.handView.delegate = self
         
         self.view.insertSubview(self.booksView, belowSubview: self.lowestOpponentPreviewView!)
         self.booksView.pinX(to: self.handView)
         self.booksView.pin(edge: .bottom, to: .top, of: self.handView, with: -30)
-        self.booksView.delegate = self
 
         self.view.insertSubview(self.deckView, belowSubview: self.lowestOpponentPreviewView!)
         self.deckView.centerHorizontally(in: self.view)
         self.deckView.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 100.0)
         self.deckView.pinHeight(toHeightOf: self.view, multiplier: 0.2, constant: 0.0)
-        self.deckView.delegate = self
-        
-        self.view.insertSubview(self.actionMenuView, belowSubview: self.lowestOpponentPreviewView!)
-        self.actionMenuView.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 40.0)
-        self.actionMenuView.pin(edge: .trailing, to: .trailing, of: self.view.safeAreaLayoutGuide, with: -40.0)
-        self.actionMenuView.pin(edge: .bottom, to: .top, of: self.booksView, with: -30.0)
-        self.actionMenuView.pinWidth(toWidthOf: self.view, multiplier: 0.25, constant: 0.0)
-        self.actionMenuView.delegate = self
         
         self.updateViews()
     }
@@ -149,8 +140,6 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
             let opponentPlayer = game.getPlayer(named: opponentPlayerName)!
             self.opponentView!.update(player: opponentPlayer, game: game)
         }
-        
-        self.updateActionMenuView()
     }
 
     func opponentPreviewViewTapped(player: Player) {
@@ -188,59 +177,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DeckVie
         self.dimmerView = nil
     }
     
-    func deckSelectionChanged(selected: Bool) {
-        self.deckSelected = selected
-        self.updateActionMenuView()
-    }
-
-    func discardPileSelectionChanged(selected: Bool) {
-        self.discardPileSelected = selected
-        self.updateActionMenuView()
-    }
-    
-    func cardSelectionChanged(cards: [Card]) {
-        self.handSelection = cards
-        self.updateActionMenuView()
-    }
-    
-    func bookSelectionChanged(bookRank: CardRank?) {
-        self.bookSelection = bookRank
-        self.updateActionMenuView()
-    }
-    
-    private func updateActionMenuView() {
-        self.actionMenuView.update(
-            player: self.currentPlayer,
-            deckSelected: self.deckSelected,
-            discardPileSelected: self.discardPileSelected,
-            handSelection: self.handSelection,
-            bookSelection: self.bookSelection
-        )
-    }
-    
-    func actionSelected(_ action: Action) {
-        self.tryAddingAction(action)
-    }
-
-    func layDownRequested(with cardsFromHand: [Card], includingDiscardPile: Bool) {
-        let cardFromDiscardPile = includingDiscardPile ? self.gameModel.game!.discardPile.last! : nil
-
-        let layDownViewController = LayDownViewController(
-            playerName: self.currentPlayer.name,
-            cardsFromHand: cardsFromHand,
-            cardFromDiscardPile: cardFromDiscardPile
-        )
-        
-        layDownViewController.delegate = self
-        let navigationController = UINavigationController(rootViewController: layDownViewController)
-        self.present(navigationController, animated: true, completion: nil)
-    }
-    
-    func layDownSelectionComplete(action: Action) {
-        self.tryAddingAction(action)
-    }
-    
-    private func tryAddingAction(_ action: Action) {
+    private func commitAction(_ action: Action) {
         Network.shared.sendAddActionRequest(game: self.gameModel, action: action) { (success, httpStatusCode, response) in
             guard success else {
                 if let errorMessage = response?["message"] as? String {
