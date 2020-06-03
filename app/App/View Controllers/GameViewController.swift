@@ -8,10 +8,11 @@
 
 import UIKit
 
-enum DragDropTransactionEndpoint {
+enum DragDropTransactionEndpoint: Hashable {
     case deck
     case discardPile
-    case book(CardRank)
+    case existingBook
+    case newBook
     case hand
 }
 
@@ -19,6 +20,87 @@ struct DragDropTransaction {
     let source: DragDropTransactionEndpoint
     let destination: DragDropTransactionEndpoint
     let cards: [Card]
+}
+
+struct ActiveDragDropTransaction {
+    let source: DragDropTransactionEndpoint
+    let cards: [Card]
+}
+
+enum PossibleAction: Hashable, CaseIterable {
+    case drawFromDeck
+    case drawFromDiscardPileAndAddToBook
+    case drawFromDiscardPileAndCreateBook
+    case discardCard
+    case layDownInitialBooks
+    case drawFromDiscardPileAndLayDownInitialBooks
+    case startBook
+    case addCardFromHandToBook
+    
+    var dragDropSources: [DragDropTransactionEndpoint] {
+        switch (self) {
+            case .drawFromDeck:
+                return [.deck]
+            case .drawFromDiscardPileAndAddToBook:
+                return [.discardPile]
+            case .drawFromDiscardPileAndCreateBook:
+                return [.discardPile]
+            case .discardCard:
+                return [.hand]
+            case .layDownInitialBooks:
+                return [.hand]
+            case .drawFromDiscardPileAndLayDownInitialBooks:
+                return [.discardPile, .hand]
+            case .startBook:
+                return [.hand]
+            case .addCardFromHandToBook:
+                return [.hand]
+        }
+    }
+    
+    var dragDropDestinations: [DragDropTransactionEndpoint] {
+        switch (self) {
+            case .drawFromDeck:
+                return [.hand]
+            case .drawFromDiscardPileAndAddToBook:
+                return [.existingBook]
+            case .drawFromDiscardPileAndCreateBook:
+                return [.newBook]
+            case .discardCard:
+                return [.discardPile]
+            case .layDownInitialBooks:
+                return [.newBook]
+            case .drawFromDiscardPileAndLayDownInitialBooks:
+                return [.newBook]
+            case .startBook:
+                return [.newBook]
+            case .addCardFromHandToBook:
+                return [.existingBook]
+        }
+    }
+    
+    func isDisqualifiedBy(dragDropSource: DragDropTransactionEndpoint) -> Bool {
+        // TODO: I'm sure this is incomplete
+        
+        switch (self) {
+            case .drawFromDeck:
+                return dragDropSource != .deck
+            case .drawFromDiscardPileAndAddToBook:
+                return dragDropSource != .discardPile
+            case .drawFromDiscardPileAndCreateBook:
+                return dragDropSource != .discardPile
+            case .discardCard:
+                return dragDropSource != .hand
+            case .layDownInitialBooks:
+                return dragDropSource != .hand
+            case .drawFromDiscardPileAndLayDownInitialBooks:
+                return dragDropSource != .hand && dragDropSource != .discardPile
+            case .startBook:
+                return dragDropSource != .hand
+            case .addCardFromHandToBook:
+                return dragDropSource != .hand
+        }
+    }
 }
 
 class GameViewController: UIViewController, OpponentPreviewViewDelegate {
@@ -35,6 +117,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
     private var opponentPlayerName: String?
 
     private var gameModel: GameModel!
+    private var dragDropTransactions: [DragDropTransaction]!
+    private var activeDragDropTransaction: ActiveDragDropTransaction?
     
     private var currentPlayer: Player {
         return self.gameModel.game!.getPlayer(named: DataManager.shared.currentUser!.email!)!
@@ -50,6 +134,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
         self.deckView = DeckView()
 
         self.gameModel = gameModel
+        self.dragDropTransactions = []
     }
     
     override func viewDidLoad() {
@@ -175,6 +260,94 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
 
         self.dimmerView?.removeFromSuperview()
         self.dimmerView = nil
+    }
+    
+    private func possibleActions() -> Set<PossibleAction> {
+        var possibleActions = self.initialPossibleActions()
+        
+        for dragDropTransaction in self.dragDropTransactions {
+            var disqualifiedActions = Set<PossibleAction>()
+            
+            for possibleAction in possibleActions {
+                if possibleAction.isDisqualifiedBy(dragDropSource: dragDropTransaction.source) {
+                    disqualifiedActions.insert(possibleAction)
+                }
+            }
+            
+            possibleActions = possibleActions.subtracting(disqualifiedActions)
+        }
+        
+        return possibleActions
+    }
+    
+    private func initialPossibleActions() -> Set<PossibleAction> {
+        var possibleActions = Set<PossibleAction>()
+        
+        guard self.gameModel.game!.isCurrentPlayer(self.currentPlayer) else {
+            return possibleActions
+        }
+        
+        if self.currentPlayer.canDrawFromDeck {
+            possibleActions.insert(.drawFromDeck)
+        }
+
+        if self.currentPlayer.canDrawFromDiscardPile {
+            possibleActions.insert(.drawFromDiscardPileAndAddToBook)
+        }
+        
+        if self.currentPlayer.hasLaidDownThisRound, self.currentPlayer.canDrawFromDiscardPile {
+            possibleActions.insert(.drawFromDiscardPileAndCreateBook)
+        }
+        
+        if self.currentPlayer.canEndTurn {
+            possibleActions.insert(.discardCard)
+        }
+        
+        if self.currentPlayer.hasLaidDownThisRound {
+            possibleActions.insert(.layDownInitialBooks)
+        }
+        
+        if !self.currentPlayer.hasLaidDownThisRound, self.currentPlayer.canDrawFromDiscardPile {
+            possibleActions.insert(.drawFromDiscardPileAndLayDownInitialBooks)
+        }
+        
+        if self.currentPlayer.hasLaidDownThisRound {
+            possibleActions.insert(.startBook)
+        }
+        
+        if self.currentPlayer.hasLaidDownThisRound {
+            possibleActions.insert(.addCardFromHandToBook)
+        }
+        
+        return possibleActions
+    }
+    
+    private func validDragDropSources() -> Set<DragDropTransactionEndpoint> {
+        var validDragDropSources = Set<DragDropTransactionEndpoint>()
+        
+        for possibleAction in self.possibleActions() {
+            for possibleActionSource in possibleAction.dragDropSources {
+                validDragDropSources.insert(possibleActionSource)
+            }
+        }
+        
+        return validDragDropSources
+    }
+    
+    private func validDragDropDestinations() -> Set<DragDropTransactionEndpoint> {
+        var validDragDropDestinations = Set<DragDropTransactionEndpoint>()
+
+        for possibleAction in self.possibleActions() {
+            guard !possibleAction.isDisqualifiedBy(dragDropSource: self.activeDragDropTransaction!.source) else {
+                continue
+            }
+            
+            for dragDropDestination in possibleAction.dragDropDestinations {
+                validDragDropDestinations.insert(dragDropDestination)
+            }
+        }
+        
+        return validDragDropDestinations
     }
     
     private func commitAction(_ action: Action) {

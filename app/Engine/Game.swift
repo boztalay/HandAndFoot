@@ -149,7 +149,7 @@ class Game: JSONEncodable {
             throw IllegalActionError.unknownPlayer
         }
         
-        guard self.playerIterator.isCurrentPlayer(player) else {
+        guard self.isCurrentPlayer(player) else {
             throw IllegalActionError.notYourTurn
         }
         
@@ -372,6 +372,12 @@ class Game: JSONEncodable {
                 player.calculatePoints(in: self.round!)
             }
         }
+    }
+    
+    // MARK: Helpers
+    
+    func isCurrentPlayer(_ player: Player) -> Bool {
+        return self.playerIterator.isCurrentPlayer(player)
     }
     
     // MARK: JSONEncodable
