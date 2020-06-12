@@ -8,13 +8,6 @@
 
 import UIKit
 
-enum DragDropSite: Hashable {
-    case deck
-    case discardPile
-    case book(CardRank?)
-    case hand
-}
-
 enum ActionBuildTransaction {
     case drag(DragDropSite, [Card])
     case drop(DragDropSite)
@@ -338,7 +331,7 @@ enum ActionBuildState {
     }
 }
 
-class GameViewController: UIViewController, OpponentPreviewViewDelegate {
+class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDelegate {
     
     private var opponentPreviewViews: [String : OpponentPreviewView]!
     private var footView: FootView!
@@ -353,6 +346,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
 
     private var gameModel: GameModel!
     private var actionBuildTransactions: [ActionBuildTransaction]!
+    private var draggableViews: [DragDropSite : Draggable]!
+    private var droppableViews: [DragDropSite : Droppable]!
     
     private var currentPlayer: Player {
         return self.gameModel.game!.getPlayer(named: DataManager.shared.currentUser!.email!)!
@@ -423,6 +418,19 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
         self.deckView.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 100.0)
         self.deckView.pinHeight(toHeightOf: self.view, multiplier: 0.2, constant: 0.0)
         
+        self.draggableViews = [
+            .deck : self.deckView,
+            .discardPile : self.deckView
+        ]
+        
+        self.droppableViews = [
+            .discardPile: self.deckView
+        ]
+        
+        for view in draggableViews.values {
+            view.dragDelegate = self
+        }
+        
         self.updateViews()
     }
     
@@ -459,6 +467,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
             let opponentPlayer = game.getPlayer(named: opponentPlayerName)!
             self.opponentView!.update(player: opponentPlayer, game: game)
         }
+        
+        self.updateActionBuildState()
     }
 
     func opponentPreviewViewTapped(player: Player) {
@@ -497,6 +507,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
     }
     
     func dragStarted(from source: DragDropSite, with cards: [Card]) {
+        print(source)
+        print(cards)
         self.actionBuildTransactions.append(.drag(source, cards))
         self.updateActionBuildState()
     }
@@ -519,17 +531,36 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
         for transaction in self.actionBuildTransactions {
             state = state.advanceState(given: transaction)
         }
+
+        for source in DragDropSite.allCases {
+            self.draggableViews[source]?.deactivateDragging(for: source)
+        }
+        
+        for destination in DragDropSite.allCases {
+            self.droppableViews[destination]?.deactivateDropping(for: destination)
+        }
         
         switch (state) {
             case let .idle(_, dragDropSources):
-                break
+                for source in dragDropSources {
+                    self.draggableViews[source]?.activateDragging(for: source)
+                }
             case let .simpleActionDragging(_, dragDropDestinations):
-                break
+                for destination in dragDropDestinations {
+                    self.droppableViews[destination]?.activateDropping(for: destination)
+                }
             case let .complexActionIdle(possibleActions, dragDropSources):
-                break
+                // TODO: Something with the actions, go into mid-action state, etc
+                for source in dragDropSources {
+                    self.draggableViews[source]?.activateDragging(for: source)
+                }
             case let .complexActionDragging(possibleActions, dragDropDestinations):
-                break
+                // TODO: Something with the actions, go into mid-action state, etc
+                for destination in dragDropDestinations {
+                    self.droppableViews[destination]?.activateDropping(for: destination)
+                }
             case let .finished(possibleActions):
+                // TODO: Build and commit the action
                 break
         }
     }

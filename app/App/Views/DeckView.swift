@@ -8,18 +8,17 @@
 
 import UIKit
 
-protocol DeckViewDelegate: AnyObject {
-    func deckSelectionChanged(selected: Bool)
-    func discardPileSelectionChanged(selected: Bool)
-}
-
-class DeckView: UIView {
+class DeckView: UIView, Draggable, Droppable {
 
     private var deckCardView: FaceDownCardView!
     private var discardPileCardView: CardView!
     private var discardPileEmptyLabel: UILabel!
     
-    weak var delegate: DeckViewDelegate?
+    var dragDelegate: DragDelegate?
+    
+    private var discardPile: [Card]!
+    private var deckDragGestureRecognizer: UILongPressGestureRecognizer!
+    private var discardPileDragGestureRecognizer: UILongPressGestureRecognizer!
     
     init() {
         super.init(frame: .zero)
@@ -49,46 +48,90 @@ class DeckView: UIView {
         self.discardPileEmptyLabel.pinX(to: self.discardPileCardView, leading: 2.0, trailing: -2.0)
         self.sendSubviewToBack(self.discardPileEmptyLabel)
         self.discardPileEmptyLabel.textAlignment = .center
-        self.discardPileEmptyLabel.text = "❌"
+        self.discardPileEmptyLabel.text = ""
         
-        let deckTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(DeckView.deckTapGestureRecognizerChanged))
-        self.deckCardView.addGestureRecognizer(deckTapGestureRecognizer)
+        self.deckDragGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(DeckView.deckDragGestureRecognizerChanged))
+        self.deckCardView.addGestureRecognizer(self.deckDragGestureRecognizer)
         
-        let discardPileTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(DeckView.discardPileTapGestureRecognizerChanged))
-        self.discardPileCardView.addGestureRecognizer(discardPileTapGestureRecognizer)
+        self.discardPileDragGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(DeckView.discardPileDragGestureRecognizerChanged))
+        self.discardPileCardView.addGestureRecognizer(self.discardPileDragGestureRecognizer)
     }
     
     func update(deck: Deck, discardPile: [Card]) {
+        self.discardPile = discardPile
         self.deckCardView.isHidden = deck.isEmpty
         
         if discardPile.count == 0 {
             self.discardPileCardView.isHidden = true
         } else {
             self.discardPileCardView.isHidden = false
-            self.discardPileCardView.update(card: discardPile.last!)
+            self.discardPileCardView.update(card: self.discardPile.last!)
         }
     }
     
-    @objc func deckTapGestureRecognizerChanged(_ sender: UITapGestureRecognizer) {
-        guard sender.state == .ended else {
-            return
+    @objc func deckDragGestureRecognizerChanged(_ sender: Any) {
+        if self.deckDragGestureRecognizer.state == .began {
+            self.deckCardView.isDragPlaceholder = true
+            self.dragDelegate?.dragStarted(from: .deck, with: [])
+            self.deckDragGestureRecognizer.cancel()
         }
+    }
 
-        self.deckCardView.isSelected = !self.deckCardView.isSelected
-        self.delegate?.deckSelectionChanged(selected: self.deckCardView.isSelected)
+    @objc func discardPileDragGestureRecognizerChanged(_ sender: Any) {
+        if self.discardPileDragGestureRecognizer.state == .began {
+            self.discardPileCardView.isDragPlaceholder = true
+            self.dragDelegate?.dragStarted(from: .discardPile, with: [self.discardPile.last!])
+            self.discardPileDragGestureRecognizer.cancel()
+        }
     }
     
-    @objc func discardPileTapGestureRecognizerChanged(_ sender: UITapGestureRecognizer) {
-        guard sender.state == .ended else {
-            return
+    func activateDragging(for source: DragDropSite) {
+        switch (source) {
+            case .deck:
+                self.deckDragGestureRecognizer.isEnabled = true
+                self.deckCardView.isSelected = true
+            case .discardPile:
+                self.discardPileDragGestureRecognizer.isEnabled = true
+                self.discardPileCardView.isSelected = true
+            default:
+                fatalError()
+        }
+    }
+    
+    func deactivateDragging(for source: DragDropSite) {
+        switch (source) {
+            case .deck:
+                self.deckDragGestureRecognizer.isEnabled = false
+                self.deckCardView.isSelected = false
+            case .discardPile:
+                self.discardPileDragGestureRecognizer.isEnabled = false
+                self.discardPileCardView.isSelected = false
+            default:
+                fatalError()
+        }
+    }
+    
+    func dragDone() {
+        self.deckCardView.isDragPlaceholder = false
+        self.discardPileCardView.isDragPlaceholder = false
+    }
+    
+    func activateDropping(for destination: DragDropSite) {
+        guard destination == .discardPile else {
+            fatalError()
         }
         
-        guard !self.discardPileCardView.isHidden else {
-            return
+        self.discardPileEmptyLabel.text = "👇"
+        self.discardPileCardView.isSelected = true
+    }
+    
+    func deactivateDropping(for destination: DragDropSite) {
+        guard destination == .discardPile else {
+            fatalError()
         }
-
-        self.discardPileCardView.isSelected = !self.discardPileCardView.isSelected
-        self.delegate?.discardPileSelectionChanged(selected: self.discardPileCardView.isSelected)
+        
+        self.discardPileEmptyLabel.text = ""
+        self.discardPileCardView.isSelected = false
     }
     
     required init?(coder: NSCoder) {

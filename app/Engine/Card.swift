@@ -68,6 +68,15 @@ enum CardRank: String, CaseIterable, Comparable {
         }
     }
     
+    var bookRank: CardRank? {
+        switch (self) {
+            case .two, .three, .joker:
+                return nil
+            default:
+                return self
+        }
+    }
+    
     static func < (lhs: CardRank, rhs: CardRank) -> Bool {
         return (lhs.numericalRank < rhs.numericalRank)
     }
@@ -117,12 +126,7 @@ struct Card: Equatable, JSONCodable {
     }
     
     var bookRank: CardRank? {
-        switch (self.rank) {
-            case .two, .three, .joker:
-                return nil
-            default:
-                return self.rank
-        }
+        return self.rank.bookRank
     }
     
     // MARK: - JSONCodable

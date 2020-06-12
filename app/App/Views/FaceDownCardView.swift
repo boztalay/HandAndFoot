@@ -26,6 +26,19 @@ class FaceDownCardView: UIView {
         }
     }
     
+    var isDragPlaceholder: Bool {
+        get {
+            return (self.alpha == 0.50)
+        }
+        set {
+            if newValue {
+                self.alpha = 0.50
+            } else {
+                self.alpha = 1.00
+            }
+        }
+    }
+    
     init() {
         super.init(frame: .zero)
         self.backgroundColor = UIColor(white: 0.95, alpha: 1.0)
@@ -54,6 +67,7 @@ class FaceDownCardView: UIView {
         self.footLabel.text = "🦶"
         
         self.isSelected = false
+        self.isDragPlaceholder = false
     }
     
     required init?(coder: NSCoder) {

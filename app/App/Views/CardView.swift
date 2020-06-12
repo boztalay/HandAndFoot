@@ -30,6 +30,19 @@ class CardView: UIView {
         }
     }
     
+    var isDragPlaceholder: Bool {
+        get {
+            return (self.alpha == 0.50)
+        }
+        set {
+            if newValue {
+                self.alpha = 0.50
+            } else {
+                self.alpha = 1.00
+            }
+        }
+    }
+    
     init(card: Card? = nil) {
         super.init(frame: CGRect.zero)
         self.backgroundColor = .white
@@ -51,6 +64,7 @@ class CardView: UIView {
         self.suitLabel.pin(edge: .bottom, to: .bottom, of: self, with: -10.0)
 
         self.isSelected = false
+        self.isDragPlaceholder = false
         
         if let card = card {
             self.update(card: card)

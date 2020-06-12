@@ -41,6 +41,8 @@
 		FBB22A9A24763A2D003DB73B /* HandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB22A9924763A2D003DB73B /* HandView.swift */; };
 		FBB97EFE2459183E00187CBF /* GamesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB97EFD2459183E00187CBF /* GamesViewController.swift */; };
 		FBB97F0024591A7700187CBF /* GamePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB97EFF24591A7700187CBF /* GamePreviewView.swift */; };
+		FBD0060A24942FA300BC6BDC /* DraggableDroppable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD0060924942FA300BC6BDC /* DraggableDroppable.swift */; };
+		FBD0060C2494337B00BC6BDC /* UIGestureRecognizer+Cancel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD0060B2494337B00BC6BDC /* UIGestureRecognizer+Cancel.swift */; };
 		FBD240AF2486135D0049E09F /* BooksView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD240AE2486135D0049E09F /* BooksView.swift */; };
 		FBD240B1248627560049E09F /* LayDownViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBD240B0248627560049E09F /* LayDownViewController.swift */; };
 		FBDB3BA82446A066008831FF /* Game.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBDB3B9E2446A066008831FF /* Game.swift */; };
@@ -118,6 +120,8 @@
 		FBB22A9924763A2D003DB73B /* HandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandView.swift; sourceTree = "<group>"; };
 		FBB97EFD2459183E00187CBF /* GamesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamesViewController.swift; sourceTree = "<group>"; };
 		FBB97EFF24591A7700187CBF /* GamePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamePreviewView.swift; sourceTree = "<group>"; };
+		FBD0060924942FA300BC6BDC /* DraggableDroppable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraggableDroppable.swift; sourceTree = "<group>"; };
+		FBD0060B2494337B00BC6BDC /* UIGestureRecognizer+Cancel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIGestureRecognizer+Cancel.swift"; sourceTree = "<group>"; };
 		FBD240AE2486135D0049E09F /* BooksView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BooksView.swift; sourceTree = "<group>"; };
 		FBD240B0248627560049E09F /* LayDownViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LayDownViewController.swift; sourceTree = "<group>"; };
 		FBDB3B9C2446A066008831FF /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -219,6 +223,7 @@
 				FB5E2C1A244F6CA900210545 /* DateFormatter+CommonFormatters.swift */,
 				FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */,
 				FB7DD37A244FEBFB00BC8AB4 /* UIView+Layout.swift */,
+				FBD0060B2494337B00BC6BDC /* UIGestureRecognizer+Cancel.swift */,
 			);
 			path = "Foundation Extensions";
 			sourceTree = "<group>";
@@ -239,6 +244,7 @@
 				FB885C23247C936700614E1E /* OpponentView.swift */,
 				FB885C25247C941200614E1E /* OpponentHandView.swift */,
 				FB885C27247DD20000614E1E /* FaceDownCardView.swift */,
+				FBD0060924942FA300BC6BDC /* DraggableDroppable.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -464,6 +470,7 @@
 				FB5512B424727EDE00814BAF /* ScoreBoardView.swift in Sources */,
 				FB0E8E6B2475161E0060DAC3 /* UserSearchViewController.swift in Sources */,
 				FB9DA0FD2474DEF2003299B3 /* LogOutDelegate.swift in Sources */,
+				FBD0060A24942FA300BC6BDC /* DraggableDroppable.swift in Sources */,
 				FBB22A9824761494003DB73B /* GameViewController.swift in Sources */,
 				FBDB3BAD2446A066008831FF /* Player.swift in Sources */,
 				FB64284C244AAAC600FDF34E /* DataManager.swift in Sources */,
@@ -491,6 +498,7 @@
 				FB64284E244AB20F00FDF34E /* ModelUpdateable.swift in Sources */,
 				FB885C1E247C6DBC00614E1E /* OpponentPreviewView.swift in Sources */,
 				FB885C1C247C69BC00614E1E /* FootView.swift in Sources */,
+				FBD0060C2494337B00BC6BDC /* UIGestureRecognizer+Cancel.swift in Sources */,
 				FB5D038024469FA90044FBC5 /* HandAndFoot.xcdatamodeld in Sources */,
 				FBB22A9A24763A2D003DB73B /* HandView.swift in Sources */,
 				FB5D037824469FA90044FBC5 /* SceneDelegate.swift in Sources */,
