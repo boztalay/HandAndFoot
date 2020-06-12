@@ -8,23 +8,17 @@
 
 import UIKit
 
-enum DragDropTransactionEndpoint: Hashable {
+enum DragDropSite: Hashable {
     case deck
     case discardPile
-    case existingBook
-    case newBook
+    case book(CardRank?)
     case hand
 }
 
-struct DragDropTransaction {
-    let source: DragDropTransactionEndpoint
-    let destination: DragDropTransactionEndpoint
-    let cards: [Card]
-}
-
-struct ActiveDragDropTransaction {
-    let source: DragDropTransactionEndpoint
-    let cards: [Card]
+enum ActionBuildTransaction {
+    case completeDragDrop(DragDropSite, DragDropSite, [Card])
+    case partialDragDrop(DragDropSite, [Card])
+    case done
 }
 
 enum PossibleAction: Hashable, CaseIterable {
@@ -37,73 +31,140 @@ enum PossibleAction: Hashable, CaseIterable {
     case startBook
     case addCardFromHandToBook
     
-    var dragDropSources: [DragDropTransactionEndpoint] {
-        switch (self) {
-            case .drawFromDeck:
-                return [.deck]
-            case .drawFromDiscardPileAndAddToBook:
-                return [.discardPile]
-            case .drawFromDiscardPileAndCreateBook:
-                return [.discardPile]
-            case .discardCard:
-                return [.hand]
-            case .layDownInitialBooks:
-                return [.hand]
-            case .drawFromDiscardPileAndLayDownInitialBooks:
-                return [.discardPile, .hand]
-            case .startBook:
-                return [.hand]
-            case .addCardFromHandToBook:
-                return [.hand]
-        }
-    }
-    
-    var dragDropDestinations: [DragDropTransactionEndpoint] {
-        switch (self) {
-            case .drawFromDeck:
-                return [.hand]
-            case .drawFromDiscardPileAndAddToBook:
-                return [.existingBook]
-            case .drawFromDiscardPileAndCreateBook:
-                return [.newBook]
-            case .discardCard:
-                return [.discardPile]
-            case .layDownInitialBooks:
-                return [.newBook]
-            case .drawFromDiscardPileAndLayDownInitialBooks:
-                return [.newBook]
-            case .startBook:
-                return [.newBook]
-            case .addCardFromHandToBook:
-                return [.existingBook]
-        }
-    }
-    
-    func isDisqualifiedBy(dragDropSource: DragDropTransactionEndpoint) -> Bool {
-        // TODO: I'm sure this is incomplete
+    func dragDropSources() -> Set<DragDropSite> {
+        var validSources = Set<DragDropSite>()
         
         switch (self) {
             case .drawFromDeck:
-                return dragDropSource != .deck
+                validSources.insert(.deck)
             case .drawFromDiscardPileAndAddToBook:
-                return dragDropSource != .discardPile
+                validSources.insert(.discardPile)
             case .drawFromDiscardPileAndCreateBook:
-                return dragDropSource != .discardPile
+                validSources.insert(.discardPile)
             case .discardCard:
-                return dragDropSource != .hand
+                validSources.insert(.hand)
             case .layDownInitialBooks:
-                return dragDropSource != .hand
+                validSources.insert(.hand)
             case .drawFromDiscardPileAndLayDownInitialBooks:
-                return dragDropSource != .hand && dragDropSource != .discardPile
+                validSources.insert(.discardPile)
+                validSources.insert(.hand)
             case .startBook:
-                return dragDropSource != .hand
+                validSources.insert(.hand)
             case .addCardFromHandToBook:
-                return dragDropSource != .hand
+                validSources.insert(.hand)
+        }
+        
+        return validSources
+    }
+    
+    func dragDropDestinations(cards: [Card]) -> Set<DragDropSite> {
+        // TODO: Smarter book destinations?
+        
+        var validDestinations = Set<DragDropSite>()
+        
+        switch (self) {
+            case .drawFromDeck:
+                validDestinations.insert(.hand)
+            case .drawFromDiscardPileAndAddToBook:
+                guard cards.count == 1 else {
+                    fatalError()
+                }
+
+                validDestinations.insert(.book(cards.first!.bookRank))
+            case .drawFromDiscardPileAndCreateBook:
+                guard cards.count > 0 else {
+                    fatalError()
+                }
+
+                let bookRank = cards.first(where: { $0.bookRank != nil })?.bookRank
+                validDestinations.insert(.book(bookRank))
+            case .discardCard:
+                validDestinations.insert(.discardPile)
+            case .layDownInitialBooks:
+                guard cards.count > 0 else {
+                    fatalError()
+                }
+
+                let bookRank = cards.first(where: { $0.bookRank != nil })?.bookRank
+                validDestinations.insert(.book(bookRank))
+            case .drawFromDiscardPileAndLayDownInitialBooks:
+                guard cards.count > 0 else {
+                    fatalError()
+                }
+
+                let bookRank = cards.first(where: { $0.bookRank != nil })?.bookRank
+                validDestinations.insert(.book(bookRank))
+            case .startBook:
+                guard cards.count > 0 else {
+                    fatalError()
+                }
+
+                let bookRank = cards.first(where: { $0.bookRank != nil })?.bookRank
+                validDestinations.insert(.book(bookRank))
+            case .addCardFromHandToBook:
+                guard cards.count == 1 else {
+                    fatalError()
+                }
+                
+                validDestinations.insert(.book(cards.first!.bookRank))
+        }
+        
+        return validDestinations
+    }
+    
+    func isDisqualifiedBy(dragDropSource: DragDropSite, cards: [Card]) -> Bool {
+        // TODO: Take the cards into account for books and all that
+        
+        switch (self) {
+            case .drawFromDeck:
+                return (dragDropSource != .hand)
+            case .drawFromDiscardPileAndAddToBook:
+                return (dragDropSource != .discardPile)
+            case .drawFromDiscardPileAndCreateBook:
+                return (dragDropSource != .discardPile)
+            case .discardCard:
+                return (dragDropSource != .hand) || (cards.count != 1)
+            case .layDownInitialBooks:
+                return (dragDropSource != .hand)
+            case .drawFromDiscardPileAndLayDownInitialBooks:
+                return (dragDropSource != .hand && dragDropSource != .discardPile)
+            case .startBook:
+                return (dragDropSource != .hand)
+            case .addCardFromHandToBook:
+                return (dragDropSource != .hand) || (cards.count != 1)
         }
     }
 }
 
+enum ActionBuildState {
+    case idle(Set<DragDropSite>)
+    case simpleActionDragging(Set<DragDropSite>)
+    case complexActionIdle(Set<PossibleAction>, Set<DragDropSite>)
+    case complexActionDragging(Set<PossibleAction>, Set<DragDropSite>)
+    case finished(Action)
+}
+
 class GameViewController: UIViewController, OpponentPreviewViewDelegate {
+    
+    private static func simpleActionTable(source: DragDropSite, destination: DragDropSite) -> PossibleAction? {
+        if source == .deck {
+            if destination == .hand {
+                return .drawFromDeck
+            }
+        } else if source == .discardPile {
+            if case .book(_) = destination {
+                return .drawFromDiscardPileAndAddToBook
+            }
+        } else if source == .hand {
+            if destination == .discardPile {
+                return .discardCard
+            } else if case .book(_) = destination {
+                return .addCardFromHandToBook
+            }
+        }
+        
+        return nil
+    }
     
     private var opponentPreviewViews: [String : OpponentPreviewView]!
     private var footView: FootView!
@@ -117,8 +178,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
     private var opponentPlayerName: String?
 
     private var gameModel: GameModel!
-    private var dragDropTransactions: [DragDropTransaction]!
-    private var activeDragDropTransaction: ActiveDragDropTransaction?
+    private var actionBuildTransactions: [ActionBuildTransaction]!
     
     private var currentPlayer: Player {
         return self.gameModel.game!.getPlayer(named: DataManager.shared.currentUser!.email!)!
@@ -134,7 +194,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
         self.deckView = DeckView()
 
         self.gameModel = gameModel
-        self.dragDropTransactions = []
+        self.actionBuildTransactions = []
     }
     
     override func viewDidLoad() {
@@ -262,22 +322,34 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
         self.dimmerView = nil
     }
     
-    private func possibleActions() -> Set<PossibleAction> {
-        var possibleActions = self.initialPossibleActions()
-        
-        for dragDropTransaction in self.dragDropTransactions {
-            var disqualifiedActions = Set<PossibleAction>()
-            
-            for possibleAction in possibleActions {
-                if possibleAction.isDisqualifiedBy(dragDropSource: dragDropTransaction.source) {
-                    disqualifiedActions.insert(possibleAction)
-                }
-            }
-            
-            possibleActions = possibleActions.subtracting(disqualifiedActions)
+    private func getActionBuildState() -> ActionBuildState {
+        guard self.actionBuildTransactions.count > 0 else {
+            return .idle(self.validIdleDragDropSources())
         }
         
-        return possibleActions
+        guard self.actionBuildTransactions.count > 1 else {
+            switch (self.actionBuildTransactions.first!) {
+                case let .completeDragDrop(source, destination, cards):
+                    if let action = self.finishedSimpleAction(source: source, destination: destination, cards: cards) {
+                        return .finished(action)
+                    } else {
+                        return .complexActionIdle(self.possibleComplexActions(), self.validComplexActionDragDropSources())
+                    }
+                case let .partialDragDrop(source, cards):
+                    return .simpleActionDragging(self.validIdleDragDropDestinations(from: source, with: cards))
+                default:
+                    fatalError("Invalid lone action build transaction")
+            }
+        }
+        
+        switch (self.actionBuildTransactions.last!) {
+            case .completeDragDrop:
+                return .complexActionIdle(self.possibleComplexActions(), self.validComplexActionDragDropSources())
+            case .partialDragDrop:
+                return .complexActionDragging(self.possibleComplexActions(), self.validComplexActionDragDropDestinations())
+            case .done:
+                return .finished(self.finishedComplexAction())
+        }
     }
     
     private func initialPossibleActions() -> Set<PossibleAction> {
@@ -322,32 +394,97 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
         return possibleActions
     }
     
-    private func validDragDropSources() -> Set<DragDropTransactionEndpoint> {
-        var validDragDropSources = Set<DragDropTransactionEndpoint>()
-        
-        for possibleAction in self.possibleActions() {
-            for possibleActionSource in possibleAction.dragDropSources {
-                validDragDropSources.insert(possibleActionSource)
+    private func validIdleDragDropSources() -> Set<DragDropSite> {
+        var dragDropSources = Set<DragDropSite>()
+
+        for possibleAction in self.initialPossibleActions() {
+            dragDropSources.formUnion(possibleAction.dragDropSources())
+        }
+
+        return dragDropSources
+    }
+
+    private func validIdleDragDropDestinations(from source: DragDropSite, with cards: [Card]) -> Set<DragDropSite> {
+        var dragDropDestinations = Set<DragDropSite>()
+
+        for possibleAction in self.initialPossibleActions() {
+            if !possibleAction.isDisqualifiedBy(dragDropSource: source, cards: cards) {
+                dragDropDestinations.formUnion(possibleAction.dragDropDestinations(cards: cards))
             }
         }
+
+        return dragDropDestinations
+    }
+
+    private func finishedSimpleAction(source: DragDropSite, destination: DragDropSite, cards: [Card]) -> Action? {
+        guard let possibleAction = GameViewController.simpleActionTable(source: source, destination: destination) else {
+            return nil
+        }
         
-        return validDragDropSources
+        switch (possibleAction) {
+            case .drawFromDeck:
+                return .drawFromDeck(self.currentPlayer.name)
+            case .drawFromDiscardPileAndAddToBook:
+                guard cards.count == 1 else {
+                    fatalError("How did they draw anything other than one card from the discard pile?")
+                }
+                
+                return .drawFromDiscardPileAndAddToBook(self.currentPlayer.name, cards.first!.rank)
+            case .discardCard:
+                guard cards.count == 1 else {
+                    fatalError("You can't discard more than one card!")
+                }
+            
+                return .discardCard(self.currentPlayer.name, cards.first!)
+            case .addCardFromHandToBook:
+                guard cards.count == 1 else {
+                    fatalError("You can't add more than one card to a book at a time! For now...")
+                }
+                
+                guard case let .book(bookRank) = destination else {
+                    fatalError()
+                }
+            
+                return .addCardFromHandToBook(self.currentPlayer.name, cards.first!, bookRank!)
+            default:
+                fatalError("Yooo this shouldn't happen, check your table bro")
+        }
     }
     
-    private func validDragDropDestinations() -> Set<DragDropTransactionEndpoint> {
-        var validDragDropDestinations = Set<DragDropTransactionEndpoint>()
-
-        for possibleAction in self.possibleActions() {
-            guard !possibleAction.isDisqualifiedBy(dragDropSource: self.activeDragDropTransaction!.source) else {
-                continue
-            }
-            
-            for dragDropDestination in possibleAction.dragDropDestinations {
-                validDragDropDestinations.insert(dragDropDestination)
+    private func possibleComplexActions() -> Set<PossibleAction> {
+        guard self.actionBuildTransactions.count > 0 else {
+            fatalError()
+        }
+        
+        if self.actionBuildTransactions.count == 1 {
+            if case .partialDragDrop(_, _) = self.actionBuildTransactions.first! {
+                fatalError()
             }
         }
         
-        return validDragDropDestinations
+        var initialPossibleActions = self.initialPossibleActions()
+        var disqualifiedPossibleActions = Set<PossibleAction>()
+        
+        for actionBuildTransaction in self.actionBuildTransactions {
+            // TODO
+        }
+
+        return Set<PossibleAction>()
+    }
+    
+    private func validComplexActionDragDropSources() -> Set<DragDropSite> {
+        // TODO
+        return Set<DragDropSite>()
+    }
+
+    private func validComplexActionDragDropDestinations() -> Set<DragDropSite> {
+        // TODO
+        return Set<DragDropSite>()
+    }
+    
+    private func finishedComplexAction() -> Action {
+        // TODO
+        return .drawFromDeck("TODO")
     }
     
     private func commitAction(_ action: Action) {

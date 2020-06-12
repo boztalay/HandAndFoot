@@ -116,6 +116,15 @@ struct Card: Equatable, JSONCodable {
         }
     }
     
+    var bookRank: CardRank? {
+        switch (self.rank) {
+            case .two, .three, .joker:
+                return nil
+            default:
+                return self.rank
+        }
+    }
+    
     // MARK: - JSONCodable
     
     init?(with json: JSONDictionary) {
