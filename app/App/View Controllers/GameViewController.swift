@@ -208,7 +208,7 @@ enum PossibleAction: Hashable, CaseIterable {
 }
 
 enum ActionBuildState {
-    case idle(Set<PossibleAction>)
+    case idle(Set<PossibleAction>, Set<DragDropSite>)
     case simpleActionDragging(Set<PossibleAction>, Set<DragDropSite>)
     case complexActionIdle(Set<PossibleAction>, Set<DragDropSite>)
     case complexActionDragging(Set<PossibleAction>, Set<DragDropSite>)
@@ -216,8 +216,7 @@ enum ActionBuildState {
     
     func advanceState(given transaction: ActionBuildTransaction) -> ActionBuildState {
         switch (self) {
-            case let .idle(possibleActions):
-                let dragDropSources = possibleActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropSources()) })
+            case let .idle(possibleActions, dragDropSources):
                 return self.advanceStateIdle(
                     transaction: transaction,
                     possibleActions: possibleActions,
@@ -340,26 +339,6 @@ enum ActionBuildState {
 }
 
 class GameViewController: UIViewController, OpponentPreviewViewDelegate {
-    
-    private static func simpleActionTable(source: DragDropSite, destination: DragDropSite) -> PossibleAction? {
-        if source == .deck {
-            if destination == .hand {
-                return .drawFromDeck
-            }
-        } else if source == .discardPile {
-            if case .book(_) = destination {
-                return .drawFromDiscardPileAndAddToBook
-            }
-        } else if source == .hand {
-            if destination == .discardPile {
-                return .discardCard
-            } else if case .book(_) = destination {
-                return .addCardFromHandToBook
-            }
-        }
-        
-        return nil
-    }
     
     private var opponentPreviewViews: [String : OpponentPreviewView]!
     private var footView: FootView!
@@ -517,14 +496,42 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate {
         self.dimmerView = nil
     }
     
-    private func getActionBuildState() -> ActionBuildState {
-        var state = ActionBuildState.idle(self.initialPossibleActions())
-        
+    func dragStarted(from source: DragDropSite, with cards: [Card]) {
+        self.actionBuildTransactions.append(.drag(source, cards))
+        self.updateActionBuildState()
+    }
+    
+    func dropEnded(on destination: DragDropSite) {
+        self.actionBuildTransactions.append(.drop(destination))
+        self.updateActionBuildState()
+    }
+    
+    @objc func doneButtonTapped(_ sender: Any) {
+        self.actionBuildTransactions.append(.done)
+        self.updateActionBuildState()
+    }
+    
+    private func updateActionBuildState() {
+        let possibleActions = self.initialPossibleActions()
+        let dragDropSources = possibleActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropSources()) })
+
+        var state = ActionBuildState.idle(possibleActions, dragDropSources)
         for transaction in self.actionBuildTransactions {
             state = state.advanceState(given: transaction)
         }
         
-        return state
+        switch (state) {
+            case let .idle(_, dragDropSources):
+                break
+            case let .simpleActionDragging(_, dragDropDestinations):
+                break
+            case let .complexActionIdle(possibleActions, dragDropSources):
+                break
+            case let .complexActionDragging(possibleActions, dragDropDestinations):
+                break
+            case let .finished(possibleActions):
+                break
+        }
     }
     
     private func initialPossibleActions() -> Set<PossibleAction> {
