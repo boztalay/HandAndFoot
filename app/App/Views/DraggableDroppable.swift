@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 enum DragDropSite: Hashable {
     case deck
@@ -31,10 +32,10 @@ enum DragDropSite: Hashable {
 }
 
 protocol DragDelegate: AnyObject {
-    func dragStarted(from source: DragDropSite, with cards: [Card])
+    func dragStarted(from source: DragDropSite, with cards: [Card], at point: CGPoint)
 }
 
-protocol Draggable: AnyObject {
+protocol Draggable: UIView {
     var dragDelegate: DragDelegate? { get set }
 
     func activateDragging(for source: DragDropSite)
@@ -42,7 +43,7 @@ protocol Draggable: AnyObject {
     func dragDone()
 }
 
-protocol Droppable: AnyObject {
+protocol Droppable: UIView {
     func activateDropping(for destination: DragDropSite)
     func deactivateDropping(for destination: DragDropSite)
 }

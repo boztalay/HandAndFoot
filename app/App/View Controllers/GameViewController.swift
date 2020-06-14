@@ -348,6 +348,9 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     private var actionBuildTransactions: [ActionBuildTransaction]!
     private var draggableViews: [DragDropSite : Draggable]!
     private var droppableViews: [DragDropSite : Droppable]!
+    private var dragView: UIView?
+    private var dragPanGestureRecognizer: UIPanGestureRecognizer?
+    private var dragStartPoint: CGPoint?
     
     private var currentPlayer: Player {
         return self.gameModel.game!.getPlayer(named: DataManager.shared.currentUser!.email!)!
@@ -506,11 +509,23 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         self.dimmerView = nil
     }
     
-    func dragStarted(from source: DragDropSite, with cards: [Card]) {
-        print(source)
-        print(cards)
+    func dragStarted(from source: DragDropSite, with cards: [Card], at point: CGPoint) {
         self.actionBuildTransactions.append(.drag(source, cards))
         self.updateActionBuildState()
+        
+        if cards.count == 0 {
+            self.dragView = FaceDownCardView()
+        } else {
+            self.dragView = CardView(card: cards.first!)
+        }
+        
+        self.view.addSubview(self.dragView!)
+        
+        self.dragPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(GameViewController.dragPanGestureRecognizerChanged))
+        self.view.addGestureRecognizer(self.dragPanGestureRecognizer!)
+        
+        let dragSourceView = self.draggableViews[source]!
+        self.dragStartPoint = dragSourceView.convert(point, to: self.view)
     }
     
     func dropEnded(on destination: DragDropSite) {
@@ -605,6 +620,25 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         }
         
         return possibleActions
+    }
+    
+    @objc private func dragPanGestureRecognizerChanged(_ sender: Any) {
+        guard let dragPanGestureRecognizer = self.dragPanGestureRecognizer,
+              let dragView = self.dragView,
+              let dragStartPoint = self.dragStartPoint else {
+            fatalError()
+        }
+        
+        if dragPanGestureRecognizer.state == .changed {
+            let translation = dragPanGestureRecognizer.translation(in: self.view)
+            let origin = CGPoint(
+                x: dragStartPoint.x + translation.x,
+                y: dragStartPoint.y + translation.y
+            )
+
+            // TODO: Actual size
+            dragView.frame = CGRect(origin: origin, size: CGSize(width: 50, height: 100))
+        }
     }
     
     private func commitAction(_ action: Action) {

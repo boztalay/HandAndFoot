@@ -72,7 +72,7 @@ class DeckView: UIView, Draggable, Droppable {
     @objc func deckDragGestureRecognizerChanged(_ sender: Any) {
         if self.deckDragGestureRecognizer.state == .began {
             self.deckCardView.isDragPlaceholder = true
-            self.dragDelegate?.dragStarted(from: .deck, with: [])
+            self.dragDelegate?.dragStarted(from: .deck, with: [], at: self.deckDragGestureRecognizer.location(in: self))
             self.deckDragGestureRecognizer.cancel()
         }
     }
@@ -80,7 +80,7 @@ class DeckView: UIView, Draggable, Droppable {
     @objc func discardPileDragGestureRecognizerChanged(_ sender: Any) {
         if self.discardPileDragGestureRecognizer.state == .began {
             self.discardPileCardView.isDragPlaceholder = true
-            self.dragDelegate?.dragStarted(from: .discardPile, with: [self.discardPile.last!])
+            self.dragDelegate?.dragStarted(from: .discardPile, with: [self.discardPile.last!], at: self.deckDragGestureRecognizer.location(in: self))
             self.discardPileDragGestureRecognizer.cancel()
         }
     }
