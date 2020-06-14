@@ -65,7 +65,7 @@ class FaceDownCardView: UIView {
         self.footLabel.pinHeight(toHeightOf: self, multiplier: 0.5, constant: 0.0)
         self.footLabel.textAlignment = .center
         self.footLabel.text = "🦶"
-        
+
         self.isSelected = false
         self.isDragPlaceholder = false
     }

@@ -349,8 +349,6 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     private var draggableViews: [DragDropSite : Draggable]!
     private var droppableViews: [DragDropSite : Droppable]!
     private var dragView: UIView?
-    private var dragPanGestureRecognizer: UIPanGestureRecognizer?
-    private var dragStartPoint: CGPoint?
     
     private var currentPlayer: Player {
         return self.gameModel.game!.getPlayer(named: DataManager.shared.currentUser!.email!)!
@@ -518,19 +516,37 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         } else {
             self.dragView = CardView(card: cards.first!)
         }
-        
+
         self.view.addSubview(self.dragView!)
         
-        self.dragPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(GameViewController.dragPanGestureRecognizerChanged))
-        self.view.addGestureRecognizer(self.dragPanGestureRecognizer!)
-        
         let dragSourceView = self.draggableViews[source]!
-        self.dragStartPoint = dragSourceView.convert(point, to: self.view)
+        let dragStartPoint = dragSourceView.convert(point, to: self.view)
+        
+        // TODO: A real size of some sort
+        self.dragView!.frame = CGRect(origin: .zero, size: CGSize(width: 100, height: 200))
+        self.dragView!.center = dragStartPoint
     }
     
-    func dropEnded(on destination: DragDropSite) {
-        self.actionBuildTransactions.append(.drop(destination))
-        self.updateActionBuildState()
+    func dragMoved(_ delta: CGPoint) {
+        guard let dragView = self.dragView else {
+            fatalError()
+        }
+        
+        dragView.frame = CGRect(
+            origin: CGPoint(
+                x: dragView.frame.origin.x + delta.x,
+                y: dragView.frame.origin.y + delta.y),
+            size: dragView.frame.size)
+    }
+    
+    func dragEnded() {
+        // Determine the view that it was dropped on (if any)
+        // Clear out the drag view and remove it from the hierarchy
+        // If it was dropped on a valid destination, add the drop action build transaction
+        // Otherwise, remove the last action build transaction (the drag)
+        
+//        self.actionBuildTransactions.append(.drop(destination))
+//        self.updateActionBuildState()
     }
     
     @objc func doneButtonTapped(_ sender: Any) {
@@ -620,25 +636,6 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         }
         
         return possibleActions
-    }
-    
-    @objc private func dragPanGestureRecognizerChanged(_ sender: Any) {
-        guard let dragPanGestureRecognizer = self.dragPanGestureRecognizer,
-              let dragView = self.dragView,
-              let dragStartPoint = self.dragStartPoint else {
-            fatalError()
-        }
-        
-        if dragPanGestureRecognizer.state == .changed {
-            let translation = dragPanGestureRecognizer.translation(in: self.view)
-            let origin = CGPoint(
-                x: dragStartPoint.x + translation.x,
-                y: dragStartPoint.y + translation.y
-            )
-
-            // TODO: Actual size
-            dragView.frame = CGRect(origin: origin, size: CGSize(width: 50, height: 100))
-        }
     }
     
     private func commitAction(_ action: Action) {

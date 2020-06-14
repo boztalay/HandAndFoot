@@ -17,8 +17,9 @@ class DeckView: UIView, Draggable, Droppable {
     var dragDelegate: DragDelegate?
     
     private var discardPile: [Card]!
-    private var deckDragGestureRecognizer: UILongPressGestureRecognizer!
-    private var discardPileDragGestureRecognizer: UILongPressGestureRecognizer!
+    private var deckPanGestureRecognizer: UIPanGestureRecognizer!
+    private var discardPilePanGestureRecognizer: UIPanGestureRecognizer!
+    private var lastPanGestureTranslation: CGPoint?
     
     init() {
         super.init(frame: .zero)
@@ -50,11 +51,11 @@ class DeckView: UIView, Draggable, Droppable {
         self.discardPileEmptyLabel.textAlignment = .center
         self.discardPileEmptyLabel.text = ""
         
-        self.deckDragGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(DeckView.deckDragGestureRecognizerChanged))
-        self.deckCardView.addGestureRecognizer(self.deckDragGestureRecognizer)
+        self.deckPanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(DeckView.deckPanGestureRecognizerChanged))
+        self.deckCardView.addGestureRecognizer(self.deckPanGestureRecognizer)
         
-        self.discardPileDragGestureRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(DeckView.discardPileDragGestureRecognizerChanged))
-        self.discardPileCardView.addGestureRecognizer(self.discardPileDragGestureRecognizer)
+        self.discardPilePanGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(DeckView.discardPilePanGestureRecognizerChanged))
+        self.discardPileCardView.addGestureRecognizer(self.discardPilePanGestureRecognizer)
     }
     
     func update(deck: Deck, discardPile: [Card]) {
@@ -69,29 +70,63 @@ class DeckView: UIView, Draggable, Droppable {
         }
     }
     
-    @objc func deckDragGestureRecognizerChanged(_ sender: Any) {
-        if self.deckDragGestureRecognizer.state == .began {
+    @objc func deckPanGestureRecognizerChanged(_ sender: Any) {
+        if self.deckPanGestureRecognizer.state == .began {
             self.deckCardView.isDragPlaceholder = true
-            self.dragDelegate?.dragStarted(from: .deck, with: [], at: self.deckDragGestureRecognizer.location(in: self))
-            self.deckDragGestureRecognizer.cancel()
+            self.dragDelegate?.dragStarted(from: .deck, with: [], at: self.deckPanGestureRecognizer.location(in: self))
+            self.lastPanGestureTranslation = .zero
+        } else if self.deckPanGestureRecognizer.state == .changed {
+            let translation = self.deckPanGestureRecognizer.translation(in: self)
+            let delta = CGPoint(
+                x: translation.x - self.lastPanGestureTranslation!.x,
+                y: translation.y - self.lastPanGestureTranslation!.y
+            )
+            
+            self.dragDelegate?.dragMoved(delta)
+            self.lastPanGestureTranslation = translation
+        } else if self.deckPanGestureRecognizer.state == .ended || self.deckPanGestureRecognizer.state == .cancelled {
+            self.dragDelegate?.dragEnded()
+            self.deckCardView.isDragPlaceholder = false
+            self.lastPanGestureTranslation = nil
         }
     }
 
-    @objc func discardPileDragGestureRecognizerChanged(_ sender: Any) {
-        if self.discardPileDragGestureRecognizer.state == .began {
+    @objc func discardPilePanGestureRecognizerChanged(_ sender: Any) {
+        if self.discardPilePanGestureRecognizer.state == .began {
             self.discardPileCardView.isDragPlaceholder = true
-            self.dragDelegate?.dragStarted(from: .discardPile, with: [self.discardPile.last!], at: self.deckDragGestureRecognizer.location(in: self))
-            self.discardPileDragGestureRecognizer.cancel()
+            self.dragDelegate?.dragStarted(from: .discardPile, with: [self.discardPile.last!], at: self.discardPilePanGestureRecognizer.location(in: self))
+            self.lastPanGestureTranslation = .zero
+        } else if self.discardPilePanGestureRecognizer.state == .changed {
+           let translation = self.discardPilePanGestureRecognizer.translation(in: self)
+           let delta = CGPoint(
+               x: translation.x - self.lastPanGestureTranslation!.x,
+               y: translation.y - self.lastPanGestureTranslation!.y
+           )
+           
+           self.dragDelegate?.dragMoved(delta)
+           self.lastPanGestureTranslation = translation
+       } else if self.discardPilePanGestureRecognizer.state == .ended {
+           self.dragDelegate?.dragEnded()
+           self.discardPileCardView.isDragPlaceholder = false
+           self.lastPanGestureTranslation = nil
+       }
+    }
+    
+    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        if gestureRecognizer === self.deckPanGestureRecognizer {
+            return self.deckCardView.isSelected
+        } else if gestureRecognizer === self.discardPilePanGestureRecognizer {
+            return self.discardPileCardView.isSelected
+        } else {
+            return super.gestureRecognizerShouldBegin(gestureRecognizer)
         }
     }
     
     func activateDragging(for source: DragDropSite) {
         switch (source) {
             case .deck:
-                self.deckDragGestureRecognizer.isEnabled = true
                 self.deckCardView.isSelected = true
             case .discardPile:
-                self.discardPileDragGestureRecognizer.isEnabled = true
                 self.discardPileCardView.isSelected = true
             default:
                 fatalError()
@@ -101,19 +136,12 @@ class DeckView: UIView, Draggable, Droppable {
     func deactivateDragging(for source: DragDropSite) {
         switch (source) {
             case .deck:
-                self.deckDragGestureRecognizer.isEnabled = false
                 self.deckCardView.isSelected = false
             case .discardPile:
-                self.discardPileDragGestureRecognizer.isEnabled = false
                 self.discardPileCardView.isSelected = false
             default:
                 fatalError()
         }
-    }
-    
-    func dragDone() {
-        self.deckCardView.isDragPlaceholder = false
-        self.discardPileCardView.isDragPlaceholder = false
     }
     
     func activateDropping(for destination: DragDropSite) {
