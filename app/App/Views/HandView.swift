@@ -12,7 +12,7 @@ protocol HandViewDelegate: AnyObject {
     func cardSelectionChanged(cards: [Card])
 }
 
-class HandView: UIView {
+class HandView: UIView, Droppable {
     
     private static let minCardOverlapProportion = 0.52
     private static let maxCardOverlapProportion = 0.90
@@ -191,6 +191,14 @@ class HandView: UIView {
         
         let selectedCards = self.cardViews.filter({ $0.isSelected }).map({ $0.card! })
         self.delegate?.cardSelectionChanged(cards: selectedCards)
+    }
+    
+    func activateDropping(for destination: DragDropSite) {
+        self.borderView.layer.borderColor = UIColor.systemRed.cgColor
+    }
+
+    func deactivateDropping(for destination: DragDropSite) {
+        self.borderView.layer.borderColor = UIColor.black.cgColor
     }
     
     required init?(coder: NSCoder) {

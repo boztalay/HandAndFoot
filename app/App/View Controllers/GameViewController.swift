@@ -426,7 +426,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         ]
         
         self.droppableViews = [
-            .discardPile: self.deckView
+            .discardPile: self.deckView,
+            .hand: self.handView
         ]
         
         for view in draggableViews.values {
@@ -623,6 +624,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
                 }
             case let .finished(possibleActions):
                 // TODO: Build and commit the action
+                print(possibleActions)
                 break
         }
     }
