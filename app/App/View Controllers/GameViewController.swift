@@ -349,6 +349,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     private var draggableViews: [DragDropSite : Draggable]!
     private var droppableViews: [DragDropSite : Droppable]!
     private var dragView: UIView?
+    private var activeDropDestinations: Set<DragDropSite>?
     
     private var currentPlayer: Player {
         return self.gameModel.game!.getPlayer(named: DataManager.shared.currentUser!.email!)!
@@ -521,8 +522,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         
         let dragSourceView = self.draggableViews[source]!
         let dragStartPoint = dragSourceView.convert(point, to: self.view)
-        
-        // TODO: A real size of some sort
+
         self.dragView!.frame = CGRect(origin: .zero, size: size)
         self.dragView!.center = dragStartPoint
     }
@@ -536,22 +536,44 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
             origin: CGPoint(
                 x: dragView.frame.origin.x + delta.x,
                 y: dragView.frame.origin.y + delta.y),
-            size: dragView.frame.size)
+            size: dragView.frame.size
+        )
     }
     
     func dragEnded() {
+        let dropPoint = self.dragView!.center
         self.dragView!.removeFromSuperview()
         self.dragView = nil
+
+        var destination: DragDropSite?
+        var subview = self.view.hitTest(dropPoint, with: nil)
+
+        while subview != self.view {
+            if subview == nil {
+                break
+            }
+            
+            for (potentialDestination, droppableView) in self.droppableViews {
+                if subview! === droppableView {
+                    destination = potentialDestination
+                    break
+                }
+            }
+            
+            if destination != nil {
+                break
+            }
+            
+            subview = subview!.superview
+        }
         
-        _ = self.actionBuildTransactions.popLast()
+        if let destination = destination, self.activeDropDestinations!.contains(destination) {
+            self.actionBuildTransactions.append(.drop(destination))
+        } else {
+            _ = self.actionBuildTransactions.popLast()
+        }
+
         self.updateActionBuildState()
-        
-        // Determine the view that it was dropped on (if any)
-        // If it was dropped on a valid destination, add the drop action build transaction
-        // Otherwise, remove the last action build transaction (the drag)
-        
-//        self.actionBuildTransactions.append(.drop(destination))
-//        self.updateActionBuildState()
     }
     
     @objc func doneButtonTapped(_ sender: Any) {
@@ -576,12 +598,15 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
             self.droppableViews[destination]?.deactivateDropping(for: destination)
         }
         
+        self.activeDropDestinations = nil
+        
         switch (state) {
             case let .idle(_, dragDropSources):
                 for source in dragDropSources {
                     self.draggableViews[source]?.activateDragging(for: source)
                 }
             case let .simpleActionDragging(_, dragDropDestinations):
+                self.activeDropDestinations = dragDropDestinations
                 for destination in dragDropDestinations {
                     self.droppableViews[destination]?.activateDropping(for: destination)
                 }
@@ -592,6 +617,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
                 }
             case let .complexActionDragging(possibleActions, dragDropDestinations):
                 // TODO: Something with the actions, go into mid-action state, etc
+                self.activeDropDestinations = dragDropDestinations
                 for destination in dragDropDestinations {
                     self.droppableViews[destination]?.activateDropping(for: destination)
                 }
