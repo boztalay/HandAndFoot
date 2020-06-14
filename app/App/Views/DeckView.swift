@@ -73,7 +73,12 @@ class DeckView: UIView, Draggable, Droppable {
     @objc func deckPanGestureRecognizerChanged(_ sender: Any) {
         if self.deckPanGestureRecognizer.state == .began {
             self.deckCardView.isDragPlaceholder = true
-            self.dragDelegate?.dragStarted(from: .deck, with: [], at: self.deckPanGestureRecognizer.location(in: self))
+            self.dragDelegate?.dragStarted(
+                from: .deck,
+                with: [],
+                at: self.deckCardView.center,
+                with: self.deckCardView.frame.size
+            )
             self.lastPanGestureTranslation = .zero
         } else if self.deckPanGestureRecognizer.state == .changed {
             let translation = self.deckPanGestureRecognizer.translation(in: self)
@@ -94,7 +99,12 @@ class DeckView: UIView, Draggable, Droppable {
     @objc func discardPilePanGestureRecognizerChanged(_ sender: Any) {
         if self.discardPilePanGestureRecognizer.state == .began {
             self.discardPileCardView.isDragPlaceholder = true
-            self.dragDelegate?.dragStarted(from: .discardPile, with: [self.discardPile.last!], at: self.discardPilePanGestureRecognizer.location(in: self))
+            self.dragDelegate?.dragStarted(
+                from: .discardPile,
+                with: [self.discardPile.last!],
+                at: self.discardPileCardView.center,
+                with: self.discardPileCardView.frame.size
+            )
             self.lastPanGestureTranslation = .zero
         } else if self.discardPilePanGestureRecognizer.state == .changed {
            let translation = self.discardPilePanGestureRecognizer.translation(in: self)

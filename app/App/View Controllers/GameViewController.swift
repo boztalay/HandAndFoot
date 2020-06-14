@@ -507,7 +507,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         self.dimmerView = nil
     }
     
-    func dragStarted(from source: DragDropSite, with cards: [Card], at point: CGPoint) {
+    func dragStarted(from source: DragDropSite, with cards: [Card], at point: CGPoint, with size: CGSize) {
         self.actionBuildTransactions.append(.drag(source, cards))
         self.updateActionBuildState()
         
@@ -523,7 +523,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         let dragStartPoint = dragSourceView.convert(point, to: self.view)
         
         // TODO: A real size of some sort
-        self.dragView!.frame = CGRect(origin: .zero, size: CGSize(width: 100, height: 200))
+        self.dragView!.frame = CGRect(origin: .zero, size: size)
         self.dragView!.center = dragStartPoint
     }
     
@@ -540,8 +540,13 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     }
     
     func dragEnded() {
+        self.dragView!.removeFromSuperview()
+        self.dragView = nil
+        
+        _ = self.actionBuildTransactions.popLast()
+        self.updateActionBuildState()
+        
         // Determine the view that it was dropped on (if any)
-        // Clear out the drag view and remove it from the hierarchy
         // If it was dropped on a valid destination, add the drop action build transaction
         // Otherwise, remove the last action build transaction (the drag)
         
