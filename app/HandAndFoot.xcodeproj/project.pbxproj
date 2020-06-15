@@ -14,6 +14,7 @@
 		FB5512B6247289AF00814BAF /* NewGameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5512B5247289AF00814BAF /* NewGameViewController.swift */; };
 		FB5512B82472928200814BAF /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5512B72472928200814BAF /* ProfileViewController.swift */; };
 		FB5512BA2474C33D00814BAF /* GroupedSectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5512B92474C33D00814BAF /* GroupedSectionViewController.swift */; };
+		FB5B343324972D360026FFEE /* DiscardPileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5B343224972D360026FFEE /* DiscardPileView.swift */; };
 		FB5C60F72478CB3200A7116B /* CGRect+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5C60F62478CB3200A7116B /* CGRect+Convenience.swift */; };
 		FB5D037624469FA90044FBC5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037524469FA90044FBC5 /* AppDelegate.swift */; };
 		FB5D037824469FA90044FBC5 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB5D037724469FA90044FBC5 /* SceneDelegate.swift */; };
@@ -91,6 +92,7 @@
 		FB5512B5247289AF00814BAF /* NewGameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewGameViewController.swift; sourceTree = "<group>"; };
 		FB5512B72472928200814BAF /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		FB5512B92474C33D00814BAF /* GroupedSectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupedSectionViewController.swift; sourceTree = "<group>"; };
+		FB5B343224972D360026FFEE /* DiscardPileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscardPileView.swift; sourceTree = "<group>"; };
 		FB5C60F62478CB3200A7116B /* CGRect+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGRect+Convenience.swift"; sourceTree = "<group>"; };
 		FB5D037224469FA90044FBC5 /* HandAndFoot.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HandAndFoot.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FB5D037524469FA90044FBC5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -235,16 +237,16 @@
 				FB79C2F3246158D100814CAE /* GameListTableViewCell.swift */,
 				FB5512B324727EDE00814BAF /* ScoreBoardView.swift */,
 				FB7DD378244FEA1800BC8AB4 /* CardView.swift */,
+				FB885C27247DD20000614E1E /* FaceDownCardView.swift */,
 				FBB22A9924763A2D003DB73B /* HandView.swift */,
 				FB885C1B247C69BC00614E1E /* FootView.swift */,
 				FB885C1F247C774B00614E1E /* DeckView.swift */,
+				FB5B343224972D360026FFEE /* DiscardPileView.swift */,
 				FB885C21247C80E400614E1E /* BookView.swift */,
 				FBD240AE2486135D0049E09F /* BooksView.swift */,
 				FB885C1D247C6DBC00614E1E /* OpponentPreviewView.swift */,
 				FB885C23247C936700614E1E /* OpponentView.swift */,
 				FB885C25247C941200614E1E /* OpponentHandView.swift */,
-				FB885C27247DD20000614E1E /* FaceDownCardView.swift */,
-				FBD0060924942FA300BC6BDC /* DraggableDroppable.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -274,6 +276,7 @@
 		FBDB3BA52446A066008831FF /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
+				FBD0060924942FA300BC6BDC /* DraggableDroppable.swift */,
 				FBDB3BA62446A066008831FF /* JSONCodable.swift */,
 				FB9DA0FC2474DEF2003299B3 /* LogOutDelegate.swift */,
 				FB642849244AA26200FDF34E /* Strongbox.swift */,
@@ -490,6 +493,7 @@
 				FBDB3BAF2446A066008831FF /* JSONCodable.swift in Sources */,
 				FB79C2F4246158D100814CAE /* GameListTableViewCell.swift in Sources */,
 				FBDB3BC22446A3E7008831FF /* ActionModel+CoreDataClass.swift in Sources */,
+				FB5B343324972D360026FFEE /* DiscardPileView.swift in Sources */,
 				FBDB3BAA2446A066008831FF /* Deck.swift in Sources */,
 				FBDB3BAB2446A066008831FF /* Book.swift in Sources */,
 				FBDB3BDE2446AA47008831FF /* Network.swift in Sources */,

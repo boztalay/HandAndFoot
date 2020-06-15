@@ -338,6 +338,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     private var handView: HandView!
     private var booksView: BooksView!
     private var deckView: DeckView!
+    private var discardPileView: DiscardPileView!
     
     private var lowestOpponentPreviewView: OpponentPreviewView?
     private var dimmerView: UIView?
@@ -363,6 +364,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         self.handView = HandView()
         self.booksView = BooksView()
         self.deckView = DeckView()
+        self.discardPileView = DiscardPileView()
 
         self.gameModel = gameModel
         self.actionBuildTransactions = []
@@ -416,17 +418,27 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         self.booksView.pin(edge: .bottom, to: .top, of: self.handView, with: -30)
 
         self.view.insertSubview(self.deckView, belowSubview: self.lowestOpponentPreviewView!)
-        self.deckView.centerHorizontally(in: self.view)
         self.deckView.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 100.0)
-        self.deckView.pinHeight(toHeightOf: self.view, multiplier: 0.2, constant: 0.0)
+        self.deckView.pinHeight(toHeightOf: self.view, multiplier: 0.18, constant: 0.0)
+        self.deckView.setAspectRatio(to: CGFloat(CardView.aspectRatio))
+        
+        self.view.insertSubview(self.discardPileView, belowSubview: self.lowestOpponentPreviewView!)
+        self.discardPileView.pin(edge: .top, to: .top, of: self.deckView)
+        self.discardPileView.pin(edge: .leading, to: .trailing, of: self.deckView, with: 10.0)
+        self.discardPileView.pinHeight(toHeightOf: self.deckView)
+        self.discardPileView.setAspectRatio(to: CGFloat(CardView.aspectRatio))
+        
+        let deckAndDiscardLeading = self.view.leadingAnchor.anchorWithOffset(to: self.deckView.leadingAnchor)
+        let deckAndDiscardTrailing = self.discardPileView.trailingAnchor.anchorWithOffset(to: self.view.trailingAnchor)
+        deckAndDiscardLeading.constraint(equalTo: deckAndDiscardTrailing, multiplier: 1.0).isActive = true
         
         self.draggableViews = [
             .deck : self.deckView,
-            .discardPile : self.deckView
+            .discardPile : self.discardPileView
         ]
         
         self.droppableViews = [
-            .discardPile: self.deckView,
+            .discardPile: self.discardPileView,
             .hand: self.handView
         ]
         
@@ -464,7 +476,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         self.footView.update(footPresent: !self.currentPlayer.isInFoot)
         self.handView.update(cards: self.currentPlayer.hand)
         self.booksView.update(books: self.currentPlayer.books[game.round!]!)
-        self.deckView.update(deck: game.deck, discardPile: game.discardPile)
+        self.deckView.update(deck: game.deck)
+        self.discardPileView.update(discardPile: game.discardPile)
         
         if let opponentPlayerName = self.opponentPlayerName {
             let opponentPlayer = game.getPlayer(named: opponentPlayerName)!
@@ -592,11 +605,11 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         }
 
         for source in DragDropSite.allCases {
-            self.draggableViews[source]?.deactivateDragging(for: source)
+            self.draggableViews[source]?.deactivateDragging()
         }
         
         for destination in DragDropSite.allCases {
-            self.droppableViews[destination]?.deactivateDropping(for: destination)
+            self.droppableViews[destination]?.deactivateDropping()
         }
         
         self.activeDropDestinations = nil
@@ -604,28 +617,30 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         switch (state) {
             case let .idle(_, dragDropSources):
                 for source in dragDropSources {
-                    self.draggableViews[source]?.activateDragging(for: source)
+                    self.draggableViews[source]?.activateDragging()
                 }
             case let .simpleActionDragging(_, dragDropDestinations):
                 self.activeDropDestinations = dragDropDestinations
                 for destination in dragDropDestinations {
-                    self.droppableViews[destination]?.activateDropping(for: destination)
+                    self.droppableViews[destination]?.activateDropping()
                 }
             case let .complexActionIdle(possibleActions, dragDropSources):
                 // TODO: Something with the actions, go into mid-action state, etc
                 for source in dragDropSources {
-                    self.draggableViews[source]?.activateDragging(for: source)
+                    self.draggableViews[source]?.activateDragging()
                 }
             case let .complexActionDragging(possibleActions, dragDropDestinations):
                 // TODO: Something with the actions, go into mid-action state, etc
                 self.activeDropDestinations = dragDropDestinations
                 for destination in dragDropDestinations {
-                    self.droppableViews[destination]?.activateDropping(for: destination)
+                    self.droppableViews[destination]?.activateDropping()
                 }
             case let .finished(possibleActions):
-                // TODO: Build and commit the action
-                print(possibleActions)
-                break
+                // TODO: Build and commit all actions
+                self.actionBuildTransactions = []
+                if possibleActions.contains(.drawFromDeck) {
+                    self.commitAction(.drawFromDeck(self.currentPlayer.name))
+                }
         }
     }
     

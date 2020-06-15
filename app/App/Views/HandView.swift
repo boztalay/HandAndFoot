@@ -193,11 +193,11 @@ class HandView: UIView, Droppable {
         self.delegate?.cardSelectionChanged(cards: selectedCards)
     }
     
-    func activateDropping(for destination: DragDropSite) {
+    func activateDropping() {
         self.borderView.layer.borderColor = UIColor.systemRed.cgColor
     }
 
-    func deactivateDropping(for destination: DragDropSite) {
+    func deactivateDropping() {
         self.borderView.layer.borderColor = UIColor.black.cgColor
     }
     

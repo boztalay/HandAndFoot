@@ -40,11 +40,11 @@ protocol DragDelegate: AnyObject {
 protocol Draggable: UIView {
     var dragDelegate: DragDelegate? { get set }
 
-    func activateDragging(for source: DragDropSite)
-    func deactivateDragging(for source: DragDropSite)
+    func activateDragging()
+    func deactivateDragging()
 }
 
 protocol Droppable: UIView {
-    func activateDropping(for destination: DragDropSite)
-    func deactivateDropping(for destination: DragDropSite)
+    func activateDropping()
+    func deactivateDropping()
 }
