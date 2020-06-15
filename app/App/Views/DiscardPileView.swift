@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DiscardPileView: UIView, Draggable, Droppable {
+class DiscardPileView: UIView, UIGestureRecognizerDelegate, Draggable, Droppable {
 
     private var cardView: CardView!
     private var emptyLabel: UILabel!
@@ -29,13 +29,14 @@ class DiscardPileView: UIView, Draggable, Droppable {
         
         self.emptyLabel = UILabel()
         self.addSubview(self.emptyLabel)
-        self.emptyLabel.centerVertically(in: self.cardView)
-        self.emptyLabel.pinX(to: self.cardView, leading: 2.0, trailing: -2.0)
+        self.emptyLabel.centerVertically(in: self)
+        self.emptyLabel.pinX(to: self, leading: 2.0, trailing: -2.0)
         self.sendSubviewToBack(self.emptyLabel)
         self.emptyLabel.textAlignment = .center
         self.emptyLabel.text = ""
         
         self.panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(DiscardPileView.panGestureRecognizerChanged))
+        self.panGestureRecognizer.delegate = self
         self.cardView.addGestureRecognizer(self.panGestureRecognizer)
     }
     
@@ -64,7 +65,7 @@ class DiscardPileView: UIView, Draggable, Droppable {
     }
     
     func deactivateDropping() {
-        self.emptyLabel.text = ""
+        self.emptyLabel.text = "❌"
         self.cardView.isSelected = false
     }
     
@@ -94,12 +95,8 @@ class DiscardPileView: UIView, Draggable, Droppable {
        }
     }
     
-    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        if gestureRecognizer === self.panGestureRecognizer {
-            return self.cardView.isSelected
-        } else {
-            return super.gestureRecognizerShouldBegin(gestureRecognizer)
-        }
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive event: UIEvent) -> Bool {
+        return self.cardView.isSelected
     }
     
     required init?(coder: NSCoder) {

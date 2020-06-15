@@ -8,7 +8,7 @@
 
 import UIKit
 
-class DeckView: UIView, Draggable {
+class DeckView: UIView, UIGestureRecognizerDelegate, Draggable {
 
     private var cardView: FaceDownCardView!
     
@@ -25,6 +25,7 @@ class DeckView: UIView, Draggable {
         self.cardView.pin(to: self)
         
         self.panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(DeckView.panGestureRecognizerChanged))
+        self.panGestureRecognizer.delegate = self
         self.cardView.addGestureRecognizer(self.panGestureRecognizer)
     }
     
@@ -66,12 +67,8 @@ class DeckView: UIView, Draggable {
         }
     }
     
-    override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-        if gestureRecognizer === self.panGestureRecognizer {
-            return self.cardView.isSelected
-        } else {
-            return super.gestureRecognizerShouldBegin(gestureRecognizer)
-        }
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive event: UIEvent) -> Bool {
+        return self.cardView.isSelected
     }
     
     required init?(coder: NSCoder) {
