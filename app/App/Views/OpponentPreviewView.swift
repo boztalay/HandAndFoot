@@ -25,6 +25,19 @@ class OpponentPreviewView: UIView {
     
     weak var delegate: OpponentPreviewViewDelegate?
     
+    var isSelected: Bool {
+        get {
+            return (self.circleView.layer.borderColor == UIColor.systemRed.cgColor)
+        }
+        set {
+            if newValue {
+                self.circleView.layer.borderColor = UIColor.systemRed.cgColor
+            } else {
+                self.circleView.layer.borderColor = UIColor.black.cgColor
+            }
+        }
+    }
+    
     init() {
         super.init(frame: .zero)
         

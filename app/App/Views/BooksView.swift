@@ -8,15 +8,9 @@
 
 import UIKit
 
-protocol BooksViewDelegate: AnyObject {
-    func bookSelectionChanged(bookRank: CardRank?)
-}
-
-class BooksView: UIView, BookViewDelegate {
+class BooksView: UIView {
     
-    private var bookViews: [CardRank : BookView]!
-    
-    weak var delegate: BooksViewDelegate?
+    private(set) var bookViews: [CardRank : BookView]!
     
     init() {
         super.init(frame: .zero)
@@ -26,15 +20,10 @@ class BooksView: UIView, BookViewDelegate {
         var lastBookView: BookView?
         var tallestBookView: BookView?
         
-        for rank in CardRank.allCases {
-            guard rank != .two && rank != .three && rank != .joker else {
-                continue
-            }
-            
+        for rank in CardRank.bookableCases {
             let bookView = BookView()
             self.addSubview(bookView)
             bookView.pin(edge: .top, to: .top, of: self)
-            bookView.delegate = self
             
             if let lastBookView = lastBookView {
                 bookView.pinWidth(toWidthOf: lastBookView)
@@ -59,11 +48,7 @@ class BooksView: UIView, BookViewDelegate {
     }
     
     func update(books: [CardRank : Book]) {
-        for rank in CardRank.allCases {
-            guard rank != .two && rank != .three && rank != .joker else {
-                continue
-            }
-            
+        for rank in CardRank.bookableCases {
             let bookView = self.bookViews[rank]!
 
             if let book = books[rank] {
@@ -72,23 +57,6 @@ class BooksView: UIView, BookViewDelegate {
                 bookView.update(rank: rank)
             }
         }
-    }
-    
-    func bookSelectionChanged(rank: CardRank, isSelected: Bool) {
-        for (bookViewRank, bookView) in self.bookViews {
-            if bookViewRank != rank {
-                bookView.isSelected = false
-            }
-        }
-        
-        let selectedBookRank: CardRank?
-        if isSelected {
-            selectedBookRank = rank
-        } else {
-            selectedBookRank = nil
-        }
-        
-        self.delegate?.bookSelectionChanged(bookRank: selectedBookRank)
     }
     
     required init?(coder: NSCoder) {

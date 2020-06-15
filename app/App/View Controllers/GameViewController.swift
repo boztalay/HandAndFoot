@@ -206,6 +206,9 @@ enum ActionBuildState {
     case complexActionIdle(Set<PossibleAction>, Set<DragDropSite>)
     case complexActionDragging(Set<PossibleAction>, Set<DragDropSite>)
     case finished(Set<PossibleAction>)
+
+    // TODO: A case for "committing" and another for "committed" to handle
+    //       loading states?
     
     func advanceState(given transaction: ActionBuildTransaction) -> ActionBuildState {
         switch (self) {
@@ -341,6 +344,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     private var discardPileView: DiscardPileView!
     
     private var lowestOpponentPreviewView: OpponentPreviewView?
+    private var rightmostOpponentPreviewView: OpponentPreviewView?
+    private var leftmostOpponentPreviewView: OpponentPreviewView?
     private var dimmerView: UIView?
     private var opponentView: OpponentView?
     private var opponentPlayerName: String?
@@ -376,30 +381,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         
         self.title = self.gameModel.title!
         
-        let game = self.gameModel.game!
-        var lastOpponentPreviewView: OpponentPreviewView?
-        
-        for player in game.players.filter({ $0.name != self.currentPlayer.name }) {
-            let opponentPreviewView = OpponentPreviewView()
-            self.view.addSubview(opponentPreviewView)
-            opponentPreviewView.pin(edge: .leading, to: .leading, of: self.view.safeAreaLayoutGuide, with: 40)
-            opponentPreviewView.setAspectRatio(to: 1.0)
-            opponentPreviewView.pinHeight(toHeightOf: self.view, multiplier: 0.10, constant: 0.0)
-            opponentPreviewView.delegate = self
-            
-            if let lastPlayerPreviewView = lastOpponentPreviewView {
-                opponentPreviewView.pin(edge: .top, to: .bottom, of: lastPlayerPreviewView, with: 20)
-            } else {
-                opponentPreviewView.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 40)
-            }
-            
-            self.opponentPreviewViews[player.name] = opponentPreviewView
-            if self.lowestOpponentPreviewView == nil {
-                self.lowestOpponentPreviewView = opponentPreviewView
-            }
-
-            lastOpponentPreviewView = opponentPreviewView
-        }
+        self.createOpponentPreviewViews()
         
         self.view.insertSubview(self.footView, belowSubview: self.lowestOpponentPreviewView!)
         self.footView.pin(edge: .leading, to: .leading, of: self.view.safeAreaLayoutGuide, with: 40)
@@ -414,7 +396,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         self.handView.pin(edge: .bottom, to: .bottom, of: self.view, with: -40)
         
         self.view.insertSubview(self.booksView, belowSubview: self.lowestOpponentPreviewView!)
-        self.booksView.pinX(to: self.handView)
+        self.booksView.pin(edge: .leading, to: .leading, of: self.view.safeAreaLayoutGuide, with: 40)
+        self.booksView.pin(edge: .trailing, to: .trailing, of: self.view.safeAreaLayoutGuide, with: -40)
         self.booksView.pin(edge: .bottom, to: .top, of: self.handView, with: -30)
 
         self.view.insertSubview(self.deckView, belowSubview: self.lowestOpponentPreviewView!)
@@ -446,7 +429,78 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
             view.dragDelegate = self
         }
         
+        for (rank, bookView) in self.booksView.bookViews {
+            self.droppableViews[.book(rank)] = bookView
+        }
+        
         self.updateViews()
+    }
+    
+    private func createOpponentPreviewViews() {
+        let game = self.gameModel.game!
+        var lastOpponentPreviewView: OpponentPreviewView?
+        
+        let currentPlayerIndex = game.players.firstIndex(where: { $0.name == self.currentPlayer.name })!
+        let numberOfOpponentsBefore = game.players.count / 2
+        let numberOfOpponentsAfter = game.players.count - numberOfOpponentsBefore - 1
+
+        for i in 0 ..< numberOfOpponentsBefore {
+            let opponentIndex = (((currentPlayerIndex - 1) - i) + game.players.count) % game.players.count
+            let opponent = game.players[opponentIndex]
+            
+            lastOpponentPreviewView = self.createOpponentPreviewView(
+                opponent: opponent,
+                isOpponentBeforeCurrentPlayer: true,
+                lastOpponentPreviewView: lastOpponentPreviewView
+            )
+            
+            if self.leftmostOpponentPreviewView == nil {
+                self.leftmostOpponentPreviewView = lastOpponentPreviewView
+            }
+        }
+        
+        lastOpponentPreviewView = nil
+        for i in 0 ..< numberOfOpponentsAfter {
+            let opponentIndex = ((currentPlayerIndex + 1) + i) % game.players.count
+            let opponent = game.players[opponentIndex]
+            
+            lastOpponentPreviewView = self.createOpponentPreviewView(
+                opponent: opponent,
+                isOpponentBeforeCurrentPlayer: false,
+                lastOpponentPreviewView: lastOpponentPreviewView
+            )
+
+            if self.rightmostOpponentPreviewView == nil {
+                self.rightmostOpponentPreviewView = lastOpponentPreviewView
+            }
+        }
+    }
+    
+    private func createOpponentPreviewView(opponent: Player, isOpponentBeforeCurrentPlayer: Bool, lastOpponentPreviewView: OpponentPreviewView?) -> OpponentPreviewView {
+        let opponentPreviewView = OpponentPreviewView()
+        self.view.addSubview(opponentPreviewView)
+        opponentPreviewView.setAspectRatio(to: 1.0)
+        opponentPreviewView.pinHeight(toHeightOf: self.view, multiplier: 0.10, constant: 0.0)
+        opponentPreviewView.delegate = self
+
+        if isOpponentBeforeCurrentPlayer {
+            opponentPreviewView.pin(edge: .leading, to: .leading, of: self.view.safeAreaLayoutGuide, with: 40)
+        } else {
+            opponentPreviewView.pin(edge: .trailing, to: .trailing, of: self.view.safeAreaLayoutGuide, with: -40)
+        }
+        
+        if let lastOpponentPreviewView = lastOpponentPreviewView {
+            opponentPreviewView.pin(edge: .top, to: .bottom, of: lastOpponentPreviewView, with: 20)
+        } else {
+            opponentPreviewView.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 40)
+        }
+        
+        self.opponentPreviewViews[opponent.name] = opponentPreviewView
+        if self.lowestOpponentPreviewView == nil {
+            self.lowestOpponentPreviewView = opponentPreviewView
+        }
+
+        return opponentPreviewView
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -500,9 +554,18 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
             
             self.opponentView = OpponentView()
             self.view.insertSubview(self.opponentView!, aboveSubview: self.dimmerView!)
-            self.opponentView!.pin(edge: .leading, to: .trailing, of: self.opponentPreviewViews.values.first!, with: 30.0)
+            self.opponentView!.pin(edge: .leading, to: .trailing, of: self.leftmostOpponentPreviewView!, with: 30.0)
             self.opponentView!.pin(edge: .top, to: .top, of: self.view.safeAreaLayoutGuide, with: 40.0)
-            self.opponentView!.pin(edge: .trailing, to: .trailing, of: self.view.safeAreaLayoutGuide, with: -40.0)
+            
+            if let rightmostOpponentPreviewView = self.rightmostOpponentPreviewView {
+                self.opponentView!.pin(edge: .trailing, to: .leading, of: rightmostOpponentPreviewView, with: -30.0)
+            } else {
+                self.opponentView!.pin(edge: .trailing, to: .trailing, of: self.view.safeAreaLayoutGuide, with: -40.0)
+            }
+        }
+        
+        for (name, opponentPreviewView) in self.opponentPreviewViews {
+            opponentPreviewView.isSelected = (name == player.name)
         }
         
         self.opponentView!.update(player: player, game: self.gameModel.game!)
@@ -512,6 +575,10 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     @objc func dimmerViewTapped(_ sender: UITapGestureRecognizer) {
         guard sender.state == .ended else {
             return
+        }
+        
+        for opponentPreviewView in self.opponentPreviewViews.values {
+            opponentPreviewView.isSelected = false
         }
 
         self.opponentView?.removeFromSuperview()

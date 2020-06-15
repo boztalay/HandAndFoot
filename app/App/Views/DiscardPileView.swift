@@ -29,9 +29,9 @@ class DiscardPileView: UIView, UIGestureRecognizerDelegate, Draggable, Droppable
         
         self.emptyLabel = UILabel()
         self.addSubview(self.emptyLabel)
+        self.sendSubviewToBack(self.emptyLabel)
         self.emptyLabel.centerVertically(in: self)
         self.emptyLabel.pinX(to: self, leading: 2.0, trailing: -2.0)
-        self.sendSubviewToBack(self.emptyLabel)
         self.emptyLabel.textAlignment = .center
         self.emptyLabel.text = ""
         

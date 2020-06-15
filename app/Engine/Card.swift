@@ -35,6 +35,10 @@ enum CardRank: String, CaseIterable, Comparable {
     case ace
     case joker
     
+    static var bookableCases: [CardRank] {
+        return CardRank.allCases.filter({ $0.bookRank != nil })
+    }
+    
     var numericalRank: Int {
         switch (self) {
             case .two:

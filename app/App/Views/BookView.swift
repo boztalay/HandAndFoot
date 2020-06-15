@@ -8,19 +8,13 @@
 
 import UIKit
 
-protocol BookViewDelegate: AnyObject {
-    func bookSelectionChanged(rank: CardRank, isSelected: Bool)
-}
-
-class BookView: UIView {
+class BookView: UIView, Droppable {
 
     private static let cardOverlapProportion = 0.9
     
     private(set) var cardViews: [CardView]!
     private var outlineView: UIView!
     private var rankLabel: UILabel!
-    
-    weak var delegate: BookViewDelegate?
     
     private var rank: CardRank!
     
@@ -47,9 +41,6 @@ class BookView: UIView {
         self.cardViews = []
         self.outlineView = UIView()
         self.rankLabel = UILabel()
-        
-        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(BookView.tapGestureRecognizerChanged))
-        self.addGestureRecognizer(tapGestureRecognizer)
     }
     
     func update(rank: CardRank) {
@@ -123,13 +114,12 @@ class BookView: UIView {
         lastCardView!.pin(edge: .bottom, to: .bottom, of: self)
     }
     
-    @objc func tapGestureRecognizerChanged(_ sender: UITapGestureRecognizer) {
-        guard sender.state == .ended else {
-            return
-        }
-        
-        self.isSelected = !self.isSelected
-        self.delegate?.bookSelectionChanged(rank: self.rank, isSelected: self.isSelected)
+    func activateDropping() {
+        self.isSelected = true
+    }
+    
+    func deactivateDropping() {
+        self.isSelected = false
     }
     
     required init?(coder: NSCoder) {
