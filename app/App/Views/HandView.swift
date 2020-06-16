@@ -48,6 +48,7 @@ class HandView: UIView, Draggable, Droppable {
         self.borderView = UIView()
         self.addSubview(self.borderView)
         self.borderView.pin(to: self)
+        self.borderView.layer.cornerCurve = .continuous
         self.borderView.layer.cornerRadius = 10
         self.borderView.layer.masksToBounds = true
         self.borderView.layer.borderWidth = 1

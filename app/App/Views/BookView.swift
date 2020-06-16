@@ -57,6 +57,7 @@ class BookView: UIView, Droppable {
         self.outlineView.pin(to: self)
         self.outlineView.setAspectRatio(to: CGFloat(CardView.aspectRatio))
         self.outlineView.backgroundColor = .white
+        self.outlineView.layer.cornerCurve = .continuous
         self.outlineView.layer.cornerRadius = 10;
         self.outlineView.layer.masksToBounds = true
         self.outlineView.layer.borderWidth = 1

@@ -43,6 +43,7 @@ class FaceDownCardView: UIView {
         super.init(frame: .zero)
         self.backgroundColor = UIColor(white: 0.95, alpha: 1.0)
         
+        self.layer.cornerCurve = .continuous
         self.layer.cornerRadius = 10
         self.layer.masksToBounds = true
         self.layer.borderWidth = 1

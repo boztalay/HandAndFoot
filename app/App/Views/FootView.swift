@@ -16,6 +16,7 @@ class FootView: UIView {
         super.init(frame: .zero)
         
         self.backgroundColor = .white
+        self.layer.cornerCurve = .continuous
         self.layer.cornerRadius = 10;
         self.layer.masksToBounds = true
         self.layer.borderWidth = 1
