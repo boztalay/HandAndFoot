@@ -75,11 +75,12 @@ class Network: PusherDelegate {
         )
     }
     
-    func sendSignUpRequest(name: String, email: String, password: String, responseHandler: @escaping NetworkResponseHandler) {
+    func sendSignUpRequest(firstName: String, lastName: String, email: String, password: String, responseHandler: @escaping NetworkResponseHandler) {
         self.sendRequest(
             path: "/api/signup",
             payload: [
-                "name": name,
+                "first_name": firstName,
+                "last_name": lastName,
                 "email" : email,
                 "password" : password
             ],

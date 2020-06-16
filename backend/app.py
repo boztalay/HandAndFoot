@@ -113,9 +113,20 @@ def signup():
         return error("Could not decode body as JSON", 400)
 
     first_name = body.get("first_name")
+    if first_name is None:
+        return error("First name is required", 400)
+
     last_name = body.get("last_name")
+    if last_name is None:
+        return error("Last name is required", 400)
+
     email = body.get("email")
+    if email is None:
+        return error("Email is required", 400)
+
     password = body.get("password")
+    if password is None:
+        return error("Password is required", 400)
 
     existing_user = User.get_or_none(User.email == email)
     if existing_user:
@@ -192,6 +203,10 @@ def sync_user(current_user):
     for usergame in usergames:
         if (usergame.user_id not in user_ids):
             user_ids.append(usergame.user_id)
+
+    # TODO: Hacky McHackface
+    if current_user.id not in user_ids:
+        user_ids.append(current_user.id)
 
     users = User.select().where(User.id.in_(user_ids) & (User.last_updated > last_updated))
 

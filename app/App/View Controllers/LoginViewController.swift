@@ -16,7 +16,8 @@ enum LoginViewControllerMode: String, CaseIterable {
 class LoginViewController: UIViewController, LogOutDelegate {
     
     var modeSegmentedControl: UISegmentedControl!
-    var nameTextField: UITextField!
+    var firstNameTextField: UITextField!
+    var lastNameTextField: UITextField!
     var emailTextField: UITextField!
     var passwordTextField: UITextField!
     var passwordConfirmationTextField: UITextField!
@@ -63,11 +64,17 @@ class LoginViewController: UIViewController, LogOutDelegate {
         self.passwordTextField.placeholder = "Password"
         self.passwordTextField.isSecureTextEntry = true
         
-        self.nameTextField = UITextField()
-        self.nameTextField.borderStyle = .roundedRect
-        self.nameTextField.textAlignment = .center
-        self.nameTextField.textContentType = .name
-        self.nameTextField.placeholder = "Name"
+        self.firstNameTextField = UITextField()
+        self.firstNameTextField.borderStyle = .roundedRect
+        self.firstNameTextField.textAlignment = .center
+        self.firstNameTextField.textContentType = .name
+        self.firstNameTextField.placeholder = "First Name"
+        
+        self.lastNameTextField = UITextField()
+        self.lastNameTextField.borderStyle = .roundedRect
+        self.lastNameTextField.textAlignment = .center
+        self.lastNameTextField.textContentType = .name
+        self.lastNameTextField.placeholder = "Last Name"
         
         self.passwordConfirmationTextField = UITextField()
         self.passwordConfirmationTextField.borderStyle = .roundedRect
@@ -93,7 +100,8 @@ class LoginViewController: UIViewController, LogOutDelegate {
     func setMode(_ mode: LoginViewControllerMode) {
         self.mode = mode
         
-        self.nameTextField.removeFromSuperview()
+        self.firstNameTextField.removeFromSuperview()
+        self.lastNameTextField.removeFromSuperview()
         self.emailTextField.removeFromSuperview()
         self.passwordTextField.removeFromSuperview()
         self.passwordConfirmationTextField.removeFromSuperview()
@@ -107,7 +115,8 @@ class LoginViewController: UIViewController, LogOutDelegate {
                 self.setUpViewsForSigningUp()
         }
         
-        self.nameTextField.setWidth(to: 300.0)
+        self.firstNameTextField.setWidth(to: 300.0)
+        self.lastNameTextField.setWidth(to: 300.0)
         self.emailTextField.setWidth(to: 300.0)
         self.passwordTextField.setWidth(to: 300.0)
         self.passwordConfirmationTextField.setWidth(to: 300.0)
@@ -131,13 +140,17 @@ class LoginViewController: UIViewController, LogOutDelegate {
     }
     
     func setUpViewsForSigningUp() {
-        self.view.addSubview(self.nameTextField)
-        self.nameTextField.centerHorizontally(in: self.view)
-        self.nameTextField.pin(edge: .top, to: .bottom, of: self.modeSegmentedControl, with: 25.0)
+        self.view.addSubview(self.firstNameTextField)
+        self.firstNameTextField.centerHorizontally(in: self.view)
+        self.firstNameTextField.pin(edge: .top, to: .bottom, of: self.modeSegmentedControl, with: 25.0)
+
+        self.view.addSubview(self.lastNameTextField)
+        self.lastNameTextField.centerHorizontally(in: self.view)
+        self.lastNameTextField.pin(edge: .top, to: .bottom, of: self.firstNameTextField, with: 10.0)
         
         self.view.addSubview(self.emailTextField)
         self.emailTextField.centerHorizontally(in: self.view)
-        self.emailTextField.pin(edge: .top, to: .bottom, of: self.nameTextField, with: 10.0)
+        self.emailTextField.pin(edge: .top, to: .bottom, of: self.lastNameTextField, with: 10.0)
         
         self.view.addSubview(self.passwordTextField)
         self.passwordTextField.centerHorizontally(in: self.view)
@@ -154,7 +167,8 @@ class LoginViewController: UIViewController, LogOutDelegate {
     }
     
     @objc func logInOrSignUpButtonPressed(_ sender: Any) {
-        guard let name = self.nameTextField.text,
+        guard let firstName = self.firstNameTextField.text,
+              let lastName = self.lastNameTextField.text,
               let email = self.emailTextField.text,
               let password = self.passwordTextField.text,
               let passwordConfirmation = self.passwordConfirmationTextField.text else {
@@ -171,7 +185,7 @@ class LoginViewController: UIViewController, LogOutDelegate {
                 return
             }
             
-            Network.shared.sendSignUpRequest(name: name, email: email, password: password) { (success, httpStatusCode, response) in
+            Network.shared.sendSignUpRequest(firstName: firstName, lastName: lastName, email: email, password: password) { (success, httpStatusCode, response) in
                 self.handleLogin(with: email, success)
             }
         }
@@ -203,7 +217,8 @@ class LoginViewController: UIViewController, LogOutDelegate {
     
     func userLoggedOut() {
         self.modeSegmentedControlChanged(self)
-        self.nameTextField.text = nil
+        self.firstNameTextField.text = nil
+        self.lastNameTextField.text = nil
         self.emailTextField.text = nil
         self.passwordTextField.text = nil
         self.passwordConfirmationTextField.text = nil
