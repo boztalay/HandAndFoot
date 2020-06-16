@@ -8,23 +8,38 @@
 
 import UIKit
 
-protocol HandViewDelegate: AnyObject {
-    func cardSelectionChanged(cards: [Card])
+enum HandViewPanState {
+    case idle
+    case scrolling
+    case dragging
 }
 
-class HandView: UIView, Droppable {
+class HandView: UIView, Draggable, Droppable {
     
     private static let minCardOverlapProportion = 0.52
     private static let maxCardOverlapProportion = 0.90
 
     private var borderView: UIView!
     private var cardViews: [CardView]!
+    
+    weak var dragDelegate: DragDelegate?
 
     private var minTranslation: CGFloat!
     private var maxTranslation: CGFloat!
     private var translation: CGFloat!
+    private var isDraggingActive: Bool!
+    private var panState: HandViewPanState!
+    private var lastDragTranslation: CGPoint?
     
-    weak var delegate: HandViewDelegate?
+    private var panGestureRecognizer: UIPanGestureRecognizer!
+    
+    var selectedCardViews: [CardView] {
+        return self.cardViews.filter({ $0.isSelected })
+    }
+    
+    var selectedCards: [Card] {
+        return self.selectedCardViews.map({ $0.card! })
+    }
 
     init() {
         super.init(frame: CGRect.zero)
@@ -42,9 +57,11 @@ class HandView: UIView, Droppable {
         self.minTranslation = 0.0
         self.maxTranslation = 0.0
         self.translation = 0.0
+        self.isDraggingActive = false
+        self.panState = .idle
         
-        let panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(HandView.panGestureRecognizerUpdated))
-        self.addGestureRecognizer(panGestureRecognizer)
+        self.panGestureRecognizer = UIPanGestureRecognizer(target: self, action: #selector(HandView.panGestureRecognizerChanged))
+        self.addGestureRecognizer(self.panGestureRecognizer)
     }
     
     func update(cards: [Card]) {
@@ -77,17 +94,17 @@ class HandView: UIView, Droppable {
         let selectedCardTopEdgeY = unselectedCardTopEdgeY - (self.frame.height * 0.15)
         
         for cardView in self.cardViews {
-            if cardView.isSelected {
+            if cardView.isSelected || cardView.isDragPlaceholder {
                 cardView.frame = CGRect(x: 0.0, y: selectedCardTopEdgeY, width: cardWidth, height: cardHeight)
             } else {
                 cardView.frame = CGRect(x: 0.0, y: unselectedCardTopEdgeY, width: cardWidth, height: cardHeight)
             }
         }
         
-        self.arrangeCards(panTranslation: 0.0)
+        self.arrangeCards(scrollTranslation: 0.0)
     }
     
-    private func arrangeCards(panTranslation: CGFloat) {
+    private func arrangeCards(scrollTranslation: CGFloat) {
         let margin = self.frame.height * 0.05
 
         let cardHeight = self.frame.height - (margin * 2.0)
@@ -114,7 +131,7 @@ class HandView: UIView, Droppable {
         let firstCardLeadingEdgeX = margin + (excessWidth / 2.0)
 
         for (i, cardView) in self.cardViews.enumerated() {
-            cardView.frame = cardView.frame.setting(x: firstCardLeadingEdgeX + (maxExposedCardWidth * CGFloat(i)) + self.translation + panTranslation)
+            cardView.frame = cardView.frame.setting(x: firstCardLeadingEdgeX + (maxExposedCardWidth * CGFloat(i)) + self.translation + scrollTranslation)
         }
         
         // Second pass:
@@ -162,16 +179,92 @@ class HandView: UIView, Droppable {
         }
     }
     
-    @objc func panGestureRecognizerUpdated(_ sender: UIPanGestureRecognizer) {
-        let panTranslation = sender.translation(in: self).x
+    @objc func panGestureRecognizerChanged(_ sender: Any) {
+        switch (self.panState!) {
+            case .idle:
+                self.determinePanType()
+            case .scrolling:
+                self.updateScrollPan()
+            case .dragging:
+                self.updateDragPan()
+        }
+    }
+    
+    private func determinePanType() {
+        let translation = self.panGestureRecognizer.translation(in: self)
         
-        switch (sender.state) {
+        guard translation.distanceFromOrigin() > 5.0 else {
+            return
+        }
+        
+        guard translation.x.magnitude < translation.y.magnitude else {
+            self.panState = .scrolling
+            return
+        }
+
+        guard self.isDraggingActive && self.selectedCardViews.count > 0 else {
+            return
+        }
+        
+        self.panState = .dragging
+        self.beginDrag()
+    }
+    
+    private func updateScrollPan() {
+        let scrollTranslation = self.panGestureRecognizer.translation(in: self).x
+        
+        switch (self.panGestureRecognizer.state) {
             case .began:
                 break
             case .changed:
-                self.arrangeCards(panTranslation: panTranslation)
+                self.arrangeCards(scrollTranslation: scrollTranslation)
             case .ended, .cancelled, .failed:
-                self.translation += panTranslation
+                self.translation += scrollTranslation
+                self.panState = .idle
+            default:
+                break
+        }
+    }
+    
+    private func beginDrag() {
+        for cardView in self.selectedCardViews {
+            cardView.isDragPlaceholder = true
+        }
+
+        self.dragDelegate?.dragStarted(
+            from: .hand,
+            with: self.selectedCards,
+            at: self.panGestureRecognizer.location(in: self),
+            with: self.cardViews.first!.frame.size
+        )
+
+        self.lastDragTranslation = .zero
+    }
+    
+    private func updateDragPan() {
+        let translation = self.panGestureRecognizer.translation(in: self)
+        let delta = CGPoint(
+            x: translation.x - self.lastDragTranslation!.x,
+            y: translation.y - self.lastDragTranslation!.y
+        )
+        
+        switch (self.panGestureRecognizer.state) {
+            case .began:
+                break
+            case .changed:
+                self.dragDelegate?.dragMoved(delta)
+                self.lastDragTranslation = translation
+            case .ended, .cancelled, .failed:
+                self.dragDelegate?.dragEnded()
+                self.lastDragTranslation = nil
+                self.panState = .idle
+            
+                for cardView in self.cardViews {
+                    cardView.isSelected = false
+                    cardView.isDragPlaceholder = false
+                }
+            
+                self.setNeedsLayout()
             default:
                 break
         }
@@ -186,11 +279,32 @@ class HandView: UIView, Droppable {
             fatalError()
         }
         
+        guard self.isDraggingActive else {
+            return
+        }
+        
+        guard self.panState != .dragging else {
+            return
+        }
+        
         cardView.isSelected = !cardView.isSelected
         self.setNeedsLayout()
-        
-        let selectedCards = self.cardViews.filter({ $0.isSelected }).map({ $0.card! })
-        self.delegate?.cardSelectionChanged(cards: selectedCards)
+    }
+    
+    func activateDragging() {
+        self.borderView.layer.borderColor = UIColor.systemRed.cgColor
+        self.isDraggingActive = true
+    }
+    
+    func deactivateDragging() {
+        for cardView in self.cardViews {
+            cardView.isSelected = false
+        }
+
+        self.setNeedsLayout()
+
+        self.borderView.layer.borderColor = UIColor.black.cgColor
+        self.isDraggingActive = false
     }
     
     func activateDropping() {

@@ -13,7 +13,7 @@ class DiscardPileView: UIView, UIGestureRecognizerDelegate, Draggable, Droppable
     private var cardView: CardView!
     private var emptyLabel: UILabel!
 
-    var dragDelegate: DragDelegate?
+    weak var dragDelegate: DragDelegate?
 
     private var discardPile: [Card]!
     private var panGestureRecognizer: UIPanGestureRecognizer!

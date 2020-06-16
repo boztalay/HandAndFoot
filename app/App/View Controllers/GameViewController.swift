@@ -417,12 +417,13 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         
         self.draggableViews = [
             .deck : self.deckView,
-            .discardPile : self.discardPileView
+            .discardPile : self.discardPileView,
+            .hand : self.handView
         ]
         
         self.droppableViews = [
-            .discardPile: self.discardPileView,
-            .hand: self.handView
+            .discardPile : self.discardPileView,
+            .hand : self.handView
         ]
         
         for view in draggableViews.values {
@@ -704,10 +705,22 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
                 }
             case let .finished(possibleActions):
                 // TODO: Build and commit all actions
-                self.actionBuildTransactions = []
+
                 if possibleActions.contains(.drawFromDeck) {
                     self.commitAction(.drawFromDeck(self.currentPlayer.name))
+                } else if possibleActions.contains(.discardCard) {
+                    var card: Card?
+                    
+                    for transaction in self.actionBuildTransactions {
+                        if case let .drag(_, cards) = transaction, cards.count == 1 {
+                            card = cards.first!
+                        }
+                    }
+                    
+                    self.commitAction(.discardCard(self.currentPlayer.name, card!))
                 }
+
+                self.actionBuildTransactions = []
         }
     }
     

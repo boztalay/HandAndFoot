@@ -6,7 +6,7 @@
 //  Copyright © 2020 Ben Oztalay. All rights reserved.
 //
 
-import UIKit
+import CoreGraphics
 
 extension CGRect {
     

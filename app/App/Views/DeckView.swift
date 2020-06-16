@@ -12,7 +12,7 @@ class DeckView: UIView, UIGestureRecognizerDelegate, Draggable {
 
     private var cardView: FaceDownCardView!
     
-    var dragDelegate: DragDelegate?
+    weak var dragDelegate: DragDelegate?
 
     private var panGestureRecognizer: UIPanGestureRecognizer!
     private var lastPanGestureTranslation: CGPoint?

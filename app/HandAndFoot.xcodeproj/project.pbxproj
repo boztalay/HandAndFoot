@@ -38,6 +38,7 @@
 		FB885C26247C941200614E1E /* OpponentHandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C25247C941200614E1E /* OpponentHandView.swift */; };
 		FB885C28247DD20000614E1E /* FaceDownCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C27247DD20000614E1E /* FaceDownCardView.swift */; };
 		FB9DA0FD2474DEF2003299B3 /* LogOutDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9DA0FC2474DEF2003299B3 /* LogOutDelegate.swift */; };
+		FBAAE05C24985F9F0045A415 /* CGPoint+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAAE05B24985F9F0045A415 /* CGPoint+Convenience.swift */; };
 		FBB22A9824761494003DB73B /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB22A9724761494003DB73B /* GameViewController.swift */; };
 		FBB22A9A24763A2D003DB73B /* HandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB22A9924763A2D003DB73B /* HandView.swift */; };
 		FBB97EFE2459183E00187CBF /* GamesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB97EFD2459183E00187CBF /* GamesViewController.swift */; };
@@ -117,6 +118,7 @@
 		FB885C25247C941200614E1E /* OpponentHandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentHandView.swift; sourceTree = "<group>"; };
 		FB885C27247DD20000614E1E /* FaceDownCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDownCardView.swift; sourceTree = "<group>"; };
 		FB9DA0FC2474DEF2003299B3 /* LogOutDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogOutDelegate.swift; sourceTree = "<group>"; };
+		FBAAE05B24985F9F0045A415 /* CGPoint+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Convenience.swift"; sourceTree = "<group>"; };
 		FBB22A9724761494003DB73B /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		FBB22A9924763A2D003DB73B /* HandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandView.swift; sourceTree = "<group>"; };
 		FBB97EFD2459183E00187CBF /* GamesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamesViewController.swift; sourceTree = "<group>"; };
@@ -219,6 +221,7 @@
 		FB5E2C19244F6C7400210545 /* Foundation Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				FBAAE05B24985F9F0045A415 /* CGPoint+Convenience.swift */,
 				FB5C60F62478CB3200A7116B /* CGRect+Convenience.swift */,
 				FB5E2C1A244F6CA900210545 /* DateFormatter+CommonFormatters.swift */,
 				FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */,
@@ -508,6 +511,7 @@
 				FBDB3BBA2446A321008831FF /* User+CoreDataClass.swift in Sources */,
 				FBD240B1248627560049E09F /* LayDownViewController.swift in Sources */,
 				FBD240AF2486135D0049E09F /* BooksView.swift in Sources */,
+				FBAAE05C24985F9F0045A415 /* CGPoint+Convenience.swift in Sources */,
 				FB7DD379244FEA1800BC8AB4 /* CardView.swift in Sources */,
 				FB5E2C1B244F6CA900210545 /* DateFormatter+CommonFormatters.swift in Sources */,
 				FB885C20247C774B00614E1E /* DeckView.swift in Sources */,
@@ -666,6 +670,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = App/Misc/HandAndFoot.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GV9FX44FW5;
 				INFOPLIST_FILE = App/Misc/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -686,6 +691,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = App/Misc/HandAndFoot.entitlements;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = GV9FX44FW5;
 				INFOPLIST_FILE = App/Misc/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
