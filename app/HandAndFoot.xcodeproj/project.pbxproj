@@ -28,7 +28,6 @@
 		FB64284E244AB20F00FDF34E /* ModelUpdateable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB64284D244AB20F00FDF34E /* ModelUpdateable.swift */; };
 		FB79C2F4246158D100814CAE /* GameListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB79C2F3246158D100814CAE /* GameListTableViewCell.swift */; };
 		FB7DD379244FEA1800BC8AB4 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7DD378244FEA1800BC8AB4 /* CardView.swift */; };
-		FB7DD37B244FEBFB00BC8AB4 /* UIView+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7DD37A244FEBFB00BC8AB4 /* UIView+Layout.swift */; };
 		FB7DD37D24502B7500BC8AB4 /* UIAlertController+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */; };
 		FB885C1C247C69BC00614E1E /* FootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C1B247C69BC00614E1E /* FootView.swift */; };
 		FB885C1E247C6DBC00614E1E /* OpponentPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C1D247C6DBC00614E1E /* OpponentPreviewView.swift */; };
@@ -39,6 +38,7 @@
 		FB885C28247DD20000614E1E /* FaceDownCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C27247DD20000614E1E /* FaceDownCardView.swift */; };
 		FB9DA0FD2474DEF2003299B3 /* LogOutDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9DA0FC2474DEF2003299B3 /* LogOutDelegate.swift */; };
 		FBAAE05C24985F9F0045A415 /* CGPoint+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAAE05B24985F9F0045A415 /* CGPoint+Convenience.swift */; };
+		FBAAE05E2499C7A10045A415 /* UIView+Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBAAE05D2499C7A10045A415 /* UIView+Layout.swift */; };
 		FBB22A9824761494003DB73B /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB22A9724761494003DB73B /* GameViewController.swift */; };
 		FBB22A9A24763A2D003DB73B /* HandView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB22A9924763A2D003DB73B /* HandView.swift */; };
 		FBB97EFE2459183E00187CBF /* GamesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBB97EFD2459183E00187CBF /* GamesViewController.swift */; };
@@ -108,7 +108,6 @@
 		FB64284D244AB20F00FDF34E /* ModelUpdateable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelUpdateable.swift; sourceTree = "<group>"; };
 		FB79C2F3246158D100814CAE /* GameListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameListTableViewCell.swift; sourceTree = "<group>"; };
 		FB7DD378244FEA1800BC8AB4 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
-		FB7DD37A244FEBFB00BC8AB4 /* UIView+Layout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Layout.swift"; sourceTree = "<group>"; };
 		FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Convenience.swift"; sourceTree = "<group>"; };
 		FB885C1B247C69BC00614E1E /* FootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootView.swift; sourceTree = "<group>"; };
 		FB885C1D247C6DBC00614E1E /* OpponentPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentPreviewView.swift; sourceTree = "<group>"; };
@@ -119,6 +118,7 @@
 		FB885C27247DD20000614E1E /* FaceDownCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FaceDownCardView.swift; sourceTree = "<group>"; };
 		FB9DA0FC2474DEF2003299B3 /* LogOutDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogOutDelegate.swift; sourceTree = "<group>"; };
 		FBAAE05B24985F9F0045A415 /* CGPoint+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Convenience.swift"; sourceTree = "<group>"; };
+		FBAAE05D2499C7A10045A415 /* UIView+Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Layout.swift"; sourceTree = "<group>"; };
 		FBB22A9724761494003DB73B /* GameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
 		FBB22A9924763A2D003DB73B /* HandView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandView.swift; sourceTree = "<group>"; };
 		FBB97EFD2459183E00187CBF /* GamesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GamesViewController.swift; sourceTree = "<group>"; };
@@ -225,7 +225,7 @@
 				FB5C60F62478CB3200A7116B /* CGRect+Convenience.swift */,
 				FB5E2C1A244F6CA900210545 /* DateFormatter+CommonFormatters.swift */,
 				FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */,
-				FB7DD37A244FEBFB00BC8AB4 /* UIView+Layout.swift */,
+				FBAAE05D2499C7A10045A415 /* UIView+Layout.swift */,
 			);
 			path = "Foundation Extensions";
 			sourceTree = "<group>";
@@ -469,7 +469,6 @@
 			files = (
 				FB7DD37D24502B7500BC8AB4 /* UIAlertController+Convenience.swift in Sources */,
 				FB5512BA2474C33D00814BAF /* GroupedSectionViewController.swift in Sources */,
-				FB7DD37B244FEBFB00BC8AB4 /* UIView+Layout.swift in Sources */,
 				FB5512B424727EDE00814BAF /* ScoreBoardView.swift in Sources */,
 				FB0E8E6B2475161E0060DAC3 /* UserSearchViewController.swift in Sources */,
 				FB9DA0FD2474DEF2003299B3 /* LogOutDelegate.swift in Sources */,
@@ -515,6 +514,7 @@
 				FB7DD379244FEA1800BC8AB4 /* CardView.swift in Sources */,
 				FB5E2C1B244F6CA900210545 /* DateFormatter+CommonFormatters.swift in Sources */,
 				FB885C20247C774B00614E1E /* DeckView.swift in Sources */,
+				FBAAE05E2499C7A10045A415 /* UIView+Layout.swift in Sources */,
 				FB885C22247C80E400614E1E /* BookView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
