@@ -85,6 +85,8 @@ class HandView: UIView, Draggable, Droppable {
         self.cardViews = cardViewsToKeep
         for card in cardsWithoutCardViews {
             let cardView = CardView(card: card)
+            // TODO: This is kinda hacky to avoid the flying in animation
+            cardView.isHidden = true
             
             let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(HandView.cardTapGestureRecognizerChanged))
             cardView.addGestureRecognizer(tapGestureRecognizer)
@@ -124,7 +126,12 @@ class HandView: UIView, Draggable, Droppable {
             }
             
             self.arrangeCards(scrollTranslation: 0.0)
-        }, completion: nil)
+        }, completion: { (_) in
+            // TODO: This is kinda hacky to avoid the flying in animation
+            for cardView in self.cardViews {
+                cardView.isHidden = false
+            }
+        })
     }
     
     private func arrangeCards(scrollTranslation: CGFloat) {

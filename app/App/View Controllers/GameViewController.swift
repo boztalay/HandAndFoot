@@ -160,41 +160,41 @@ enum PossibleAction: Hashable, CaseIterable {
                 return (dragDropDestination != .hand)
             case .drawFromDiscardPileAndAddToBook:
                 if case .book = dragDropDestination {
-                    return true
-                } else {
                     return false
+                } else {
+                    return true
                 }
             case .drawFromDiscardPileAndCreateBook:
                 if case .book = dragDropDestination {
-                    return true
-                } else {
                     return false
+                } else {
+                    return true
                 }
             case .discardCard:
                 return (dragDropDestination != .discardPile)
             case .layDownInitialBooks:
                 if case .book = dragDropDestination {
-                    return true
-                } else {
                     return false
+                } else {
+                    return true
                 }
             case .drawFromDiscardPileAndLayDownInitialBooks:
                 if case .book = dragDropDestination {
-                    return true
-                } else {
                     return false
+                } else {
+                    return true
                 }
             case .startBook:
                 if case .book = dragDropDestination {
-                    return true
-                } else {
                     return false
+                } else {
+                    return true
                 }
             case .addCardFromHandToBook:
                 if case .book = dragDropDestination {
-                    return true
-                } else {
                     return false
+                } else {
+                    return true
                 }
         }
     }
@@ -250,10 +250,6 @@ enum ActionBuildState {
                 }
             
                 let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(dragDropSource: source, cards: cards) })
-                guard remainingActions.count > 0 else {
-                    fatalError()
-                }
-                
                 let validDestinations = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropDestinations(cards: cards)) })
                 return .simpleActionDragging(remainingActions, validDestinations)
             case .drop:
@@ -733,6 +729,30 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         }
         
         self.activeDropDestinations = nil
+        self.navigationItem.rightBarButtonItem = nil
+        
+        var complexActionBooksCards = [CardRank : [Card]]()
+        var dragCards: [Card]?
+        for transaction in self.actionBuildTransactions {
+            if case let .drag(_, cards) = transaction {
+                dragCards = cards
+            } else if case let .drop(destination) = transaction {
+                if case let .book(rank) = destination {
+                    if complexActionBooksCards[rank!] == nil {
+                        complexActionBooksCards[rank!] = []
+                    }
+                    
+                    complexActionBooksCards[rank!]!.append(contentsOf: dragCards!)
+                }
+            }
+        }
+
+        self.booksView.update(
+            books: self.currentPlayer.books[self.gameModel.game!.round!]!,
+            complexActionBooksCards: complexActionBooksCards
+        )
+        
+        self.title = self.gameModel.title
         
         switch (state) {
             case let .idle(_, dragDropSources):
@@ -745,16 +765,34 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
                     self.droppableViews[destination]?.activateDropping()
                 }
             case let .complexActionIdle(possibleActions, dragDropSources):
-                // TODO: Something with the actions, go into mid-action state, etc
                 for source in dragDropSources {
                     self.draggableViews[source]?.activateDragging()
                 }
+                
+                if possibleActions.contains(.layDownInitialBooks) || possibleActions.contains(.drawFromDiscardPileAndLayDownInitialBooks) {
+                    self.title = "Laying Down"
+                } else if possibleActions.contains(.drawFromDiscardPileAndCreateBook) || possibleActions.contains(.startBook) {
+                    self.title = "Starting Book"
+                } else if possibleActions.contains(.drawFromDiscardPileAndAddToBook) || possibleActions.contains(.addCardFromHandToBook) {
+                    self.title = "Adding to Book"
+                }
+                
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(GameViewController.complexActionDoneButtonTapped))
             case let .complexActionDragging(possibleActions, dragDropDestinations):
-                // TODO: Something with the actions, go into mid-action state, etc
                 self.activeDropDestinations = dragDropDestinations
                 for destination in dragDropDestinations {
                     self.droppableViews[destination]?.activateDropping()
                 }
+                
+                if possibleActions.contains(.layDownInitialBooks) || possibleActions.contains(.drawFromDiscardPileAndLayDownInitialBooks) {
+                    self.title = "Laying Down"
+                } else if possibleActions.contains(.drawFromDiscardPileAndCreateBook) || possibleActions.contains(.startBook) {
+                    self.title = "Starting Book"
+                } else if possibleActions.contains(.drawFromDiscardPileAndAddToBook) || possibleActions.contains(.addCardFromHandToBook) {
+                    self.title = "Adding to Book"
+                }
+                
+                self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(GameViewController.complexActionDoneButtonTapped))
             case let .finished(possibleActions):
                 // TODO: Build and commit all actions
 
@@ -799,7 +837,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
             possibleActions.insert(.discardCard)
         }
         
-        if self.currentPlayer.hasLaidDownThisRound {
+        if !self.currentPlayer.hasLaidDownThisRound {
             possibleActions.insert(.layDownInitialBooks)
         }
         
@@ -816,6 +854,11 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         }
         
         return possibleActions
+    }
+    
+    @objc private func complexActionDoneButtonTapped(_ sender: Any) {
+        self.actionBuildTransactions.append(.done)
+        self.updateActionBuildState()
     }
     
     private func commitAction(_ action: Action) {

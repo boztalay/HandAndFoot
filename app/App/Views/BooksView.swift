@@ -47,14 +47,15 @@ class BooksView: UIView {
         self.pinHeight(toHeightOf: tallestBookView!)
     }
     
-    func update(books: [CardRank : Book]) {
+    func update(books: [CardRank : Book], complexActionBooksCards: [CardRank : [Card]]? = nil) {
         for rank in CardRank.bookableCases {
             let bookView = self.bookViews[rank]!
+            let complexActionCards = complexActionBooksCards?[rank]
 
             if let book = books[rank] {
-                bookView.update(book: book)
+                bookView.update(book: book, complexActionCards: complexActionCards)
             } else {
-                bookView.update(rank: rank)
+                bookView.update(rank: rank, complexActionCards: complexActionCards)
             }
         }
     }
