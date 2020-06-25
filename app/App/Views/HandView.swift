@@ -65,43 +65,66 @@ class HandView: UIView, Draggable, Droppable {
     }
     
     func update(cards: [Card]) {
+        var cardViewsToKeep = [CardView]()
+        var cardsWithoutCardViews = cards
+        
+        for card in cards {
+            if let cardViewIndex = self.cardViews.firstIndex(where: { $0.card! == card}) {
+                cardViewsToKeep.append(self.cardViews[cardViewIndex])
+                self.cardViews.remove(at: cardViewIndex)
+                
+                let cardIndex = cardsWithoutCardViews.firstIndex(of: card)!
+                cardsWithoutCardViews.remove(at: cardIndex)
+            }
+        }
+
         for cardView in self.cardViews {
             cardView.removeFromSuperview()
         }
-        
-        let sortedCards = cards.sorted() { (cardA, cardB) in
-            return cardA.rank < cardB.rank
-        }
-        
-        self.cardViews = sortedCards.map() { CardView(card: $0) }
-        
-        for cardView in self.cardViews {
+
+        self.cardViews = cardViewsToKeep
+        for card in cardsWithoutCardViews {
+            let cardView = CardView(card: card)
+            
             let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(HandView.cardTapGestureRecognizerChanged))
             cardView.addGestureRecognizer(tapGestureRecognizer)
             self.addSubview(cardView)
+            
+            self.cardViews.append(cardView)
+        }
+        
+        self.cardViews.sort { (cardViewA, cardViewB) -> Bool in
+            return cardViewA.card!.rank < cardViewB.card!.rank
+        }
+    
+        for cardView in self.cardViews {
+            self.bringSubviewToFront(cardView)
         }
 
         self.setNeedsLayout()
     }
     
     override func layoutSubviews() {
-        let margin = self.frame.height * 0.05
+        let animationOptions = UIView.AnimationOptions(arrayLiteral: .curveEaseInOut)
+        UIView.animate(withDuration: 0.10, delay: 0.0, options: animationOptions, animations: {
+            let margin = self.frame.height * 0.05
 
-        let cardHeight = self.frame.height - (margin * 2.0)
-        let cardWidth = cardHeight * CGFloat(CardView.aspectRatio)
+            let cardHeight = self.frame.height - (margin * 2.0)
+            let cardWidth = cardHeight * CGFloat(CardView.aspectRatio)
 
-        let unselectedCardTopEdgeY = (self.frame.height / 2.0) - (cardHeight / 2.0)
-        let selectedCardTopEdgeY = unselectedCardTopEdgeY - (self.frame.height * 0.15)
-        
-        for cardView in self.cardViews {
-            if cardView.isSelected || cardView.isDragPlaceholder {
-                cardView.frame = CGRect(x: 0.0, y: selectedCardTopEdgeY, width: cardWidth, height: cardHeight)
-            } else {
-                cardView.frame = CGRect(x: 0.0, y: unselectedCardTopEdgeY, width: cardWidth, height: cardHeight)
+            let unselectedCardTopEdgeY = (self.frame.height / 2.0) - (cardHeight / 2.0)
+            let selectedCardTopEdgeY = unselectedCardTopEdgeY - (self.frame.height * 0.15)
+            
+            for cardView in self.cardViews {
+                if cardView.isSelected || cardView.isDragPlaceholder {
+                    cardView.frame = CGRect(x: 0.0, y: selectedCardTopEdgeY, width: cardWidth, height: cardHeight)
+                } else {
+                    cardView.frame = CGRect(x: 0.0, y: unselectedCardTopEdgeY, width: cardWidth, height: cardHeight)
+                }
             }
-        }
-        
-        self.arrangeCards(scrollTranslation: 0.0)
+            
+            self.arrangeCards(scrollTranslation: 0.0)
+        }, completion: nil)
     }
     
     private func arrangeCards(scrollTranslation: CGFloat) {
