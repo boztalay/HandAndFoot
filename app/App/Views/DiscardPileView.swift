@@ -80,8 +80,9 @@ class DiscardPileView: UIView, UIGestureRecognizerDelegate, Draggable, Droppable
         } else if self.panGestureRecognizer.state == .changed {
             self.dragDelegate?.dragMoved(.discardPile, to: location)
         } else if self.panGestureRecognizer.state == .ended {
-            self.dragDelegate?.dragEnded(.discardPile, at: location)
-            self.cardView.isDragPlaceholder = false
+            self.dragDelegate?.dragEnded(.discardPile, at: location) {
+                self.cardView.isDragPlaceholder = false
+            }
         }
     }
     

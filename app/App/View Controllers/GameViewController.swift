@@ -355,6 +355,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     private var draggableViews: [DragDropSite : Draggable]!
     private var droppableViews: [DragDropSite : Droppable]!
     private var dragViews: [UIView]?
+    private var originalDragViewPoints: [CGPoint]?
     private var activeDropDestinations: Set<DragDropSite>?
     
     private var currentPlayer: Player {
@@ -602,6 +603,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         faceDownCardView.center = dragSourceView.convert(point, to: self.view)
 
         self.dragViews = [faceDownCardView]
+        self.originalDragViewPoints = [faceDownCardView.center]
     }
     
     func dragStarted(_ source: DragDropSite, with cards: [Card : CGPoint], and cardSize: CGSize) {
@@ -609,6 +611,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         self.updateActionBuildState()
 
         self.dragViews = []
+        self.originalDragViewPoints = []
         let dragSourceView = self.draggableViews[source]!
         var lastCardView: CardView?
 
@@ -624,6 +627,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
 
             cardView.frame = CGRect(origin: .zero, size: cardSize)
             cardView.center = dragSourceView.convert(point, to: self.view)
+            
+            self.originalDragViewPoints!.append(cardView.center)
             lastCardView = cardView
         }
     }
@@ -644,14 +649,9 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         }
     }
     
-    func dragEnded(_ source: DragDropSite, at point: CGPoint) {
+    func dragEnded(_ source: DragDropSite, at point: CGPoint, animationCompletion: @escaping () -> ()) {
         let dragSourceView = self.draggableViews[source]!
         let dropPoint = dragSourceView.convert(point, to: self.view)
-
-        for dragView in self.dragViews! {
-            dragView.removeFromSuperview()
-        }
-        self.dragViews = nil
 
         var destination: DragDropSite?
         var subview = self.view.hitTest(dropPoint, with: nil)
@@ -677,10 +677,34 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         
         if let destination = destination, self.activeDropDestinations!.contains(destination) {
             self.actionBuildTransactions.append(.drop(destination))
+            self.cleanUpFinishedDrag(animationCompletion: animationCompletion)
         } else {
-            _ = self.actionBuildTransactions.popLast()
+            for dragView in self.dragViews! {
+                dragView.layer.removeAllAnimations()
+            }
+            
+            let animationOptions = UIView.AnimationOptions(arrayLiteral: .curveEaseOut)
+            UIView.animate(withDuration: 0.15, delay: 0.0, options: animationOptions, animations: {
+                for (dragView, originalPoint) in zip(self.dragViews!, self.originalDragViewPoints!) {
+                    dragView.center = originalPoint
+                }
+            }) { completed in
+                _ = self.actionBuildTransactions.popLast()
+                self.cleanUpFinishedDrag(animationCompletion: animationCompletion)
+            }
         }
-
+    }
+    
+    private func cleanUpFinishedDrag(animationCompletion: () -> ()) {
+        animationCompletion()
+        
+        for dragView in self.dragViews! {
+            dragView.removeFromSuperview()
+        }
+        
+        self.dragViews = nil
+        self.originalDragViewPoints = nil
+        
         self.updateActionBuildState()
     }
     

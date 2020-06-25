@@ -52,8 +52,9 @@ class DeckView: UIView, UIGestureRecognizerDelegate, Draggable {
         } else if self.panGestureRecognizer.state == .changed {
             self.dragDelegate?.dragMoved(.deck, to: location)
         } else if self.panGestureRecognizer.state == .ended || self.panGestureRecognizer.state == .cancelled {
-            self.dragDelegate?.dragEnded(.deck, at: location)
-            self.cardView.isDragPlaceholder = false
+            self.dragDelegate?.dragEnded(.deck, at: location) {
+                self.cardView.isDragPlaceholder = false
+            }
         }
     }
     

@@ -252,15 +252,16 @@ class HandView: UIView, Draggable, Droppable {
             case .changed:
                 self.dragDelegate?.dragMoved(.hand, to: location)
             case .ended, .cancelled, .failed:
-                self.dragDelegate?.dragEnded(.hand, at: location)
-                self.state = .idle
-            
-                for cardView in self.cardViews {
-                    cardView.isSelected = false
-                    cardView.isDragPlaceholder = false
+                self.dragDelegate?.dragEnded(.hand, at: location) {
+                    self.state = .idle
+                
+                    for cardView in self.cardViews {
+                        cardView.isSelected = false
+                        cardView.isDragPlaceholder = false
+                    }
+                
+                    self.setNeedsLayout()
                 }
-            
-                self.setNeedsLayout()
             default:
                 break
         }
