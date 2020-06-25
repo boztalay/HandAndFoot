@@ -603,8 +603,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         self.originalDragViewPoints = [faceDownCardView.center]
     }
     
-    func dragStarted(_ source: DragDropSite, with cards: [Card : CGPoint], and cardSize: CGSize) {
-        self.actionBuildTransactions.append(.drag(source, Array(cards.keys)))
+    func dragStarted(_ source: DragDropSite, with cards: [(Card, CGPoint)], and cardSize: CGSize) {
+        self.actionBuildTransactions.append(.drag(source, cards.map({ $0.0 })))
         self.updateActionBuildState()
 
         self.dragViews = []
@@ -744,6 +744,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
                     
                     complexActionBooksCards[rank!]!.append(contentsOf: dragCards!)
                 }
+
+                dragCards = nil
             }
         }
 
@@ -794,22 +796,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
                 
                 self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(GameViewController.complexActionDoneButtonTapped))
             case let .finished(possibleActions):
-                // TODO: Build and commit all actions
-
-                if possibleActions.contains(.drawFromDeck) {
-                    self.commitAction(.drawFromDeck(self.currentPlayer.name))
-                } else if possibleActions.contains(.discardCard) {
-                    var card: Card?
-                    
-                    for transaction in self.actionBuildTransactions {
-                        if case let .drag(_, cards) = transaction, cards.count == 1 {
-                            card = cards.first!
-                        }
-                    }
-                    
-                    self.commitAction(.discardCard(self.currentPlayer.name, card!))
-                }
-
+                self.buildAndCommitFinalAction(possibleActions)
                 self.actionBuildTransactions = []
         }
     }
@@ -825,7 +812,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
             possibleActions.insert(.drawFromDeck)
         }
 
-        if self.currentPlayer.canDrawFromDiscardPile {
+        if self.currentPlayer.hasLaidDownThisRound, self.currentPlayer.canDrawFromDiscardPile {
             possibleActions.insert(.drawFromDiscardPileAndAddToBook)
         }
         
@@ -859,6 +846,115 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     @objc private func complexActionDoneButtonTapped(_ sender: Any) {
         self.actionBuildTransactions.append(.done)
         self.updateActionBuildState()
+    }
+
+    private func buildAndCommitFinalAction(_ possibleActions: Set<PossibleAction>) {
+        var action: Action?
+        
+        if possibleActions.contains(.drawFromDeck) {
+            action = .drawFromDeck(self.currentPlayer.name)
+        } else if possibleActions.contains(.drawFromDiscardPileAndAddToBook) {
+            var bookRank: CardRank?
+            
+            for transaction in self.actionBuildTransactions {
+                if case let .drop(destination) = transaction {
+                    if case let .book(rank) = destination {
+                        bookRank = rank
+                    }
+                }
+            }
+            
+            action = .drawFromDiscardPileAndAddToBook(self.currentPlayer.name, bookRank!)
+        } else if possibleActions.contains(.drawFromDiscardPileAndCreateBook) {
+            var cards = [Card]()
+            
+            var dragCards: [Card]?
+            for transaction in self.actionBuildTransactions {
+                if case let .drag(_, cards) = transaction {
+                    dragCards = cards
+                } else if case let .drop(destination) = transaction {
+                    if case .book = destination {
+                        cards.append(contentsOf: dragCards!)
+                    }
+
+                    dragCards = nil
+                }
+            }
+
+            action = .drawFromDiscardPileAndCreateBook(self.currentPlayer.name, cards)
+        } else if possibleActions.contains(.discardCard) {
+            var card: Card?
+            
+            for transaction in self.actionBuildTransactions {
+                if case let .drag(_, cards) = transaction, cards.count == 1 {
+                    card = cards.first!
+                }
+            }
+            
+            action = .discardCard(self.currentPlayer.name, card!)
+        } else if possibleActions.contains(.layDownInitialBooks) || possibleActions.contains(.drawFromDiscardPileAndLayDownInitialBooks) {
+            var booksCards = [CardRank : [Card]]()
+            
+            var dragCards: [Card]?
+            for transaction in self.actionBuildTransactions {
+                if case let .drag(_, cards) = transaction {
+                    dragCards = cards
+                } else if case let .drop(destination) = transaction {
+                    if case let .book(rank) = destination {
+                        if booksCards[rank!] == nil {
+                            booksCards[rank!] = []
+                        }
+                        
+                        booksCards[rank!]?.append(contentsOf: dragCards!)
+                    }
+
+                    dragCards = nil
+                }
+            }
+            
+            let books = Array(booksCards.values)
+            action = .layDownInitialBooks(self.currentPlayer.name, books)
+        } else if possibleActions.contains(.startBook) {
+            var cards = [Card]()
+            
+            var dragCards: [Card]?
+            for transaction in self.actionBuildTransactions {
+                if case let .drag(_, cards) = transaction {
+                    dragCards = cards
+                } else if case let .drop(destination) = transaction {
+                    if case .book = destination {
+                        cards.append(contentsOf: dragCards!)
+                    }
+
+                    dragCards = nil
+                }
+            }
+
+            action = .startBook(self.currentPlayer.name, cards)
+        } else if possibleActions.contains(.addCardFromHandToBook) {
+            var card: Card?
+            var bookRank: CardRank?
+            
+            for transaction in self.actionBuildTransactions {
+                if case let .drag(_, cards) = transaction, cards.count == 1 {
+                    card = cards.first!
+                } else if case let .drop(destination) = transaction {
+                    if case let .book(rank) = destination {
+                        bookRank = rank
+                    }
+                }
+            }
+            
+            action = .addCardFromHandToBook(self.currentPlayer.name, card!, bookRank!)
+        } else {
+            fatalError()
+        }
+
+        if let action = action {
+            self.commitAction(action)
+        } else {
+            fatalError()
+        }
     }
     
     private func commitAction(_ action: Action) {

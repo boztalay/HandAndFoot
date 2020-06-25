@@ -262,9 +262,9 @@ class HandView: UIView, Draggable, Droppable {
             cardView.isDragPlaceholder = true
         }
         
-        var cardsWithPoints = [Card : CGPoint]()
+        var cardsWithPoints = [(Card, CGPoint)]()
         for cardView in self.selectedCardViews {
-            cardsWithPoints[cardView.card!] = cardView.center
+            cardsWithPoints.append((cardView.card!, cardView.center))
         }
 
         self.dragDelegate?.dragStarted(.hand,
