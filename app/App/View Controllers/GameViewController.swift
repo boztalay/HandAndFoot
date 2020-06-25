@@ -599,6 +599,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
 
         let faceDownCardView = FaceDownCardView()
         self.view.addSubview(faceDownCardView)
+        faceDownCardView.isUserInteractionEnabled = false
         faceDownCardView.frame = CGRect(origin: .zero, size: cardSize)
         faceDownCardView.center = dragSourceView.convert(point, to: self.view)
 
@@ -625,6 +626,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
                 self.view.addSubview(cardView)
             }
 
+            cardView.isUserInteractionEnabled = false
             cardView.frame = CGRect(origin: .zero, size: cardSize)
             cardView.center = dragSourceView.convert(point, to: self.view)
             
