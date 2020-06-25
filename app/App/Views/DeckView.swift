@@ -15,7 +15,6 @@ class DeckView: UIView, UIGestureRecognizerDelegate, Draggable {
     weak var dragDelegate: DragDelegate?
 
     private var panGestureRecognizer: UIPanGestureRecognizer!
-    private var lastPanGestureTranslation: CGPoint?
     
     init() {
         super.init(frame: .zero)
@@ -42,28 +41,19 @@ class DeckView: UIView, UIGestureRecognizerDelegate, Draggable {
     }
     
     @objc func panGestureRecognizerChanged(_ sender: Any) {
+        let location = self.panGestureRecognizer.location(in: self)
+        
         if self.panGestureRecognizer.state == .began {
             self.cardView.isDragPlaceholder = true
-            self.dragDelegate?.dragStarted(
-                from: .deck,
-                with: [],
-                at: self.cardView.center,
-                with: self.cardView.frame.size
+            self.dragDelegate?.dragStartedFaceDown(.deck,
+                with: self.cardView.center,
+                and: self.cardView.frame.size
             )
-            self.lastPanGestureTranslation = .zero
         } else if self.panGestureRecognizer.state == .changed {
-            let translation = self.panGestureRecognizer.translation(in: self)
-            let delta = CGPoint(
-                x: translation.x - self.lastPanGestureTranslation!.x,
-                y: translation.y - self.lastPanGestureTranslation!.y
-            )
-            
-            self.dragDelegate?.dragMoved(delta)
-            self.lastPanGestureTranslation = translation
+            self.dragDelegate?.dragMoved(.deck, to: location)
         } else if self.panGestureRecognizer.state == .ended || self.panGestureRecognizer.state == .cancelled {
-            self.dragDelegate?.dragEnded()
+            self.dragDelegate?.dragEnded(.deck, at: location)
             self.cardView.isDragPlaceholder = false
-            self.lastPanGestureTranslation = nil
         }
     }
     

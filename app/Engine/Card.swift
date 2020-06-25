@@ -86,7 +86,7 @@ enum CardRank: String, CaseIterable, Comparable {
     }
 }
 
-struct Card: Equatable, JSONCodable {
+struct Card: Equatable, Hashable, JSONCodable {
     
     let suit: CardSuit
     let rank: CardRank

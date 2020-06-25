@@ -354,7 +354,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     private var actionBuildTransactions: [ActionBuildTransaction]!
     private var draggableViews: [DragDropSite : Draggable]!
     private var droppableViews: [DragDropSite : Droppable]!
-    private var dragView: UIView?
+    private var dragViews: [UIView]?
     private var activeDropDestinations: Set<DragDropSite>?
     
     private var currentPlayer: Player {
@@ -590,42 +590,68 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         self.dimmerView = nil
     }
     
-    func dragStarted(from source: DragDropSite, with cards: [Card], at point: CGPoint, with size: CGSize) {
-        self.actionBuildTransactions.append(.drag(source, cards))
+    func dragStartedFaceDown(_ source: DragDropSite, with point: CGPoint, and cardSize: CGSize) {
+        self.actionBuildTransactions.append(.drag(source, []))
         self.updateActionBuildState()
         
-        if cards.count == 0 {
-            self.dragView = FaceDownCardView()
-        } else {
-            self.dragView = CardView(card: cards.first!)
-        }
-
-        self.view.addSubview(self.dragView!)
-        
         let dragSourceView = self.draggableViews[source]!
-        let dragStartPoint = dragSourceView.convert(point, to: self.view)
 
-        self.dragView!.frame = CGRect(origin: .zero, size: size)
-        self.dragView!.center = dragStartPoint
+        let faceDownCardView = FaceDownCardView()
+        self.view.addSubview(faceDownCardView)
+        faceDownCardView.frame = CGRect(origin: .zero, size: cardSize)
+        faceDownCardView.center = dragSourceView.convert(point, to: self.view)
+
+        self.dragViews = [faceDownCardView]
     }
     
-    func dragMoved(_ delta: CGPoint) {
-        guard let dragView = self.dragView else {
+    func dragStarted(_ source: DragDropSite, with cards: [Card : CGPoint], and cardSize: CGSize) {
+        self.actionBuildTransactions.append(.drag(source, Array(cards.keys)))
+        self.updateActionBuildState()
+
+        self.dragViews = []
+        let dragSourceView = self.draggableViews[source]!
+        var lastCardView: CardView?
+
+        for (card, point) in cards {
+            let cardView = CardView(card: card)
+            self.dragViews!.append(cardView)
+            
+            if let lastCardView = lastCardView {
+                self.view.insertSubview(cardView, belowSubview: lastCardView)
+            } else {
+                self.view.addSubview(cardView)
+            }
+
+            cardView.frame = CGRect(origin: .zero, size: cardSize)
+            cardView.center = dragSourceView.convert(point, to: self.view)
+            lastCardView = cardView
+        }
+    }
+    
+    func dragMoved(_ source: DragDropSite, to point: CGPoint) {
+        guard let dragViews = self.dragViews, dragViews.count > 0 else {
             fatalError()
         }
-        
-        dragView.frame = CGRect(
-            origin: CGPoint(
-                x: dragView.frame.origin.x + delta.x,
-                y: dragView.frame.origin.y + delta.y),
-            size: dragView.frame.size
-        )
+
+        let dragSourceView = self.draggableViews[source]!
+        let animationOptions = UIView.AnimationOptions(arrayLiteral: .curveEaseInOut)
+
+        for (i, dragView) in dragViews.enumerated() {
+            let delay = Double(i) * 0.025
+            UIView.animate(withDuration: 0.2, delay: delay, options: animationOptions, animations: {
+                dragView.center = dragSourceView.convert(point, to: self.view)
+            }, completion: nil)
+        }
     }
     
-    func dragEnded() {
-        let dropPoint = self.dragView!.center
-        self.dragView!.removeFromSuperview()
-        self.dragView = nil
+    func dragEnded(_ source: DragDropSite, at point: CGPoint) {
+        let dragSourceView = self.draggableViews[source]!
+        let dropPoint = dragSourceView.convert(point, to: self.view)
+
+        for dragView in self.dragViews! {
+            dragView.removeFromSuperview()
+        }
+        self.dragViews = nil
 
         var destination: DragDropSite?
         var subview = self.view.hitTest(dropPoint, with: nil)

@@ -32,9 +32,10 @@ enum DragDropSite: Hashable {
 }
 
 protocol DragDelegate: AnyObject {
-    func dragStarted(from source: DragDropSite, with cards: [Card], at point: CGPoint, with size: CGSize)
-    func dragMoved(_ delta: CGPoint)
-    func dragEnded()
+    func dragStartedFaceDown(_ source: DragDropSite, with point: CGPoint, and cardSize: CGSize)
+    func dragStarted(_ source: DragDropSite, with cards: [Card : CGPoint], and cardSize: CGSize)
+    func dragMoved(_ source: DragDropSite, to point: CGPoint)
+    func dragEnded(_ source: DragDropSite, at point: CGPoint)
 }
 
 protocol Draggable: UIView {
