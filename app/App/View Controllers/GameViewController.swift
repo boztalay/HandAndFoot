@@ -588,9 +588,6 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     }
     
     func dragStartedFaceDown(_ source: DragDropSite, with point: CGPoint, and cardSize: CGSize) {
-        self.actionBuildTransactions.append(.drag(source, []))
-        self.updateActionBuildState()
-        
         let dragSourceView = self.draggableViews[source]!
 
         let faceDownCardView = FaceDownCardView()
@@ -601,12 +598,12 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
 
         self.dragViews = [faceDownCardView]
         self.originalDragViewPoints = [faceDownCardView.center]
+        
+        self.actionBuildTransactions.append(.drag(source, []))
+        self.updateViews()
     }
     
     func dragStarted(_ source: DragDropSite, with cards: [(Card, CGPoint)], and cardSize: CGSize) {
-        self.actionBuildTransactions.append(.drag(source, cards.map({ $0.0 })))
-        self.updateActionBuildState()
-
         self.dragViews = []
         self.originalDragViewPoints = []
         let dragSourceView = self.draggableViews[source]!
@@ -629,6 +626,9 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
             self.originalDragViewPoints!.append(cardView.center)
             lastCardView = cardView
         }
+        
+        self.actionBuildTransactions.append(.drag(source, cards.map({ $0.0 })))
+        self.updateViews()
     }
     
     func dragMoved(_ source: DragDropSite, to point: CGPoint) {
@@ -647,7 +647,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         }
     }
     
-    func dragEnded(_ source: DragDropSite, at point: CGPoint, animationCompletion: @escaping () -> ()) {
+    func dragEnded(_ source: DragDropSite, at point: CGPoint) {
         let dragSourceView = self.draggableViews[source]!
         let dropPoint = dragSourceView.convert(point, to: self.view)
 
@@ -675,7 +675,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         
         if let destination = destination, self.activeDropDestinations!.contains(destination) {
             self.actionBuildTransactions.append(.drop(destination))
-            self.cleanUpFinishedDrag(animationCompletion: animationCompletion)
+            self.cleanUpFinishedDrag()
         } else {
             for dragView in self.dragViews! {
                 dragView.layer.removeAllAnimations()
@@ -688,14 +688,12 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
                 }
             }) { completed in
                 _ = self.actionBuildTransactions.popLast()
-                self.cleanUpFinishedDrag(animationCompletion: animationCompletion)
+                self.cleanUpFinishedDrag()
             }
         }
     }
     
-    private func cleanUpFinishedDrag(animationCompletion: () -> ()) {
-        animationCompletion()
-        
+    private func cleanUpFinishedDrag() {
         for dragView in self.dragViews! {
             dragView.removeFromSuperview()
         }
@@ -703,12 +701,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         self.dragViews = nil
         self.originalDragViewPoints = nil
         
-        self.updateActionBuildState()
-    }
-    
-    @objc func doneButtonTapped(_ sender: Any) {
-        self.actionBuildTransactions.append(.done)
-        self.updateActionBuildState()
+        self.updateViews()
     }
     
     private func updateActionBuildState() {
@@ -719,41 +712,9 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         for transaction in self.actionBuildTransactions {
             state = state.advanceState(given: transaction)
         }
-
-        for source in DragDropSite.allCases {
-            self.draggableViews[source]?.deactivateDragging()
-        }
-        
-        for destination in DragDropSite.allCases {
-            self.droppableViews[destination]?.deactivateDropping()
-        }
         
         self.activeDropDestinations = nil
         self.navigationItem.rightBarButtonItem = nil
-        
-        var complexActionBooksCards = [CardRank : [Card]]()
-        var dragCards: [Card]?
-        for transaction in self.actionBuildTransactions {
-            if case let .drag(_, cards) = transaction {
-                dragCards = cards
-            } else if case let .drop(destination) = transaction {
-                if case let .book(rank) = destination {
-                    if complexActionBooksCards[rank!] == nil {
-                        complexActionBooksCards[rank!] = []
-                    }
-                    
-                    complexActionBooksCards[rank!]!.append(contentsOf: dragCards!)
-                }
-
-                dragCards = nil
-            }
-        }
-
-        self.booksView.update(
-            books: self.currentPlayer.books[self.gameModel.game!.round!]!,
-            complexActionBooksCards: complexActionBooksCards
-        )
-        
         self.title = self.gameModel.title
         
         switch (state) {
@@ -845,7 +806,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     
     @objc private func complexActionDoneButtonTapped(_ sender: Any) {
         self.actionBuildTransactions.append(.done)
-        self.updateActionBuildState()
+        self.updateViews()
     }
 
     private func buildAndCommitFinalAction(_ possibleActions: Set<PossibleAction>) {

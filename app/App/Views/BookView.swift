@@ -43,7 +43,8 @@ class BookView: UIView, Droppable {
         self.rankLabel = UILabel()
     }
     
-    func update(rank: CardRank, complexActionCards: [Card]? = nil) {
+    func update(rank: CardRank) {
+        self.isSelected = false
         self.rank = rank
 
         for cardView in self.cardViews {
@@ -51,48 +52,28 @@ class BookView: UIView, Droppable {
         }
         
         self.cardViews = []
-        
-        if let complexActionCards = complexActionCards {
-            self.outlineView.removeFromSuperview()
-            self.rankLabel.removeFromSuperview()
-            
-            var lastCardView: CardView?
-            
-            let sortedComplexActionCards = complexActionCards.sorted { (cardA, cardB) -> Bool in
-                if cardA.isWild && !cardB.isWild {
-                    return true
-                } else if !cardA.isWild && cardB.isWild {
-                    return false
-                } else {
-                    return (cardA.rank > cardB.rank)
-                }
-            }
-            
-            for card in sortedComplexActionCards {
-                lastCardView = self.addCardView(card: card, lastCardView: lastCardView, isComplexActionCard: true)
-            }
-        } else {
-            self.outlineView = UIView()
-            self.addSubview(self.outlineView)
-            self.outlineView.pin(to: self)
-            self.outlineView.setAspectRatio(to: CGFloat(CardView.aspectRatio))
-            self.outlineView.backgroundColor = .white
-            self.outlineView.layer.cornerCurve = .continuous
-            self.outlineView.layer.cornerRadius = 10;
-            self.outlineView.layer.masksToBounds = true
-            self.outlineView.layer.borderWidth = 1
-            self.outlineView.layer.borderColor = UIColor.black.cgColor
+    
+        self.outlineView = UIView()
+        self.addSubview(self.outlineView)
+        self.outlineView.pin(to: self)
+        self.outlineView.setAspectRatio(to: CGFloat(CardView.aspectRatio))
+        self.outlineView.backgroundColor = .white
+        self.outlineView.layer.cornerCurve = .continuous
+        self.outlineView.layer.cornerRadius = 10;
+        self.outlineView.layer.masksToBounds = true
+        self.outlineView.layer.borderWidth = 1
+        self.outlineView.layer.borderColor = UIColor.black.cgColor
 
-            self.rankLabel = UILabel()
-            self.addSubview(self.rankLabel)
-            self.rankLabel.centerVertically(in: self)
-            self.rankLabel.pinX(to: self, leading: 2.0, trailing: -2.0)
-            self.rankLabel.textAlignment = .center
-            self.rankLabel.text = rank.rawValue
-        }
+        self.rankLabel = UILabel()
+        self.addSubview(self.rankLabel)
+        self.rankLabel.centerVertically(in: self)
+        self.rankLabel.pinX(to: self, leading: 2.0, trailing: -2.0)
+        self.rankLabel.textAlignment = .center
+        self.rankLabel.text = rank.rawValue
     }
     
-    func update(book: Book, complexActionCards: [Card]? = nil) {
+    func update(book: Book) {
+        self.isSelected = false
         self.rank = book.rank
         
         let sortedCards = book.cards.sorted() { (cardA, cardB) in
@@ -116,29 +97,13 @@ class BookView: UIView, Droppable {
         var lastCardView: CardView?
         
         for card in sortedCards {
-            lastCardView = self.addCardView(card: card, lastCardView: lastCardView, isComplexActionCard: false)
-        }
-        
-        if let complexActionCards = complexActionCards {
-            let sortedComplexActionCards = complexActionCards.sorted { (cardA, cardB) -> Bool in
-                if cardA.isWild && !cardB.isWild {
-                    return true
-                } else if !cardA.isWild && cardB.isWild {
-                    return false
-                } else {
-                    return (cardA.rank > cardB.rank)
-                }
-            }
-            
-            for card in sortedComplexActionCards {
-                lastCardView = self.addCardView(card: card, lastCardView: lastCardView, isComplexActionCard: true)
-            }
+            lastCardView = self.addCardView(card: card, lastCardView: lastCardView)
         }
         
         lastCardView!.pin(edge: .bottom, to: .bottom, of: self)
     }
     
-    private func addCardView(card: Card, lastCardView: CardView?, isComplexActionCard: Bool) -> CardView {
+    private func addCardView(card: Card, lastCardView: CardView?) -> CardView {
         let cardView = CardView(card: card)
         self.cardViews.append(cardView)
         self.addSubview(cardView)
@@ -153,9 +118,6 @@ class BookView: UIView, Droppable {
         } else {
             cardView.pin(edge: .top, to: .top, of: self)
         }
-        
-        // TODO: Something better to indicate what's up
-        cardView.isDragPlaceholder = isComplexActionCard
 
         return cardView
     }
@@ -164,8 +126,8 @@ class BookView: UIView, Droppable {
         self.isSelected = true
     }
     
-    func deactivateDropping() {
-        self.isSelected = false
+    func setCardsDropped(_ cards: [Card]) {
+        // TODO: BookView layout is a mess in general, need to redo all of this
     }
     
     required init?(coder: NSCoder) {

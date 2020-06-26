@@ -65,6 +65,10 @@ class HandView: UIView, Draggable, Droppable {
     }
     
     func update(cards: [Card]) {
+        self.state = .idle
+        self.isDraggingActive = false
+        self.borderView.layer.borderColor = UIColor.black.cgColor
+        
         var cardViewsToKeep = [CardView]()
         var cardsWithoutCardViews = cards
         
@@ -100,6 +104,7 @@ class HandView: UIView, Draggable, Droppable {
         }
     
         for cardView in self.cardViews {
+            cardView.isSelected = false
             self.bringSubviewToFront(cardView)
         }
 
@@ -282,16 +287,7 @@ class HandView: UIView, Draggable, Droppable {
             case .changed:
                 self.dragDelegate?.dragMoved(.hand, to: location)
             case .ended, .cancelled, .failed:
-                self.dragDelegate?.dragEnded(.hand, at: location) {
-                    self.state = .idle
-                
-                    for cardView in self.cardViews {
-                        cardView.isSelected = false
-                        cardView.isDragPlaceholder = false
-                    }
-                
-                    self.setNeedsLayout()
-                }
+                self.dragDelegate?.dragEnded(.hand, at: location)
             default:
                 break
         }
@@ -322,24 +318,22 @@ class HandView: UIView, Draggable, Droppable {
         self.borderView.layer.borderColor = UIColor.systemRed.cgColor
         self.isDraggingActive = true
     }
-    
-    func deactivateDragging() {
-        for cardView in self.cardViews {
-            cardView.isSelected = false
-        }
 
-        self.setNeedsLayout()
-
-        self.borderView.layer.borderColor = UIColor.black.cgColor
-        self.isDraggingActive = false
-    }
-    
     func activateDropping() {
         self.borderView.layer.borderColor = UIColor.systemRed.cgColor
     }
 
-    func deactivateDropping() {
-        self.borderView.layer.borderColor = UIColor.black.cgColor
+    func setCardsDragged(_ cards: [Card]) {
+        for card in cards {
+            let cardView = self.cardViews.first(where: { $0.card == card })!
+            cardView.isDragPlaceholder = true
+        }
+        
+        self.setNeedsLayout()
+    }
+    
+    func setCardsDropped(_ cards: [Card]) {
+        // TODO: Is there anything here for HandView to do?
     }
     
     required init?(coder: NSCoder) {

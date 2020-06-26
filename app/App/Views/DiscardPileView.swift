@@ -48,31 +48,32 @@ class DiscardPileView: UIView, UIGestureRecognizerDelegate, Draggable, Droppable
             self.cardView.isHidden = false
             self.cardView.update(card: self.discardPile.last!)
         }
+        
+        self.emptyLabel.text = "❌"
+        self.cardView.isSelected = false
+        self.cardView.isDragPlaceholder = false
     }
     
     func activateDragging() {
         self.cardView.isSelected = true
     }
-    
-    func deactivateDragging() {
-        self.cardView.isSelected = false
-    }
 
+    func setCardsDragged(_ cards: [Card]) {
+        self.cardView.isDragPlaceholder = true
+    }
     func activateDropping() {
         self.emptyLabel.text = "👇"
         self.cardView.isSelected = true
     }
     
-    func deactivateDropping() {
-        self.emptyLabel.text = "❌"
-        self.cardView.isSelected = false
+    func setCardsDropped(_ cards: [Card]) {
+        // TODO: Anything for DeckView to do here?
     }
     
     @objc func panGestureRecognizerChanged(_ sender: Any) {
         let location = self.panGestureRecognizer.location(in: self)
         
         if self.panGestureRecognizer.state == .began {
-            self.cardView.isDragPlaceholder = true
             self.dragDelegate?.dragStarted(.discardPile,
                 with: [(self.discardPile.last!, self.cardView.center)],
                 and: self.cardView.frame.size
@@ -80,9 +81,7 @@ class DiscardPileView: UIView, UIGestureRecognizerDelegate, Draggable, Droppable
         } else if self.panGestureRecognizer.state == .changed {
             self.dragDelegate?.dragMoved(.discardPile, to: location)
         } else if self.panGestureRecognizer.state == .ended {
-            self.dragDelegate?.dragEnded(.discardPile, at: location) {
-                self.cardView.isDragPlaceholder = false
-            }
+            self.dragDelegate?.dragEnded(.discardPile, at: location)
         }
     }
     

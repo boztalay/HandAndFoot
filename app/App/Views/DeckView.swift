@@ -29,22 +29,23 @@ class DeckView: UIView, UIGestureRecognizerDelegate, Draggable {
     }
     
     func update(deck: Deck) {
+        self.cardView.isSelected = false
+        self.cardView.isDragPlaceholder = false
         self.cardView.isHidden = deck.isEmpty
     }
 
     func activateDragging() {
         self.cardView.isSelected = true
     }
-    
-    func deactivateDragging() {
-        self.cardView.isSelected = false
+
+    func setCardsDragged(_ cards: [Card]) {
+        self.cardView.isDragPlaceholder = true
     }
     
     @objc func panGestureRecognizerChanged(_ sender: Any) {
         let location = self.panGestureRecognizer.location(in: self)
         
         if self.panGestureRecognizer.state == .began {
-            self.cardView.isDragPlaceholder = true
             self.dragDelegate?.dragStartedFaceDown(.deck,
                 with: self.cardView.center,
                 and: self.cardView.frame.size
@@ -52,9 +53,7 @@ class DeckView: UIView, UIGestureRecognizerDelegate, Draggable {
         } else if self.panGestureRecognizer.state == .changed {
             self.dragDelegate?.dragMoved(.deck, to: location)
         } else if self.panGestureRecognizer.state == .ended || self.panGestureRecognizer.state == .cancelled {
-            self.dragDelegate?.dragEnded(.deck, at: location) {
-                self.cardView.isDragPlaceholder = false
-            }
+            self.dragDelegate?.dragEnded(.deck, at: location)
         }
     }
     

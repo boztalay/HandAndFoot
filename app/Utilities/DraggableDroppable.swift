@@ -35,17 +35,17 @@ protocol DragDelegate: AnyObject {
     func dragStartedFaceDown(_ source: DragDropSite, with point: CGPoint, and cardSize: CGSize)
     func dragStarted(_ source: DragDropSite, with cards: [(Card, CGPoint)], and cardSize: CGSize)
     func dragMoved(_ source: DragDropSite, to point: CGPoint)
-    func dragEnded(_ source: DragDropSite, at point: CGPoint, animationCompletion: @escaping () -> ())
+    func dragEnded(_ source: DragDropSite, at point: CGPoint)
 }
 
 protocol Draggable: UIView {
     var dragDelegate: DragDelegate? { get set }
 
     func activateDragging()
-    func deactivateDragging()
+    func setCardsDragged(_ cards: [Card])
 }
 
 protocol Droppable: UIView {
     func activateDropping()
-    func deactivateDropping()
+    func setCardsDropped(_ cards: [Card])
 }
