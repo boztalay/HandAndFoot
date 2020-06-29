@@ -23,6 +23,8 @@ class HandView: UIView, Draggable, Droppable {
     private var cardViews: [CardView]!
     
     weak var dragDelegate: DragDelegate?
+    private var dragState: DragState!
+    private var dropState: DropState!
     
     private var gestureState: HandViewGestureState!
     private var isDraggingActive: Bool!
@@ -316,15 +318,12 @@ class HandView: UIView, Draggable, Droppable {
     }
     
     func setDragState(_ state: DragState, with cards: [Card]?) {
+        self.dragState = state
+        
         switch state {
             case .disabled:
-                self.borderView.layer.borderColor = UIColor.black.cgColor
                 self.isDraggingActive = false
-            case .enabled:
-                self.borderView.layer.borderColor = UIColor.systemRed.cgColor
-                self.isDraggingActive = true
-            case .dragging:
-                self.borderView.layer.borderColor = UIColor.black.cgColor
+            case .enabled, .dragging:
                 self.isDraggingActive = true
         }
         
@@ -340,14 +339,20 @@ class HandView: UIView, Draggable, Droppable {
             
             self.setNeedsLayout()
         }
+        
+        self.updateBorderColor()
     }
     
     func setDropState(_ state: DropState, with cards: [Card]?) {
-        switch state {
-            case .disabled:
-                self.borderView.layer.borderColor = UIColor.black.cgColor
-            case .enabled:
-                self.borderView.layer.borderColor = UIColor.systemRed.cgColor
+        self.dropState = state
+        self.updateBorderColor()
+    }
+    
+    private func updateBorderColor() {
+        if self.dragState == .enabled || self.dropState == .enabled {
+            self.borderView.layer.borderColor = UIColor.systemRed.cgColor
+        } else {
+            self.borderView.layer.borderColor = UIColor.black.cgColor
         }
     }
 

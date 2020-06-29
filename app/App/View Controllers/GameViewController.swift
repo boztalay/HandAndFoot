@@ -780,12 +780,10 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         }
         
         for (source, view) in self.draggableViews {
-            if let enabledDragDropSources = enabledDragDropSources {
-                if enabledDragDropSources.contains(source) {
-                    view.setDragState(.enabled, with: draggedCards[source])
-                } else if let activeDragSource = activeDragSource, source == activeDragSource {
-                    view.setDragState(.dragging, with: draggedCards[source])
-                }
+            if let enabledDragDropSources = enabledDragDropSources, enabledDragDropSources.contains(source) {
+                view.setDragState(.enabled, with: draggedCards[source])
+            } else if let activeDragSource = activeDragSource, source == activeDragSource {
+                view.setDragState(.dragging, with: draggedCards[source])
             } else {
                 view.setDragState(.disabled, with: draggedCards[source])
             }
