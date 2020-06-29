@@ -48,26 +48,28 @@ class DiscardPileView: UIView, UIGestureRecognizerDelegate, Draggable, Droppable
             self.cardView.isHidden = false
             self.cardView.update(card: self.discardPile.last!)
         }
-        
-        self.emptyLabel.text = "❌"
-        self.cardView.isSelected = false
-        self.cardView.isDragPlaceholder = false
     }
     
-    func activateDragging() {
-        self.cardView.isSelected = true
-    }
-
-    func setCardsDragged(_ cards: [Card]) {
-        self.cardView.isDragPlaceholder = true
-    }
-    func activateDropping() {
-        self.emptyLabel.text = "👇"
-        self.cardView.isSelected = true
+    func setDragState(_ state: DragState, with cards: [Card]?) {
+        switch state {
+            case .disabled:
+                self.cardView.isSelected = false
+                self.cardView.isDragPlaceholder = false
+            case .enabled:
+                self.cardView.isSelected = true
+            case .dragging:
+                self.cardView.isDragPlaceholder = true
+        }
     }
     
-    func setCardsDropped(_ cards: [Card]) {
-        // TODO: Anything for DeckView to do here?
+    func setDropState(_ state: DropState, with cards: [Card]?) {
+        switch state {
+            case .disabled:
+                self.emptyLabel.text = "❌"
+            case .enabled:
+                self.emptyLabel.text = "👇"
+                self.cardView.isSelected = true
+        }
     }
     
     @objc func panGestureRecognizerChanged(_ sender: Any) {

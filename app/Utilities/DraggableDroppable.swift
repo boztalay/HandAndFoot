@@ -31,6 +31,12 @@ enum DragDropSite: Hashable {
     }
 }
 
+enum DragState {
+    case disabled
+    case enabled
+    case dragging
+}
+
 protocol DragDelegate: AnyObject {
     func dragStartedFaceDown(_ source: DragDropSite, with point: CGPoint, and cardSize: CGSize)
     func dragStarted(_ source: DragDropSite, with cards: [(Card, CGPoint)], and cardSize: CGSize)
@@ -41,11 +47,14 @@ protocol DragDelegate: AnyObject {
 protocol Draggable: UIView {
     var dragDelegate: DragDelegate? { get set }
 
-    func activateDragging()
-    func setCardsDragged(_ cards: [Card])
+    func setDragState(_ state: DragState, with cards: [Card]?)
+}
+
+enum DropState {
+    case disabled
+    case enabled
 }
 
 protocol Droppable: UIView {
-    func activateDropping()
-    func setCardsDropped(_ cards: [Card])
+    func setDropState(_ state: DropState, with cards: [Card]?)
 }

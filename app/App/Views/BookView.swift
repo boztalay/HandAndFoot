@@ -122,12 +122,16 @@ class BookView: UIView, Droppable {
         return cardView
     }
     
-    func activateDropping() {
-        self.isSelected = true
-    }
-    
-    func setCardsDropped(_ cards: [Card]) {
-        // TODO: BookView layout is a mess in general, need to redo all of this
+    func setDropState(_ state: DropState, with cards: [Card]?) {
+        switch state {
+            case .disabled:
+                self.isSelected = false
+            case .enabled:
+                self.isSelected = true
+        }
+        
+        // TODO: Something with the placeholder cards, layout is a mess, it all
+        //       needs to be redone
     }
     
     required init?(coder: NSCoder) {

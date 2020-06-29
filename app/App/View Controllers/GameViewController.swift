@@ -707,30 +707,51 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     private func updateActionBuildState() {
         let possibleActions = self.initialPossibleActions()
         let dragDropSources = possibleActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropSources()) })
-
         var state = ActionBuildState.idle(possibleActions, dragDropSources)
+
+        var draggedCards = [DragDropSite : [Card]]()
+        var droppedCards = [DragDropSite : [Card]]()
+        var lastDraggedCards: [Card]?
+        var activeDragSource: DragDropSite?
+        
         for transaction in self.actionBuildTransactions {
             state = state.advanceState(given: transaction)
+            
+            if case let .drag(source, cards) = transaction {
+                if draggedCards[source] == nil {
+                    draggedCards[source] = []
+                }
+
+                draggedCards[source]!.append(contentsOf: cards)
+                lastDraggedCards = cards
+                activeDragSource = source
+            } else {
+                if case let .drop(destination) = transaction {
+                    if droppedCards[destination] == nil {
+                        droppedCards[destination] = []
+                    }
+
+                    droppedCards[destination]!.append(contentsOf: lastDraggedCards!)
+                }
+                
+                lastDraggedCards = nil
+                activeDragSource = nil
+            }
         }
-        
-        self.activeDropDestinations = nil
+
         self.navigationItem.rightBarButtonItem = nil
         self.title = self.gameModel.title
         
+        var enabledDragDropSources: Set<DragDropSite>?
+        var enabledDragDropDestinations: Set<DragDropSite>?
+        
         switch (state) {
             case let .idle(_, dragDropSources):
-                for source in dragDropSources {
-                    self.draggableViews[source]?.activateDragging()
-                }
+                enabledDragDropSources = dragDropSources
             case let .simpleActionDragging(_, dragDropDestinations):
-                self.activeDropDestinations = dragDropDestinations
-                for destination in dragDropDestinations {
-                    self.droppableViews[destination]?.activateDropping()
-                }
+                enabledDragDropDestinations = dragDropDestinations
             case let .complexActionIdle(possibleActions, dragDropSources):
-                for source in dragDropSources {
-                    self.draggableViews[source]?.activateDragging()
-                }
+                enabledDragDropSources = dragDropSources
                 
                 if possibleActions.contains(.layDownInitialBooks) || possibleActions.contains(.drawFromDiscardPileAndLayDownInitialBooks) {
                     self.title = "Laying Down"
@@ -742,10 +763,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
                 
                 self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(GameViewController.complexActionDoneButtonTapped))
             case let .complexActionDragging(possibleActions, dragDropDestinations):
-                self.activeDropDestinations = dragDropDestinations
-                for destination in dragDropDestinations {
-                    self.droppableViews[destination]?.activateDropping()
-                }
+                enabledDragDropDestinations = dragDropDestinations
                 
                 if possibleActions.contains(.layDownInitialBooks) || possibleActions.contains(.drawFromDiscardPileAndLayDownInitialBooks) {
                     self.title = "Laying Down"
@@ -759,6 +777,32 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
             case let .finished(possibleActions):
                 self.buildAndCommitFinalAction(possibleActions)
                 self.actionBuildTransactions = []
+        }
+        
+        if let enabledDragDropSources = enabledDragDropSources {
+            for (source, view) in self.draggableViews {
+                if enabledDragDropSources.contains(source) {
+                    view.setDragState(.enabled, with: draggedCards[source])
+                } else if let activeDragSource = activeDragSource, source == activeDragSource {
+                    view.setDragState(.dragging, with: draggedCards[source])
+                } else {
+                    view.setDragState(.disabled, with: draggedCards[source])
+                }
+            }
+        }
+        
+        if let enabledDragDropDestinations = enabledDragDropDestinations {
+            self.activeDropDestinations = enabledDragDropDestinations
+
+            for (destination, view) in self.droppableViews {
+                if enabledDragDropDestinations.contains(destination) {
+                    view.setDropState(.enabled, with: droppedCards[destination])
+                } else {
+                    view.setDropState(.disabled, with: droppedCards[destination])
+                }
+            }
+        } else {
+            self.activeDropDestinations = nil
         }
     }
     

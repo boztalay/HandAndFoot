@@ -29,17 +29,19 @@ class DeckView: UIView, UIGestureRecognizerDelegate, Draggable {
     }
     
     func update(deck: Deck) {
-        self.cardView.isSelected = false
-        self.cardView.isDragPlaceholder = false
         self.cardView.isHidden = deck.isEmpty
     }
-
-    func activateDragging() {
-        self.cardView.isSelected = true
-    }
-
-    func setCardsDragged(_ cards: [Card]) {
-        self.cardView.isDragPlaceholder = true
+    
+    func setDragState(_ state: DragState, with cards: [Card]?) {
+        switch state {
+            case .disabled:
+                self.cardView.isSelected = false
+                self.cardView.isDragPlaceholder = false
+            case .enabled:
+                self.cardView.isSelected = true
+            case .dragging:
+                self.cardView.isDragPlaceholder = true
+        }
     }
     
     @objc func panGestureRecognizerChanged(_ sender: Any) {

@@ -8,7 +8,7 @@
 
 import UIKit
 
-enum HandViewState {
+enum HandViewGestureState {
     case idle
     case dragging
     case scrolling
@@ -24,7 +24,7 @@ class HandView: UIView, Draggable, Droppable {
     
     weak var dragDelegate: DragDelegate?
     
-    private var state: HandViewState!
+    private var gestureState: HandViewGestureState!
     private var isDraggingActive: Bool!
     private var minScrollTranslation: CGFloat!
     private var maxScrollTranslation: CGFloat!
@@ -54,7 +54,7 @@ class HandView: UIView, Draggable, Droppable {
         self.borderView.layer.borderColor = UIColor.black.cgColor
         
         self.cardViews = []
-        self.state = .idle
+        self.gestureState = .idle
         self.isDraggingActive = false
         self.minScrollTranslation = 0.0
         self.maxScrollTranslation = 0.0
@@ -65,10 +65,6 @@ class HandView: UIView, Draggable, Droppable {
     }
     
     func update(cards: [Card]) {
-        self.state = .idle
-        self.isDraggingActive = false
-        self.borderView.layer.borderColor = UIColor.black.cgColor
-        
         var cardViewsToKeep = [CardView]()
         var cardsWithoutCardViews = cards
         
@@ -215,7 +211,7 @@ class HandView: UIView, Draggable, Droppable {
     }
     
     @objc func panGestureRecognizerChanged(_ sender: Any) {
-        switch (self.state!) {
+        switch (self.gestureState!) {
             case .idle:
                 self.determinePanType()
             case .scrolling:
@@ -227,7 +223,7 @@ class HandView: UIView, Draggable, Droppable {
     
     private func determinePanType() {
         guard self.isDraggingActive && (self.selectedCardViews.count > 0) else {
-            self.state = .scrolling
+            self.gestureState = .scrolling
             return
         }
         
@@ -238,11 +234,11 @@ class HandView: UIView, Draggable, Droppable {
         }
         
         guard translation.x.magnitude < translation.y.magnitude else {
-            self.state = .scrolling
+            self.gestureState = .scrolling
             return
         }
         
-        self.state = .dragging
+        self.gestureState = .dragging
         self.beginDrag()
     }
     
@@ -256,7 +252,7 @@ class HandView: UIView, Draggable, Droppable {
                 self.arrangeCards(scrollTranslation: scrollTranslation)
             case .ended, .cancelled, .failed:
                 self.scrollTranslation += scrollTranslation
-                self.state = .idle
+                self.gestureState = .idle
             default:
                 break
         }
@@ -288,6 +284,7 @@ class HandView: UIView, Draggable, Droppable {
                 self.dragDelegate?.dragMoved(.hand, to: location)
             case .ended, .cancelled, .failed:
                 self.dragDelegate?.dragEnded(.hand, at: location)
+                self.gestureState = .idle
             default:
                 break
         }
@@ -306,7 +303,7 @@ class HandView: UIView, Draggable, Droppable {
             return
         }
         
-        guard self.state != .dragging else {
+        guard self.gestureState != .dragging else {
             return
         }
         
@@ -314,28 +311,42 @@ class HandView: UIView, Draggable, Droppable {
         self.setNeedsLayout()
     }
     
-    func activateDragging() {
-        self.borderView.layer.borderColor = UIColor.systemRed.cgColor
-        self.isDraggingActive = true
-    }
-
-    func activateDropping() {
-        self.borderView.layer.borderColor = UIColor.systemRed.cgColor
-    }
-
-    func setCardsDragged(_ cards: [Card]) {
-        for card in cards {
-            let cardView = self.cardViews.first(where: { $0.card == card })!
-            cardView.isDragPlaceholder = true
+    func setDragState(_ state: DragState, with cards: [Card]?) {
+        switch state {
+            case .disabled:
+                self.borderView.layer.borderColor = UIColor.black.cgColor
+                self.isDraggingActive = false
+            case .enabled:
+                self.borderView.layer.borderColor = UIColor.systemRed.cgColor
+                self.isDraggingActive = true
+            case .dragging:
+                self.borderView.layer.borderColor = UIColor.black.cgColor
+                self.isDraggingActive = true
         }
         
-        self.setNeedsLayout()
+        for cardView in self.cardViews {
+            cardView.isDragPlaceholder = false
+        }
+        
+        if let cards = cards {
+            for card in cards {
+                let cardView = self.cardViews.first(where: { $0.card == card })!
+                cardView.isDragPlaceholder = true
+            }
+            
+            self.setNeedsLayout()
+        }
     }
     
-    func setCardsDropped(_ cards: [Card]) {
-        // TODO: Is there anything here for HandView to do?
+    func setDropState(_ state: DropState, with cards: [Card]?) {
+        switch state {
+            case .disabled:
+                self.borderView.layer.borderColor = UIColor.black.cgColor
+            case .enabled:
+                self.borderView.layer.borderColor = UIColor.systemRed.cgColor
+        }
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
