@@ -85,9 +85,9 @@ class OpponentView: UIView {
             let bookView = self.bookViews[rank]!
 
             if let book = player.books[game.round!]![rank] {
-                bookView.update(book: book)
+                bookView.update(rank: book.rank, cards: book.cards)
             } else {
-                bookView.update(rank: rank)
+                bookView.update(rank: rank, cards: nil)
             }
         }
     }

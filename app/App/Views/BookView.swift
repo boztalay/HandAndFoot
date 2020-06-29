@@ -17,6 +17,8 @@ class BookView: UIView, Droppable {
     private var rankLabel: UILabel!
     
     private var rank: CardRank!
+    private var cards: [Card]?
+    private var placeholderCards: [Card]?
     
     var isSelected: Bool {
         get {
@@ -39,20 +41,7 @@ class BookView: UIView, Droppable {
         super.init(frame: .zero)
         
         self.cardViews = []
-        self.outlineView = UIView()
-        self.rankLabel = UILabel()
-    }
-    
-    func update(rank: CardRank) {
-        self.isSelected = false
-        self.rank = rank
 
-        for cardView in self.cardViews {
-            cardView.removeFromSuperview()
-        }
-        
-        self.cardViews = []
-    
         self.outlineView = UIView()
         self.addSubview(self.outlineView)
         self.outlineView.pin(to: self)
@@ -69,14 +58,45 @@ class BookView: UIView, Droppable {
         self.rankLabel.centerVertically(in: self)
         self.rankLabel.pinX(to: self, leading: 2.0, trailing: -2.0)
         self.rankLabel.textAlignment = .center
-        self.rankLabel.text = rank.rawValue
     }
     
-    func update(book: Book) {
-        self.isSelected = false
-        self.rank = book.rank
+    func update(rank: CardRank, cards: [Card]?) {
+        self.rank = rank
+        self.cards = cards
+
+        for cardView in self.cardViews {
+            cardView.removeFromSuperview()
+        }
         
-        let sortedCards = book.cards.sorted() { (cardA, cardB) in
+        self.cardViews = []
+        self.outlineView.isHidden = true
+        self.rankLabel.isHidden = true
+        
+        if self.cards == nil && self.placeholderCards == nil {
+            self.outlineView.isHidden = false
+            self.rankLabel.isHidden = false
+            self.rankLabel.text = rank.rawValue
+        } else {
+            var lastCardView: CardView?
+            
+            if let cards = self.cards {
+                for card in self.sortCards(cards) {
+                    lastCardView = self.addCardView(card: card, lastCardView: lastCardView, isPlaceholder: false)
+                }
+            }
+            
+            if let cards = self.placeholderCards {
+                for card in self.sortCards(cards) {
+                    lastCardView = self.addCardView(card: card, lastCardView: lastCardView, isPlaceholder: true)
+                }
+            }
+            
+            lastCardView!.pin(edge: .bottom, to: .bottom, of: self)
+        }
+    }
+    
+    private func sortCards(_ cards: [Card]) -> [Card] {
+        return cards.sorted() { (cardA, cardB) in
             if cardA.isWild && !cardB.isWild {
                 return true
             } else if !cardA.isWild && cardB.isWild {
@@ -85,31 +105,16 @@ class BookView: UIView, Droppable {
                 return (cardA.rank > cardB.rank)
             }
         }
-        
-        self.outlineView.removeFromSuperview()
-        self.rankLabel.removeFromSuperview()
-        
-        for cardView in self.cardViews {
-            cardView.removeFromSuperview()
-        }
-        
-        self.cardViews = []
-        var lastCardView: CardView?
-        
-        for card in sortedCards {
-            lastCardView = self.addCardView(card: card, lastCardView: lastCardView)
-        }
-        
-        lastCardView!.pin(edge: .bottom, to: .bottom, of: self)
     }
     
-    private func addCardView(card: Card, lastCardView: CardView?) -> CardView {
+    private func addCardView(card: Card, lastCardView: CardView?, isPlaceholder: Bool) -> CardView {
         let cardView = CardView(card: card)
         self.cardViews.append(cardView)
         self.addSubview(cardView)
 
         cardView.pinX(to: self)
         cardView.setAspectRatio(to: CGFloat(CardView.aspectRatio))
+        cardView.isDragPlaceholder = isPlaceholder
         
         if let lastCardView = lastCardView {
             let lastCardViewTopToCardViewTop = lastCardView.topAnchor.anchorWithOffset(to: cardView.topAnchor)
@@ -130,8 +135,8 @@ class BookView: UIView, Droppable {
                 self.isSelected = true
         }
         
-        // TODO: Something with the placeholder cards, layout is a mess, it all
-        //       needs to be redone
+        self.placeholderCards = cards
+        self.update(rank: self.rank, cards: self.cards)
     }
     
     required init?(coder: NSCoder) {

@@ -779,30 +779,25 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
                 self.actionBuildTransactions = []
         }
         
-        if let enabledDragDropSources = enabledDragDropSources {
-            for (source, view) in self.draggableViews {
+        for (source, view) in self.draggableViews {
+            if let enabledDragDropSources = enabledDragDropSources {
                 if enabledDragDropSources.contains(source) {
                     view.setDragState(.enabled, with: draggedCards[source])
                 } else if let activeDragSource = activeDragSource, source == activeDragSource {
                     view.setDragState(.dragging, with: draggedCards[source])
-                } else {
-                    view.setDragState(.disabled, with: draggedCards[source])
                 }
+            } else {
+                view.setDragState(.disabled, with: draggedCards[source])
             }
         }
         
-        if let enabledDragDropDestinations = enabledDragDropDestinations {
-            self.activeDropDestinations = enabledDragDropDestinations
-
-            for (destination, view) in self.droppableViews {
-                if enabledDragDropDestinations.contains(destination) {
-                    view.setDropState(.enabled, with: droppedCards[destination])
-                } else {
-                    view.setDropState(.disabled, with: droppedCards[destination])
-                }
+        self.activeDropDestinations = enabledDragDropDestinations
+        for (destination, view) in self.droppableViews {
+            if let enabledDragDropDestinations = enabledDragDropDestinations, enabledDragDropDestinations.contains(destination) {
+                view.setDropState(.enabled, with: droppedCards[destination])
+            } else {
+                view.setDropState(.disabled, with: droppedCards[destination])
             }
-        } else {
-            self.activeDropDestinations = nil
         }
     }
     
