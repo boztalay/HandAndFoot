@@ -307,6 +307,10 @@ class HandView: UIView, Draggable, Droppable {
             return
         }
         
+        guard !cardView.isDragPlaceholder else {
+            return
+        }
+        
         cardView.isSelected = !cardView.isSelected
         self.setNeedsLayout()
     }
@@ -330,7 +334,7 @@ class HandView: UIView, Draggable, Droppable {
         
         if let cards = cards {
             for card in cards {
-                let cardView = self.cardViews.first(where: { $0.card == card })!
+                let cardView = self.cardViews.first(where: { $0.card == card && !$0.isDragPlaceholder })!
                 cardView.isDragPlaceholder = true
             }
             
