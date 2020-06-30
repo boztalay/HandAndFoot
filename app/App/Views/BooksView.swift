@@ -36,7 +36,7 @@ class BooksView: UIView {
                 bookView.pin(edge: .leading, to: .leading, of: self)
             }
             
-            if tallestBookView == nil || bookView.cardViews.count > tallestBookView!.cardViews.count {
+            if tallestBookView == nil || bookView.cardViewCount > tallestBookView!.cardViewCount {
                 tallestBookView = bookView
             }
             

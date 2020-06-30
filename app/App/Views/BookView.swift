@@ -12,71 +12,70 @@ class BookView: UIView, Droppable {
 
     private static let cardOverlapProportion = 0.9
     
-    private(set) var cardViews: [CardView]!
-    private var outlineView: UIView!
-    private var rankLabel: UILabel!
+    private var cardViews: [CardView]?
+    private var bookPlaceholderView: BookPlaceholderView?
     
     private var rank: CardRank!
     private var cards: [Card]?
     private var placeholderCards: [Card]?
     
+    var cardViewCount: Int {
+        if let cardViews = self.cardViews {
+            return cardViews.count
+        } else {
+            return 0
+        }
+    }
+    
     var isSelected: Bool {
         get {
-            return self.outlineView.layer.borderColor == UIColor.systemRed.cgColor
+            if let cardViews = self.cardViews {
+                return cardViews.first!.isSelected
+            } else if let bookPlaceholderView = self.bookPlaceholderView {
+                return bookPlaceholderView.isSelected
+            } else {
+                return false
+            }
         }
         set {
-            if newValue {
-                self.outlineView.layer.borderColor = UIColor.systemRed.cgColor
-            } else {
-                self.outlineView.layer.borderColor = UIColor.black.cgColor
+            if let cardViews = self.cardViews {
+                for cardView in cardViews {
+                    cardView.isSelected = newValue
+                }
             }
             
-            for cardView in self.cardViews {
-                cardView.isSelected = newValue
-            }
+            self.bookPlaceholderView?.isSelected = newValue
         }
     }
     
     init() {
         super.init(frame: .zero)
-        
-        self.cardViews = []
-
-        self.outlineView = UIView()
-        self.addSubview(self.outlineView)
-        self.outlineView.pin(to: self)
-        self.outlineView.setAspectRatio(to: CGFloat(CardView.aspectRatio))
-        self.outlineView.backgroundColor = .white
-        self.outlineView.layer.cornerCurve = .continuous
-        self.outlineView.layer.cornerRadius = 10;
-        self.outlineView.layer.masksToBounds = true
-        self.outlineView.layer.borderWidth = 1
-        self.outlineView.layer.borderColor = UIColor.black.cgColor
-
-        self.rankLabel = UILabel()
-        self.addSubview(self.rankLabel)
-        self.rankLabel.centerVertically(in: self)
-        self.rankLabel.pinX(to: self, leading: 2.0, trailing: -2.0)
-        self.rankLabel.textAlignment = .center
     }
     
     func update(rank: CardRank, cards: [Card]?) {
         self.rank = rank
         self.cards = cards
 
-        for cardView in self.cardViews {
-            cardView.removeFromSuperview()
+        if let cardViews = self.cardViews {
+            for cardView in cardViews {
+                cardView.removeFromSuperview()
+            }
         }
         
-        self.cardViews = []
-        self.outlineView.isHidden = true
-        self.rankLabel.isHidden = true
+        self.bookPlaceholderView?.removeFromSuperview()
+
+        self.cardViews = nil
+        self.bookPlaceholderView = nil
         
         if self.cards == nil && self.placeholderCards == nil {
-            self.outlineView.isHidden = false
-            self.rankLabel.isHidden = false
-            self.rankLabel.text = rank.rawValue
+            let bookPlaceholderView = BookPlaceholderView()
+            self.addSubview(bookPlaceholderView)
+            bookPlaceholderView.pin(to: self)
+            bookPlaceholderView.setAspectRatio(to: CGFloat(CardView.aspectRatio))
+            bookPlaceholderView.update(rank: self.rank)
+            self.bookPlaceholderView = bookPlaceholderView
         } else {
+            self.cardViews = []
             var lastCardView: CardView?
             
             if let cards = self.cards {
@@ -109,7 +108,7 @@ class BookView: UIView, Droppable {
     
     private func addCardView(card: Card, lastCardView: CardView?, isPlaceholder: Bool) -> CardView {
         let cardView = CardView(card: card)
-        self.cardViews.append(cardView)
+        self.cardViews!.append(cardView)
         self.addSubview(cardView)
 
         cardView.pinX(to: self)
@@ -128,15 +127,15 @@ class BookView: UIView, Droppable {
     }
     
     func setDropState(_ state: DropState, with cards: [Card]?) {
+        self.placeholderCards = cards
+        self.update(rank: self.rank, cards: self.cards)
+        
         switch state {
             case .disabled:
                 self.isSelected = false
             case .enabled:
                 self.isSelected = true
         }
-        
-        self.placeholderCards = cards
-        self.update(rank: self.rank, cards: self.cards)
     }
     
     required init?(coder: NSCoder) {

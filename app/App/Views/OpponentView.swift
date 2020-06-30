@@ -62,7 +62,7 @@ class OpponentView: UIView {
                 bookView.pin(edge: .leading, to: .leading, of: self, with: 30.0)
             }
             
-            if tallestBookView == nil || bookView.cardViews.count > tallestBookView!.cardViews.count {
+            if tallestBookView == nil || bookView.cardViewCount > tallestBookView!.cardViewCount {
                 tallestBookView = bookView
             }
             

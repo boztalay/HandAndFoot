@@ -26,6 +26,7 @@
 		FB64284A244AA26200FDF34E /* Strongbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB642849244AA26200FDF34E /* Strongbox.swift */; };
 		FB64284C244AAAC600FDF34E /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB64284B244AAAC600FDF34E /* DataManager.swift */; };
 		FB64284E244AB20F00FDF34E /* ModelUpdateable.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB64284D244AB20F00FDF34E /* ModelUpdateable.swift */; };
+		FB72291C24AAC4AB00076740 /* BookPlaceholderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB72291B24AAC4AB00076740 /* BookPlaceholderView.swift */; };
 		FB79C2F4246158D100814CAE /* GameListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB79C2F3246158D100814CAE /* GameListTableViewCell.swift */; };
 		FB7DD379244FEA1800BC8AB4 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7DD378244FEA1800BC8AB4 /* CardView.swift */; };
 		FB7DD37D24502B7500BC8AB4 /* UIAlertController+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */; };
@@ -106,6 +107,7 @@
 		FB642849244AA26200FDF34E /* Strongbox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Strongbox.swift; sourceTree = "<group>"; };
 		FB64284B244AAAC600FDF34E /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		FB64284D244AB20F00FDF34E /* ModelUpdateable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelUpdateable.swift; sourceTree = "<group>"; };
+		FB72291B24AAC4AB00076740 /* BookPlaceholderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BookPlaceholderView.swift; sourceTree = "<group>"; };
 		FB79C2F3246158D100814CAE /* GameListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameListTableViewCell.swift; sourceTree = "<group>"; };
 		FB7DD378244FEA1800BC8AB4 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Convenience.swift"; sourceTree = "<group>"; };
@@ -243,6 +245,7 @@
 				FB885C1F247C774B00614E1E /* DeckView.swift */,
 				FB5B343224972D360026FFEE /* DiscardPileView.swift */,
 				FB885C21247C80E400614E1E /* BookView.swift */,
+				FB72291B24AAC4AB00076740 /* BookPlaceholderView.swift */,
 				FBD240AE2486135D0049E09F /* BooksView.swift */,
 				FB885C1D247C6DBC00614E1E /* OpponentPreviewView.swift */,
 				FB885C23247C936700614E1E /* OpponentView.swift */,
@@ -486,6 +489,7 @@
 				FBDB3BA82446A066008831FF /* Game.swift in Sources */,
 				FBDB3BBE2446A39B008831FF /* UserGame+CoreDataClass.swift in Sources */,
 				FBB97F0024591A7700187CBF /* GamePreviewView.swift in Sources */,
+				FB72291C24AAC4AB00076740 /* BookPlaceholderView.swift in Sources */,
 				FB5512B82472928200814BAF /* ProfileViewController.swift in Sources */,
 				FBDB3BA92446A066008831FF /* Card.swift in Sources */,
 				FB134A6C247E258900058654 /* Secrets.swift in Sources */,
