@@ -12,7 +12,7 @@ class OpponentView: UIView {
     
     private var footView: FootView!
     private var opponentHandView: OpponentHandView!
-    private var bookViews: [CardRank : BookView]!
+    private var booksView: BooksView!
 
     init() {
         super.init(frame: .zero)
@@ -37,59 +37,17 @@ class OpponentView: UIView {
         self.opponentHandView.pin(edge: .trailing, to: .trailing, of: self, with: -30.0)
         self.opponentHandView.pinHeight(toHeightOf: self.footView)
         
-        self.bookViews = [:]
-        var lastBookView: BookView?
-        var tallestBookView: BookView?
-        
-        for rank in CardRank.allCases {
-            guard rank != .two && rank != .three && rank != .joker else {
-                continue
-            }
-            
-            let bookView = BookView()
-            self.bookViews[rank] = bookView
-            self.addSubview(bookView)
-            bookView.pin(edge: .top, to: .bottom, of: self.footView, with: 20.0)
-            
-            if let lastBookView = lastBookView {
-                bookView.pinWidth(toWidthOf: lastBookView)
-                bookView.pin(edge: .leading, to: .trailing, of: lastBookView, with: 5.0)
-
-                if rank == .ace {
-                    bookView.pin(edge: .trailing, to: .trailing, of: self, with: -30.0)
-                }
-            } else {
-                bookView.pin(edge: .leading, to: .leading, of: self, with: 30.0)
-            }
-            
-            if tallestBookView == nil || bookView.cardViewCount > tallestBookView!.cardViewCount {
-                tallestBookView = bookView
-            }
-            
-            lastBookView = bookView
-        }
-        
-        tallestBookView!.pin(edge: .bottom, to: .bottom, of: self, with: -30.0)
-        self.footView.pinWidth(toWidthOf: lastBookView!)
+        self.booksView = BooksView()
+        self.addSubview(self.booksView)
+        self.booksView.pinX(to: self, leading: 30.0, trailing: -30.0)
+        self.booksView.pin(edge: .top, to: .bottom, of: self.footView, with: 20.0)
+        self.booksView.pin(edge: .bottom, to: .bottom, of: self, with: -30.0)
     }
     
     func update(player: Player, game: Game) {
         self.footView.update(footPresent: !player.isInFoot)
         self.opponentHandView.update(cards: player.hand)
-        
-        for rank in CardRank.allCases {
-            guard rank != .two && rank != .three && rank != .joker else {
-                continue
-            }
-            
-            let bookView = self.bookViews[rank]!
-
-            if let book = player.books[game.round!]![rank] {
-                bookView.update(rank: book.rank, cards: book.cards)
-            } else {
-                bookView.update(rank: rank, cards: nil)
-            }
-        }
+        self.booksView.update(books: player.books[game.round!]!)
     }
     
     required init?(coder: NSCoder) {
