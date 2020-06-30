@@ -45,6 +45,18 @@ extension UIView {
         self.translatesAutoresizingMaskIntoConstraints = false
         self.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: multiplier, constant: constant).isActive = true
     }
+    
+    func pinHeight(toMaxHeightOf views: [UIView]) {
+        self.translatesAutoresizingMaskIntoConstraints = false
+        
+        for view in views {
+            self.heightAnchor.constraint(greaterThanOrEqualTo: view.heightAnchor, multiplier: 1.0).isActive = true
+        }
+        
+        let constraint = self.heightAnchor.constraint(equalToConstant: 0.0)
+        constraint.priority = .defaultLow
+        constraint.isActive = true
+    }
 
     func pinWidth(toWidthOf view: UIView, multiplier: CGFloat = 1, constant: CGFloat = 0) {
         self.translatesAutoresizingMaskIntoConstraints = false
