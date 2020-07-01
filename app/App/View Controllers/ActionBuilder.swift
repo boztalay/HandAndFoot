@@ -347,7 +347,7 @@ class ActionBuilder {
     }
     
     func cancelLastDrag() {
-        guard let lastTransaction = self.transactions.first, case .drag = lastTransaction else {
+        guard let lastTransaction = self.transactions.last, case .drag = lastTransaction else {
             fatalError()
         }
         
