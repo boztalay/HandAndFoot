@@ -30,6 +30,7 @@
 		FB79C2F4246158D100814CAE /* GameListTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB79C2F3246158D100814CAE /* GameListTableViewCell.swift */; };
 		FB7DD379244FEA1800BC8AB4 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7DD378244FEA1800BC8AB4 /* CardView.swift */; };
 		FB7DD37D24502B7500BC8AB4 /* UIAlertController+Convenience.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */; };
+		FB86A5D624AC17F400F62ED2 /* ActionBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB86A5D524AC17F400F62ED2 /* ActionBuilder.swift */; };
 		FB885C1C247C69BC00614E1E /* FootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C1B247C69BC00614E1E /* FootView.swift */; };
 		FB885C1E247C6DBC00614E1E /* OpponentPreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C1D247C6DBC00614E1E /* OpponentPreviewView.swift */; };
 		FB885C20247C774B00614E1E /* DeckView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB885C1F247C774B00614E1E /* DeckView.swift */; };
@@ -111,6 +112,7 @@
 		FB79C2F3246158D100814CAE /* GameListTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameListTableViewCell.swift; sourceTree = "<group>"; };
 		FB7DD378244FEA1800BC8AB4 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		FB7DD37C24502B7500BC8AB4 /* UIAlertController+Convenience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIAlertController+Convenience.swift"; sourceTree = "<group>"; };
+		FB86A5D524AC17F400F62ED2 /* ActionBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionBuilder.swift; sourceTree = "<group>"; };
 		FB885C1B247C69BC00614E1E /* FootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootView.swift; sourceTree = "<group>"; };
 		FB885C1D247C6DBC00614E1E /* OpponentPreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentPreviewView.swift; sourceTree = "<group>"; };
 		FB885C1F247C774B00614E1E /* DeckView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeckView.swift; sourceTree = "<group>"; };
@@ -322,6 +324,7 @@
 				FBB22A9724761494003DB73B /* GameViewController.swift */,
 				FB5512B92474C33D00814BAF /* GroupedSectionViewController.swift */,
 				FBD240B0248627560049E09F /* LayDownViewController.swift */,
+				FB86A5D524AC17F400F62ED2 /* ActionBuilder.swift */,
 			);
 			path = "View Controllers";
 			sourceTree = "<group>";
@@ -483,6 +486,7 @@
 				FB5512B6247289AF00814BAF /* NewGameViewController.swift in Sources */,
 				FB5C60F72478CB3200A7116B /* CGRect+Convenience.swift in Sources */,
 				FB885C24247C936700614E1E /* OpponentView.swift in Sources */,
+				FB86A5D624AC17F400F62ED2 /* ActionBuilder.swift in Sources */,
 				FBDB3BAE2446A066008831FF /* Action.swift in Sources */,
 				FB885C28247DD20000614E1E /* FaceDownCardView.swift in Sources */,
 				FB5D037A24469FA90044FBC5 /* LoginViewController.swift in Sources */,
