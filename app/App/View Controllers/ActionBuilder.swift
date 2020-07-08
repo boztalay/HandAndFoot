@@ -45,7 +45,7 @@ enum PossibleAction: Hashable, CaseIterable {
         }
     }
     
-    func dragDropSources(player: Player, transactions: [ActionBuildTransaction]) -> Set<DragDropSite> {
+    func dragDropSources(game: Game, player: Player, transactions: [ActionBuildTransaction]) -> Set<DragDropSite> {
         var validSources = Set<DragDropSite>()
         
         switch (self) {
@@ -78,7 +78,7 @@ enum PossibleAction: Hashable, CaseIterable {
         return validSources
     }
     
-    func dragDropDestinations(player: Player, transactions: [ActionBuildTransaction]) -> Set<DragDropSite> {
+    func dragDropDestinations(game: Game, player: Player, transactions: [ActionBuildTransaction]) -> Set<DragDropSite> {
         guard case let .drag(lastDragSource, lastDragCards) = transactions.last! else {
             fatalError()
         }
@@ -93,14 +93,21 @@ enum PossibleAction: Hashable, CaseIterable {
                     fatalError()
                 }
 
-                validDestinations.insert(.book(cards.first!.bookRank))
+                if let cardRank = lastDragCards.first!.bookRank {
+                    let existingBookRanks = player.books[game.round!]!.keys
+                    if existingBookRanks.contains(cardRank) {
+                        validDestinations.insert(.book(cardRank))
+                    }
+                }
             case .drawFromDiscardPileAndCreateBook:
-                guard cards.count > 0 else {
+                // Can only go to a book
+                // Only one book (if there are multiple drops, the first one takes it)
+                
+                guard lastDragCards.count > 0 else {
                     fatalError()
                 }
-
-                let bookRank = cards.first(where: { $0.bookRank != nil })?.bookRank
-                validDestinations.insert(.book(bookRank))
+                
+                let bookRank = self.bookRankOf(lastDragCards)
             case .discardCard:
                 validDestinations.insert(.discardPile)
             case .layDownInitialBooks:
@@ -135,7 +142,7 @@ enum PossibleAction: Hashable, CaseIterable {
         return validDestinations
     }
     
-    func isDisqualifiedBy(player: Player, transactions: [ActionBuildTransaction]) -> Bool {
+    func isDisqualifiedBy(game: Game, player: Player, transactions: [ActionBuildTransaction]) -> Bool {
         switch (self) {
             case .drawFromDeck:
                 // * Need to be able to draw from the deck
@@ -175,90 +182,111 @@ enum PossibleAction: Hashable, CaseIterable {
                 
                 return false
             case .drawFromDiscardPileAndCreateBook:
-                // Need to be able to draw from the discard pile
-                // Need to have already laid down
-                // All good if there aren't any transactions
-                // Drags can only be from the discard pile or the hand
-                // Drags must only have playable cards (no threes)
+                // * Need to be able to draw from the discard pile
+                // * Need to have already laid down
+                // * All good if there aren't any transactions
+                // * Drags can only be from the discard pile or the hand
+                // * Drags must only have playable cards (no threes)
                 //  - Same note as above with checking what's on the discard pile
-                // There can only be drag from the discard pile
-                // Drops can only go to books, and only one book
+                // * There can only be drag from the discard pile
+                //  - Might enforce this in the dragDropSources/Destinations
+                // * Drops can only go to books, and only one book
                 
-                guard player.canDrawFromDiscardPile, player.hasLaidDownThisRound else {
+                guard player.canDrawFromDiscardPile,
+                      player.hasLaidDownThisRound,
+                      self.dragsOnlyStartFrom(transactions, dragSources: [.discardPile, .hand]),
+                      self.dragsOnlyContainPlayableCards(transactions),
+                      self.dropsOnlyGoToOneBook(transactions) else {
                     return true
                 }
                 
-                guard transactions.count > 0 else {
-                    return false
-                }
-                
-                // TODO
-                
-                return (dragDropSource != .discardPile)
+                return false
             case .discardCard:
-                // Need to be able to end turn
-                // All good if there aren't any transactions
-                // Drag can only be from the hand
-                // Drop can only go to the discard pile
-                // There can only be one drag and one drop
+                // * Need to be able to end turn
+                // * All good if there aren't any transactions
+                // * Drag can only be from the hand
+                // * Drop can only go to the discard pile
+                // * There can only be one drag and one drop
                 
-                guard player.canEndTurn else {
+                guard player.canEndTurn,
+                      self.dragsOnlyStartFrom(transactions, dragSources: [.hand]),
+                      self.dropsOnlyGoTo(transactions, dropDestinations: [.discardPile]),
+                      self.atMostOneDragDropPairIn(transactions) else {
                     return true
                 }
                 
-                return (dragDropSource != .hand) || (cards.count != 1)
+                return false
             case .layDownInitialBooks:
-                // Need to have not laid down yet
-                // All good if there aren't any transactions
-                // Drags can only start from the hand
-                // Drags must only have playable cards (no threes)
-                // Drops can only go to books
+                // * Need to have not laid down yet
+                // * All good if there aren't any transactions
+                // * Drags can only start from the hand
+                // * Drags must only have playable cards (no threes)
+                // * Drops can only go to books
                 
-                guard !player.hasLaidDownThisRound else {
+                guard !player.hasLaidDownThisRound,
+                      self.dragsOnlyStartFrom(transactions, dragSources: [.hand]),
+                      self.dragsOnlyContainPlayableCards(transactions),
+                      self.dropsOnlyGoTo(transactions, dropDestinations: DragDropSite.allBookCases) else {
                     return true
                 }
                 
-                return (dragDropSource != .hand)
+                return false
             case .drawFromDiscardPileAndLayDownInitialBooks:
-                // Need to be able to draw from the discard pile
-                // Need to have not laid down yet
-                // All good if there aren't any transactions
-                // Drags can only start from the discard pile or the hand
-                // There can only be one drag from the discard pile
-                // Drags must only have playable cards (no threes)
-                // Drops can only go to books
+                // * Need to be able to draw from the discard pile
+                // * Need to have not laid down yet
+                // * All good if there aren't any transactions
+                // * Drags can only start from the discard pile or the hand
+                // * There can only be one drag from the discard pile
+                //   - Might enforce this in dragDropSources/Destinations
+                // * Drags must only have playable cards (no threes)
+                // * Drops can only go to books
                 
-                guard player.canDrawFromDiscardPile, !player.hasLaidDownThisRound else {
+                guard player.canDrawFromDiscardPile,
+                      !player.hasLaidDownThisRound,
+                      self.dragsOnlyStartFrom(transactions, dragSources: [.discardPile, .hand]),
+                      self.dragsOnlyContainPlayableCards(transactions),
+                      self.dropsOnlyGoTo(transactions, dropDestinations: DragDropSite.allBookCases) else {
                     return true
                 }
                 
-                return (dragDropSource != .hand && dragDropSource != .discardPile)
+                return false
             case .startBook:
-                // Need to have laid down already
-                // All good if there aren't any transactions
-                // Drags can only start from the hand
-                // Drags must only have playable cards (no threes)
-                // Drops can only go to books, and only one book
+                // * Need to have laid down already
+                // * All good if there aren't any transactions
+                // * Drags can only start from the hand
+                // * Drags must only have playable cards (no threes)
+                // * Drops can only go to books, and only one book
                 
-                guard player.hasLaidDownThisRound else {
+                guard player.hasLaidDownThisRound,
+                      self.dragsOnlyStartFrom(transactions, dragSources: [.hand]),
+                      self.dragsOnlyContainPlayableCards(transactions),
+                      self.dropsOnlyGoToOneBook(transactions) else {
                     return true
                 }
                 
-                return (dragDropSource != .hand)
+                return false
             case .addCardFromHandToBook:
-                // Need to have laid down already
-                // All good if there aren't any transactions
-                // Drag can only start from the hand
-                // Drag must only have playable cards (no threes)
-                // Drop can only go to a book
-                // There can only be one drag and one drop
+                // * Need to have laid down already
+                // * All good if there aren't any transactions
+                // * Drag can only start from the hand
+                // * Drag must only have playable cards (no threes)
+                // * Drop can only go to a book
+                // * There can only be one drag and one drop
                 
-                guard player.hasLaidDownThisRound else {
+                guard player.hasLaidDownThisRound,
+                      self.dragsOnlyStartFrom(transactions, dragSources: [.hand]),
+                      self.dragsOnlyContainPlayableCards(transactions),
+                      self.dropsOnlyGoTo(transactions, dropDestinations: DragDropSite.allBookCases),
+                      self.atMostOneDragDropPairIn(transactions) else {
                     return true
                 }
                 
-                return (dragDropSource != .hand) || (cards.count != 1)
+                return false
         }
+    }
+    
+    private func bookRankOf(_ cards: [Card]) -> CardRank? {
+        // TODO
     }
     
     private func dragsOnlyStartFrom(_ transactions: [ActionBuildTransaction], dragSources: Set<DragDropSite>) -> Bool {
@@ -292,6 +320,24 @@ enum PossibleAction: Hashable, CaseIterable {
             if case let .drop(destination) = transaction {
                 if !dropDestinations.contains(destination) {
                     return false
+                }
+            }
+        }
+        
+        return true
+    }
+    
+    private func dropsOnlyGoToOneBook(_ transactions: [ActionBuildTransaction]) -> Bool {
+        var firstBookSeen: DragDropSite?
+        
+        for transaction in transactions {
+            if case let .drop(destination) = transaction, case .book = destination {
+                if firstBookSeen == nil {
+                    firstBookSeen = destination
+                } else {
+                    if destination != firstBookSeen {
+                        return false
+                    }
                 }
             }
         }
