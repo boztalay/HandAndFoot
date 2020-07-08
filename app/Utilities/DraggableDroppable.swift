@@ -12,7 +12,7 @@ import UIKit
 enum DragDropSite: Hashable {
     case deck
     case discardPile
-    case book(CardRank?)
+    case book(CardRank)
     case hand
     
     static var allCases: Set<DragDropSite> {
@@ -24,6 +24,16 @@ enum DragDropSite: Hashable {
         
         let bookableRanks = CardRank.allCases.filter({ $0.bookRank != nil })
         for rank in bookableRanks {
+            cases.insert(.book(rank))
+        }
+        
+        return cases
+    }
+    
+    static var allBookCases: Set<DragDropSite> {
+        var cases = Set<DragDropSite>()
+        
+        for rank in CardRank.bookableCases {
             cases.insert(.book(rank))
         }
         

@@ -136,66 +136,42 @@ enum PossibleAction: Hashable, CaseIterable {
     }
     
     func isDisqualifiedBy(player: Player, transactions: [ActionBuildTransaction]) -> Bool {
-        // TODO: Take the cards into account for books and all that
-        // TODO: Merge the destination one
-        
         switch (self) {
             case .drawFromDeck:
-                // Need to be able to draw from the deck
-                // All good if there aren't any transactions
-                // Drag can only start from the deck
-                // Drop can only go to the hand
-                // There can only be one drag and one drop
+                // * Need to be able to draw from the deck
+                // * All good if there aren't any transactions
+                // * Drag can only start from the deck
+                // * Drop can only go to the hand
+                // * There can only be one drag and one drop
                 
-                guard player.canDrawFromDeck else {
+                guard player.canDrawFromDeck,
+                      self.dragsOnlyStartFrom(transactions, dragSources: [.deck]),
+                      self.dropsOnlyGoTo(transactions, dropDestinations: [.hand]),
+                      self.atMostOneDragDropPairIn(transactions) else {
                     return true
                 }
-                
-                guard transactions.count > 0 else {
-                    return false
-                }
-                
-                guard case let .drag(source, _) = transactions.first!, source == .deck else {
-                    return true
-                }
-                
-                // TODO: Does this need some more logic to be explicit about the
-                //       case where there are more transactions?
                 
                 return false
             case .drawFromDiscardPileAndAddToBook:
-                // Need to be able to draw from the discard pile
-                // Need to have already laid down
-                // All good if there aren't any transactions
-                // Drag can only start from the discard pile
-                // Drags must only have playable cards (no threes)
+                // * Need to be able to draw from the discard pile
+                // * Need to have already laid down
+                // * All good if there aren't any transactions
+                // * Drag can only start from the discard pile
+                // * Drags must only have playable cards (no threes)
                 //   - Does this mean this function needs the game state too?
                 //     Could disqualify this before the drag by checking what's
                 //     on top of the discard pile
-                // Drop can only go to a book
-                // There can only be one drag and one drop
+                // * Drop can only go to a book
+                // * There can only be one drag and one drop
                 
-                guard player.canDrawFromDiscardPile, player.hasLaidDownThisRound else {
+                guard player.canDrawFromDiscardPile,
+                      player.hasLaidDownThisRound,
+                      self.dragsOnlyStartFrom(transactions, dragSources: [.discardPile]),
+                      self.dragsOnlyContainPlayableCards(transactions),
+                      self.dropsOnlyGoTo(transactions, dropDestinations: DragDropSite.allBookCases),
+                      self.atMostOneDragDropPairIn(transactions) else {
                     return true
                 }
-                
-                guard transactions.count > 0 else {
-                    return false
-                }
-                
-                guard case let .drag(source, cards) = transactions.first!, source == .discardPile else {
-                    return true
-                }
-                
-                guard cards.count == 1, let card = cards.first else {
-                    return true
-                }
-                
-                guard card.isPlayable else {
-                    return true
-                }
-                
-                // TODO
                 
                 return false
             case .drawFromDiscardPileAndCreateBook:
@@ -283,6 +259,59 @@ enum PossibleAction: Hashable, CaseIterable {
                 
                 return (dragDropSource != .hand) || (cards.count != 1)
         }
+    }
+    
+    private func dragsOnlyStartFrom(_ transactions: [ActionBuildTransaction], dragSources: Set<DragDropSite>) -> Bool {
+        for transaction in transactions {
+            if case let .drag(source, _) = transaction {
+                if !dragSources.contains(source) {
+                    return false
+                }
+            }
+        }
+        
+        return true
+    }
+    
+    private func dragsOnlyContainPlayableCards(_ transactions: [ActionBuildTransaction]) -> Bool {
+        for transaction in transactions {
+            if case let .drag(_, cards) = transaction {
+                for card in cards {
+                    if !card.isPlayable {
+                        return false
+                    }
+                }
+            }
+        }
+        
+        return true
+    }
+    
+    private func dropsOnlyGoTo(_ transactions: [ActionBuildTransaction], dropDestinations: Set<DragDropSite>) -> Bool {
+        for transaction in transactions {
+            if case let .drop(destination) = transaction {
+                if !dropDestinations.contains(destination) {
+                    return false
+                }
+            }
+        }
+        
+        return true
+    }
+    
+    private func atMostOneDragDropPairIn(_ transactions: [ActionBuildTransaction]) -> Bool {
+        var dragCount = 0
+        var dropCount = 0
+        
+        for transaction in transactions {
+            if case .drag = transaction {
+                dragCount += 1
+            } else if case .drop = transaction {
+                dropCount += 1
+            }
+        }
+        
+        return ((dragCount <= 1) && (dropCount <= 1))
     }
 }
 
