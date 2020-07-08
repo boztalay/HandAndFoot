@@ -45,15 +45,13 @@ enum PossibleAction: Hashable, CaseIterable {
         }
     }
     
-    func dragDropSources(transactions: [ActionBuildTransaction]) -> Set<DragDropSite> {
+    func dragDropSources(player: Player, transactions: [ActionBuildTransaction]) -> Set<DragDropSite> {
         var validSources = Set<DragDropSite>()
         
         switch (self) {
             case .drawFromDeck:
-                // Deck is always the source, always valid if this action is possible
                 validSources.insert(.deck)
             case .drawFromDiscardPileAndAddToBook:
-                // Discard pile is always the source, always valid if this action is possible
                 validSources.insert(.discardPile)
             case .drawFromDiscardPileAndCreateBook:
                 validSources.insert(.discardPile)
@@ -80,7 +78,7 @@ enum PossibleAction: Hashable, CaseIterable {
         return validSources
     }
     
-    func dragDropDestinations(transactions: [ActionBuildTransaction]) -> Set<DragDropSite> {
+    func dragDropDestinations(player: Player, transactions: [ActionBuildTransaction]) -> Set<DragDropSite> {
         guard case let .drag(lastDragSource, lastDragCards) = transactions.last! else {
             fatalError()
         }
@@ -137,72 +135,153 @@ enum PossibleAction: Hashable, CaseIterable {
         return validDestinations
     }
     
-    func isDisqualifiedBy(transactions: [ActionBuildTransaction]) -> Bool {
+    func isDisqualifiedBy(player: Player, transactions: [ActionBuildTransaction]) -> Bool {
         // TODO: Take the cards into account for books and all that
         // TODO: Merge the destination one
         
         switch (self) {
             case .drawFromDeck:
-                return (dragDropSource != .deck)
+                // Need to be able to draw from the deck
+                // All good if there aren't any transactions
+                // Drag can only start from the deck
+                // Drop can only go to the hand
+                // There can only be one drag and one drop
+                
+                guard player.canDrawFromDeck else {
+                    return true
+                }
+                
+                guard transactions.count > 0 else {
+                    return false
+                }
+                
+                guard case let .drag(source, _) = transactions.first!, source == .deck else {
+                    return true
+                }
+                
+                // TODO: Does this need some more logic to be explicit about the
+                //       case where there are more transactions?
+                
+                return false
             case .drawFromDiscardPileAndAddToBook:
-                return (dragDropSource != .discardPile)
+                // Need to be able to draw from the discard pile
+                // Need to have already laid down
+                // All good if there aren't any transactions
+                // Drag can only start from the discard pile
+                // Drags must only have playable cards (no threes)
+                //   - Does this mean this function needs the game state too?
+                //     Could disqualify this before the drag by checking what's
+                //     on top of the discard pile
+                // Drop can only go to a book
+                // There can only be one drag and one drop
+                
+                guard player.canDrawFromDiscardPile, player.hasLaidDownThisRound else {
+                    return true
+                }
+                
+                guard transactions.count > 0 else {
+                    return false
+                }
+                
+                guard case let .drag(source, cards) = transactions.first!, source == .discardPile else {
+                    return true
+                }
+                
+                guard cards.count == 1, let card = cards.first else {
+                    return true
+                }
+                
+                guard card.isPlayable else {
+                    return true
+                }
+                
+                // TODO
+                
+                return false
             case .drawFromDiscardPileAndCreateBook:
+                // Need to be able to draw from the discard pile
+                // Need to have already laid down
+                // All good if there aren't any transactions
+                // Drags can only be from the discard pile or the hand
+                // Drags must only have playable cards (no threes)
+                //  - Same note as above with checking what's on the discard pile
+                // There can only be drag from the discard pile
+                // Drops can only go to books, and only one book
+                
+                guard player.canDrawFromDiscardPile, player.hasLaidDownThisRound else {
+                    return true
+                }
+                
+                guard transactions.count > 0 else {
+                    return false
+                }
+                
+                // TODO
+                
                 return (dragDropSource != .discardPile)
             case .discardCard:
+                // Need to be able to end turn
+                // All good if there aren't any transactions
+                // Drag can only be from the hand
+                // Drop can only go to the discard pile
+                // There can only be one drag and one drop
+                
+                guard player.canEndTurn else {
+                    return true
+                }
+                
                 return (dragDropSource != .hand) || (cards.count != 1)
             case .layDownInitialBooks:
+                // Need to have not laid down yet
+                // All good if there aren't any transactions
+                // Drags can only start from the hand
+                // Drags must only have playable cards (no threes)
+                // Drops can only go to books
+                
+                guard !player.hasLaidDownThisRound else {
+                    return true
+                }
+                
                 return (dragDropSource != .hand)
             case .drawFromDiscardPileAndLayDownInitialBooks:
+                // Need to be able to draw from the discard pile
+                // Need to have not laid down yet
+                // All good if there aren't any transactions
+                // Drags can only start from the discard pile or the hand
+                // There can only be one drag from the discard pile
+                // Drags must only have playable cards (no threes)
+                // Drops can only go to books
+                
+                guard player.canDrawFromDiscardPile, !player.hasLaidDownThisRound else {
+                    return true
+                }
+                
                 return (dragDropSource != .hand && dragDropSource != .discardPile)
             case .startBook:
+                // Need to have laid down already
+                // All good if there aren't any transactions
+                // Drags can only start from the hand
+                // Drags must only have playable cards (no threes)
+                // Drops can only go to books, and only one book
+                
+                guard player.hasLaidDownThisRound else {
+                    return true
+                }
+                
                 return (dragDropSource != .hand)
             case .addCardFromHandToBook:
+                // Need to have laid down already
+                // All good if there aren't any transactions
+                // Drag can only start from the hand
+                // Drag must only have playable cards (no threes)
+                // Drop can only go to a book
+                // There can only be one drag and one drop
+                
+                guard player.hasLaidDownThisRound else {
+                    return true
+                }
+                
                 return (dragDropSource != .hand) || (cards.count != 1)
-        }
-    }
-    
-    func isDisqualifiedBy(dragDropDestination: DragDropSite) -> Bool {
-        switch (self) {
-            case .drawFromDeck:
-                return (dragDropDestination != .hand)
-            case .drawFromDiscardPileAndAddToBook:
-                if case .book = dragDropDestination {
-                    return false
-                } else {
-                    return true
-                }
-            case .drawFromDiscardPileAndCreateBook:
-                if case .book = dragDropDestination {
-                    return false
-                } else {
-                    return true
-                }
-            case .discardCard:
-                return (dragDropDestination != .discardPile)
-            case .layDownInitialBooks:
-                if case .book = dragDropDestination {
-                    return false
-                } else {
-                    return true
-                }
-            case .drawFromDiscardPileAndLayDownInitialBooks:
-                if case .book = dragDropDestination {
-                    return false
-                } else {
-                    return true
-                }
-            case .startBook:
-                if case .book = dragDropDestination {
-                    return false
-                } else {
-                    return true
-                }
-            case .addCardFromHandToBook:
-                if case .book = dragDropDestination {
-                    return false
-                } else {
-                    return true
-                }
         }
     }
 }
@@ -214,28 +293,32 @@ enum ActionBuildState {
     case complexActionDragging(Set<PossibleAction>, Set<DragDropSite>)
     case finished(Set<PossibleAction>)
     
-    func advanceState(given transactions: [ActionBuildTransaction]) -> ActionBuildState {
+    func advanceState(player: Player, transactions: [ActionBuildTransaction]) -> ActionBuildState {
         switch (self) {
             case let .idle(possibleActions, dragDropSources):
                 return self.advanceStateIdle(
+                    player: player,
                     transactions: transactions,
                     possibleActions: possibleActions,
                     dragDropSources: dragDropSources
                 )
             case let .simpleActionDragging(possibleActions, dragDropDestinations):
                 return self.advanceStateSimpleActionDragging(
+                    player: player,
                     transactions: transactions,
                     possibleActions: possibleActions,
                     dragDropDestinations: dragDropDestinations
                 )
             case let .complexActionIdle(possibleActions, dragDropSources):
                 return self.advanceStateComplexActionIdle(
+                    player: player,
                     transactions: transactions,
                     possibleActions: possibleActions,
                     dragDropSources: dragDropSources
                 )
             case let .complexActionDragging(possibleActions, dragDropDestinations):
                 return self.advanceStateComplexActionDragging(
+                    player: player,
                     transactions: transactions,
                     possibleActions: possibleActions,
                     dragDropDestinations: dragDropDestinations
@@ -245,17 +328,17 @@ enum ActionBuildState {
         }
     }
     
-    private func advanceStateIdle(transactions: [ActionBuildTransaction], possibleActions: Set<PossibleAction>, dragDropSources: Set<DragDropSite>) -> ActionBuildState {
+    private func advanceStateIdle(player: Player, transactions: [ActionBuildTransaction], possibleActions: Set<PossibleAction>, dragDropSources: Set<DragDropSite>) -> ActionBuildState {
         guard case let .drag(source, _) = transactions.last!, dragDropSources.contains(source) else {
             fatalError()
         }
             
-        let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(transactions: transactions) })
-        let validDestinations = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropDestinations(transactions: transactions)) })
+        let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(player: player, transactions: transactions) })
+        let validDestinations = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropDestinations(player: player, transactions: transactions)) })
         return .simpleActionDragging(remainingActions, validDestinations)
     }
 
-    private func advanceStateSimpleActionDragging(transactions: [ActionBuildTransaction], possibleActions: Set<PossibleAction>, dragDropDestinations: Set<DragDropSite>) -> ActionBuildState {
+    private func advanceStateSimpleActionDragging(player: Player, transactions: [ActionBuildTransaction], possibleActions: Set<PossibleAction>, dragDropDestinations: Set<DragDropSite>) -> ActionBuildState {
         guard case let .drop(destination) = transactions.last!, dragDropDestinations.contains(destination) else {
             fatalError()
         }
@@ -264,32 +347,32 @@ enum ActionBuildState {
         // action, with the exception of laying down vs laying down with a
         // discard, which is ambiguous if the player is still able to draw from
         // the discard pile and use the card
-        let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(transactions: transactions) })
+        let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(player: player, transactions: transactions) })
         guard (remainingActions.count == 1) || (remainingActions.count == 2 && remainingActions.contains(.layDownInitialBooks) && remainingActions.contains(.drawFromDiscardPileAndLayDownInitialBooks)) else {
             fatalError()
         }
     
         if remainingActions.first!.isComplex {
-            let validSources = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropSources(transactions: transactions)) })
+            let validSources = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropSources(player: player, transactions: transactions)) })
             return .complexActionIdle(remainingActions, validSources)
         } else {
             return .finished(remainingActions)
         }
     }
 
-    private func advanceStateComplexActionIdle(transactions: [ActionBuildTransaction], possibleActions: Set<PossibleAction>, dragDropSources: Set<DragDropSite>) -> ActionBuildState {
+    private func advanceStateComplexActionIdle(player: Player, transactions: [ActionBuildTransaction], possibleActions: Set<PossibleAction>, dragDropSources: Set<DragDropSite>) -> ActionBuildState {
         switch (transactions.last!) {
             case let .drag(source, _):
                 guard dragDropSources.contains(source) else {
                     fatalError()
                 }
             
-                let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(transactions: transactions) })
+                let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(player: player, transactions: transactions) })
                 guard remainingActions.count > 0 else {
                     fatalError()
                 }
             
-                let validDestinations = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropDestinations(transactions: transactions)) })
+                let validDestinations = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropDestinations(player: player, transactions: transactions)) })
                 return .complexActionDragging(remainingActions, validDestinations)
             case .drop:
                 fatalError()
@@ -298,17 +381,17 @@ enum ActionBuildState {
         }
     }
 
-    private func advanceStateComplexActionDragging(transactions: [ActionBuildTransaction], possibleActions: Set<PossibleAction>, dragDropDestinations: Set<DragDropSite>) -> ActionBuildState {
+    private func advanceStateComplexActionDragging(player: Player, transactions: [ActionBuildTransaction], possibleActions: Set<PossibleAction>, dragDropDestinations: Set<DragDropSite>) -> ActionBuildState {
         guard case let .drop(destination) = transactions.last!, dragDropDestinations.contains(destination) else {
             fatalError()
         }
 
-        let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(transactions: transactions) })
+        let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(player: player, transactions: transactions) })
         guard remainingActions.count > 0 else {
             fatalError()
         }
     
-        let validSources = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropSources(transactions: transactions)) })
+        let validSources = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropSources(player: player, transactions: transactions)) })
         return .complexActionIdle(remainingActions, validSources)
     }
 }
@@ -340,13 +423,15 @@ class ActionBuilder {
         self.player = player
         self.transactions = []
 
-        let possibleActions = self.initialPossibleActions(game: game, player: player)
+        let possibleActions = self.initialPossibleActions()
         let dragDropSources = possibleActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropSources(player: self.player, transactions: self.transactions)) })
         self.state = .idle(possibleActions, dragDropSources)
         
         // TODO: Should these things be part of ActionBuildState? They're
         //       required by the UI side of things just like the other parts
         //       of ActionBuildState cases
+        //       Or maybe remove the associated values from ActionBuildState and
+        //       move them into ActionBuilder if the state is getting more complex
         self.draggedCardsBySource = [DragDropSite : [Card]]()
         self.droppedCardsByDestination = [DragDropSite : [Card]]()
         self.activeDragSource = nil
@@ -395,46 +480,13 @@ class ActionBuilder {
         }
     }
     
-    private func initialPossibleActions(game: Game, player: Player) -> Set<PossibleAction> {
-        // TODO: Should all of this logic be in PossibleAction instead?
-        
-        var possibleActions = Set<PossibleAction>()
-        
-        guard game.isCurrentPlayer(player) else {
-            return possibleActions
-        }
-        
-        if player.canDrawFromDeck {
-            possibleActions.insert(.drawFromDeck)
+    private func initialPossibleActions() -> Set<PossibleAction> {
+        guard self.game.isCurrentPlayer(player) else {
+            return Set<PossibleAction>()
         }
 
-        if player.hasLaidDownThisRound, player.canDrawFromDiscardPile {
-            possibleActions.insert(.drawFromDiscardPileAndAddToBook)
-        }
-        
-        if player.hasLaidDownThisRound, player.canDrawFromDiscardPile {
-            possibleActions.insert(.drawFromDiscardPileAndCreateBook)
-        }
-        
-        if player.canEndTurn {
-            possibleActions.insert(.discardCard)
-        }
-        
-        if !player.hasLaidDownThisRound {
-            possibleActions.insert(.layDownInitialBooks)
-        }
-        
-        if !player.hasLaidDownThisRound, player.canDrawFromDiscardPile {
-            possibleActions.insert(.drawFromDiscardPileAndLayDownInitialBooks)
-        }
-        
-        if player.hasLaidDownThisRound {
-            possibleActions.insert(.startBook)
-        }
-        
-        if player.hasLaidDownThisRound {
-            possibleActions.insert(.addCardFromHandToBook)
-        }
+        var possibleActions = Set<PossibleAction>(PossibleAction.allCases)
+        possibleActions = possibleActions.filter({ !$0.isDisqualifiedBy(player: self.player, transactions: self.transactions) })
         
         return possibleActions
     }

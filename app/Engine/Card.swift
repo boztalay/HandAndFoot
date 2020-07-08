@@ -81,6 +81,10 @@ enum CardRank: String, CaseIterable, Comparable {
         }
     }
     
+    var isPlayable: Bool {
+        return (self != .three)
+    }
+    
     static func < (lhs: CardRank, rhs: CardRank) -> Bool {
         return (lhs.numericalRank < rhs.numericalRank)
     }
