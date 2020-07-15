@@ -137,6 +137,10 @@ struct Card: Equatable, Hashable, JSONCodable {
         return self.rank.bookRank
     }
     
+    var isPlayable: Bool {
+        return self.rank.isPlayable
+    }
+    
     // MARK: - JSONCodable
     
     init?(with json: JSONDictionary) {

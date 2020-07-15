@@ -79,7 +79,7 @@ enum PossibleAction: Hashable, CaseIterable {
     }
     
     func dragDropDestinations(game: Game, player: Player, transactions: [ActionBuildTransaction]) -> Set<DragDropSite> {
-        guard case let .drag(lastDragSource, lastDragCards) = transactions.last! else {
+        guard case let .drag(_, lastDragCards) = transactions.last! else {
             fatalError()
         }
         
@@ -92,7 +92,7 @@ enum PossibleAction: Hashable, CaseIterable {
                 // TODO: Fancy logic to prevent building invalid books (too many wild cards)
 
                 guard lastDragCards.count == 1 else {
-                    fatalError()
+                    break
                 }
 
                 if let cardRank = lastDragCards.first!.bookRank {
@@ -108,12 +108,10 @@ enum PossibleAction: Hashable, CaseIterable {
                 //   book rank of the dragged cards matches, insert that destination
                 // If the book rank of the dragged cards is one that the player
                 //   doesn't already have, insert that destination
-                // TODO: If the cards being dragged are only wild, insert all
-                //   book destiations that player doesn't already have
                 // TODO: Fancy logic to prevent building invalid books (too many wild cards)
                 
                 guard lastDragCards.count > 0 else {
-                    fatalError()
+                    break
                 }
                 
                 guard self.cardsArePlayableTogether(lastDragCards) else {
@@ -128,15 +126,20 @@ enum PossibleAction: Hashable, CaseIterable {
                     }
                 }
                 
-                let lastDragCardsBookRank = self.bookRankOf(lastDragCards)!
+                let lastDragCardsBookRank = self.bookRankOf(lastDragCards)
                 
-                if let partialBookRank = partialBookRank {
+                if let partialBookRank = partialBookRank, let lastDragCardsBookRank = lastDragCardsBookRank {
                     if lastDragCardsBookRank == partialBookRank {
                         validDestinations.insert(.book(lastDragCardsBookRank))
                     }
-                } else {
+                } else if let lastDragCardsBookRank = lastDragCardsBookRank {
                     if player.books[game.round!]![lastDragCardsBookRank] == nil {
                         validDestinations.formUnion(DragDropSite.allBookCases)
+                    }
+                } else if self.cardsAreWild(lastDragCards) {
+                    let existingBookRanks = player.books[game.round!]!.keys
+                    for bookRank in existingBookRanks {
+                        validDestinations.insert(.book(bookRank))
                     }
                 }
             case .discardCard:
@@ -149,7 +152,7 @@ enum PossibleAction: Hashable, CaseIterable {
                 // TODO: Fancy logic to prevent building invalid books (too many wild cards)
                 
                 guard lastDragCards.count > 0 else {
-                    fatalError()
+                    break
                 }
                 
                 guard self.cardsArePlayableTogether(lastDragCards) else {
@@ -169,7 +172,7 @@ enum PossibleAction: Hashable, CaseIterable {
                 // TODO: Fancy logic to prevent building invalid books (too many wild cards)
                 
                 guard lastDragCards.count > 0 else {
-                    fatalError()
+                    break
                 }
                 
                 guard self.cardsArePlayableTogether(lastDragCards) else {
@@ -193,7 +196,7 @@ enum PossibleAction: Hashable, CaseIterable {
                 // TODO: Fancy logic to prevent building invalid books (too many wild cards)
                 
                 guard lastDragCards.count > 0 else {
-                    fatalError()
+                    break
                 }
                 
                 guard self.cardsArePlayableTogether(lastDragCards) else {
@@ -208,15 +211,20 @@ enum PossibleAction: Hashable, CaseIterable {
                     }
                 }
                 
-                let lastDragCardsBookRank = self.bookRankOf(lastDragCards)!
+                let lastDragCardsBookRank = self.bookRankOf(lastDragCards)
                 
-                if let partialBookRank = partialBookRank {
+                if let partialBookRank = partialBookRank, let lastDragCardsBookRank = lastDragCardsBookRank {
                     if lastDragCardsBookRank == partialBookRank {
                         validDestinations.insert(.book(lastDragCardsBookRank))
                     }
-                } else {
+                } else if let lastDragCardsBookRank = lastDragCardsBookRank {
                     if player.books[game.round!]![lastDragCardsBookRank] == nil {
                         validDestinations.formUnion(DragDropSite.allBookCases)
+                    }
+                } else if self.cardsAreWild(lastDragCards) {
+                    let existingBookRanks = player.books[game.round!]!.keys
+                    for bookRank in existingBookRanks {
+                        validDestinations.insert(.book(bookRank))
                     }
                 }
             case .addCardFromHandToBook:
@@ -228,7 +236,7 @@ enum PossibleAction: Hashable, CaseIterable {
                 // TODO: Fancy logic to prevent building invalid books (too many wild cards)
                 
                 guard lastDragCards.count == 1 else {
-                    fatalError()
+                    break
                 }
                 
                 guard self.cardsArePlayableTogether(lastDragCards) else {
@@ -402,15 +410,55 @@ enum PossibleAction: Hashable, CaseIterable {
     }
     
     private func cardsArePlayableTogether(_ cards: [Card]) -> Bool {
-        // TODO
+        for card in cards {
+            if !card.isPlayable {
+                return false
+            }
+        }
+        
+        var firstBookRank: CardRank?
+    
+        for card in cards {
+            if !card.isWild {
+                if let firstBookRank = firstBookRank {
+                    if card.rank != firstBookRank {
+                        return false
+                    }
+                } else {
+                    firstBookRank = card.rank
+                }
+            }
+        }
+        
+        return true
     }
     
     private func bookRankOf(_ cards: [Card]) -> CardRank? {
-        // TODO
+        for card in cards {
+            if !card.isPlayable {
+                return nil
+            }
+        }
+        
+        var bookRank: CardRank?
+    
+        for card in cards {
+            if !card.isWild {
+                if let bookRank = bookRank {
+                    if card.rank != bookRank {
+                        return nil
+                    }
+                } else {
+                    bookRank = card.rank
+                }
+            }
+        }
+        
+        return bookRank
     }
     
     private func cardsAreWild(_ cards: [Card]) -> Bool {
-        // TODO
+        return (cards.filter({ !$0.isWild }).count == 0)
     }
     
     private func dragsOnlyStartFrom(_ transactions: [ActionBuildTransaction], dragSources: Set<DragDropSite>) -> Bool {
