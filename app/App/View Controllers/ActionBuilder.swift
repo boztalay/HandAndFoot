@@ -218,12 +218,11 @@ enum PossibleAction: Hashable, CaseIterable {
                         validDestinations.insert(.book(lastDragCardsBookRank))
                     }
                 } else if let lastDragCardsBookRank = lastDragCardsBookRank {
-                    if player.books[game.round!]![lastDragCardsBookRank] == nil {
-                        validDestinations.formUnion(DragDropSite.allBookCases)
-                    }
+                    validDestinations.insert(.book(lastDragCardsBookRank))
                 } else if self.cardsAreWild(lastDragCards) {
                     let existingBookRanks = player.books[game.round!]!.keys
-                    for bookRank in existingBookRanks {
+                    let newBookRanks = CardRank.bookableCases.filter({ !existingBookRanks.contains($0) })
+                    for bookRank in newBookRanks {
                         validDestinations.insert(.book(bookRank))
                     }
                 }
