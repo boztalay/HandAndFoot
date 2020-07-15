@@ -47,7 +47,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         self.discardPileView = DiscardPileView()
 
         self.gameModel = gameModel
-        self.actionBuilder = ActionBuilder()
+        self.actionBuilder = ActionBuilder(game: self.gameModel.game!, player: self.currentPlayer)
     }
     
     override func viewDidLoad() {
@@ -383,14 +383,12 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     }
     
     private func updateActionBuildState() {
-        let (state, draggedCards, droppedCards, activeDragSource) = self.actionBuilder.getState(game: self.gameModel.game!, player: self.currentPlayer)
-
         self.resetComplexActionInterface()
         
         var enabledDragDropSources: Set<DragDropSite>?
         var enabledDragDropDestinations: Set<DragDropSite>?
         
-        switch (state) {
+        switch (self.actionBuilder.state) {
             case let .idle(_, dragDropSources):
                 enabledDragDropSources = dragDropSources
             case let .simpleActionDragging(_, dragDropDestinations):
@@ -403,25 +401,25 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
                 self.setUpComplexActionInterface(possibleActions: possibleActions)
             case let .finished(possibleActions):
                 self.buildAndCommitFinalAction(possibleActions)
-                self.actionBuilder.clearTransactions()
+                self.actionBuilder.reset(game: self.gameModel.game!, player: self.currentPlayer)
         }
         
         for (source, view) in self.draggableViews {
             if let enabledDragDropSources = enabledDragDropSources, enabledDragDropSources.contains(source) {
-                view.setDragState(.enabled, with: draggedCards[source])
-            } else if let activeDragSource = activeDragSource, source == activeDragSource {
-                view.setDragState(.dragging, with: draggedCards[source])
+                view.setDragState(.enabled, with: self.actionBuilder.draggedCardsBySource[source])
+            } else if let activeDragSource = self.actionBuilder.activeDragSource, source == activeDragSource {
+                view.setDragState(.dragging, with: self.actionBuilder.draggedCardsBySource[source])
             } else {
-                view.setDragState(.disabled, with: draggedCards[source])
+                view.setDragState(.disabled, with: self.actionBuilder.draggedCardsBySource[source])
             }
         }
         
         self.activeDropDestinations = enabledDragDropDestinations
         for (destination, view) in self.droppableViews {
             if let enabledDragDropDestinations = enabledDragDropDestinations, enabledDragDropDestinations.contains(destination) {
-                view.setDropState(.enabled, with: droppedCards[destination])
+                view.setDropState(.enabled, with: self.actionBuilder.droppedCardsByDestination[destination])
             } else {
-                view.setDropState(.disabled, with: droppedCards[destination])
+                view.setDropState(.disabled, with: self.actionBuilder.droppedCardsByDestination[destination])
             }
         }
     }
@@ -449,7 +447,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     }
 
     private func buildAndCommitFinalAction(_ possibleActions: Set<PossibleAction>) {
-        guard let action = self.actionBuilder.buildAction(game: self.gameModel.game!, player: self.currentPlayer) else {
+        guard let action = self.actionBuilder.buildAction() else {
             fatalError()
         }
 

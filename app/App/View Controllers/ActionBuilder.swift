@@ -103,9 +103,7 @@ enum PossibleAction: Hashable, CaseIterable {
                 }
             case .drawFromDiscardPileAndCreateBook:
                 // Need to be dragging at least one card
-                // If the cards aren't bookable together, don't add any destinations
-                //  - The cards contain a non-playable card
-                //  - The cards contain at least two non-wild cards of different rank
+                // If the cards aren't playable together, skip
                 // If there's already been a drop on a book destination and the
                 //   book rank of the dragged cards matches, insert that destination
                 // If the book rank of the dragged cards is one that the player
@@ -150,12 +148,19 @@ enum PossibleAction: Hashable, CaseIterable {
                 // Otherwise, insert the book rank of the cards being dragged
                 // TODO: Fancy logic to prevent building invalid books (too many wild cards)
                 
-                guard cards.count > 0 else {
+                guard lastDragCards.count > 0 else {
                     fatalError()
                 }
-
-                let bookRank = cards.first(where: { $0.bookRank != nil })?.bookRank
-                validDestinations.insert(.book(bookRank))
+                
+                guard self.cardsArePlayableTogether(lastDragCards) else {
+                    break
+                }
+                
+                if self.cardsAreWild(lastDragCards) {
+                    validDestinations.formUnion(DragDropSite.allBookCases)
+                } else {
+                    validDestinations.insert(.book(self.bookRankOf(lastDragCards)!))
+                }
             case .drawFromDiscardPileAndLayDownInitialBooks:
                 // Need to be dragging at least one card
                 // If the cards being dragged aren't playable together, skip
@@ -163,12 +168,19 @@ enum PossibleAction: Hashable, CaseIterable {
                 // Otherwise, insert the book rank of the cards being dragged
                 // TODO: Fancy logic to prevent building invalid books (too many wild cards)
                 
-                guard cards.count > 0 else {
+                guard lastDragCards.count > 0 else {
                     fatalError()
                 }
+                
+                guard self.cardsArePlayableTogether(lastDragCards) else {
+                    break
+                }
 
-                let bookRank = cards.first(where: { $0.bookRank != nil })?.bookRank
-                validDestinations.insert(.book(bookRank))
+                if self.cardsAreWild(lastDragCards) {
+                    validDestinations.formUnion(DragDropSite.allBookCases)
+                } else {
+                    validDestinations.insert(.book(self.bookRankOf(lastDragCards)!))
+                }
             case .startBook:
                 // Need to be dragging at least one card
                 // If the cards aren't playable together, skip
@@ -180,12 +192,33 @@ enum PossibleAction: Hashable, CaseIterable {
                 //   book destiations that player doesn't already have
                 // TODO: Fancy logic to prevent building invalid books (too many wild cards)
                 
-                guard cards.count > 0 else {
+                guard lastDragCards.count > 0 else {
                     fatalError()
                 }
+                
+                guard self.cardsArePlayableTogether(lastDragCards) else {
+                    break
+                }
 
-                let bookRank = cards.first(where: { $0.bookRank != nil })?.bookRank
-                validDestinations.insert(.book(bookRank))
+                var partialBookRank: CardRank?
+                for transaction in transactions {
+                    if case let .drop(destination) = transaction, case let .book(bookRank) = destination {
+                        partialBookRank = bookRank
+                        break
+                    }
+                }
+                
+                let lastDragCardsBookRank = self.bookRankOf(lastDragCards)!
+                
+                if let partialBookRank = partialBookRank {
+                    if lastDragCardsBookRank == partialBookRank {
+                        validDestinations.insert(.book(lastDragCardsBookRank))
+                    }
+                } else {
+                    if player.books[game.round!]![lastDragCardsBookRank] == nil {
+                        validDestinations.formUnion(DragDropSite.allBookCases)
+                    }
+                }
             case .addCardFromHandToBook:
                 // Can only be dragging one card (for now, need backend changes
                 //   to support multiple)
@@ -194,11 +227,26 @@ enum PossibleAction: Hashable, CaseIterable {
                 // Otherwise, insert the card's book rank if the book exists
                 // TODO: Fancy logic to prevent building invalid books (too many wild cards)
                 
-                guard cards.count == 1 else {
+                guard lastDragCards.count == 1 else {
                     fatalError()
                 }
                 
-                validDestinations.insert(.book(cards.first!.bookRank))
+                guard self.cardsArePlayableTogether(lastDragCards) else {
+                    break
+                }
+                
+                let existingBookRanks = player.books[game.round!]!.keys
+                
+                if self.cardsAreWild(lastDragCards) {
+                    for bookRank in existingBookRanks {
+                        validDestinations.insert(.book(bookRank))
+                    }
+                } else {
+                    let lastDragCardsBookRank = self.bookRankOf(lastDragCards)!
+                    if existingBookRanks.contains(lastDragCardsBookRank) {
+                        validDestinations.insert(.book(lastDragCardsBookRank))
+                    }
+                }
         }
         
         return validDestinations
@@ -361,6 +409,10 @@ enum PossibleAction: Hashable, CaseIterable {
         // TODO
     }
     
+    private func cardsAreWild(_ cards: [Card]) -> Bool {
+        // TODO
+    }
+    
     private func dragsOnlyStartFrom(_ transactions: [ActionBuildTransaction], dragSources: Set<DragDropSite>) -> Bool {
         for transaction in transactions {
             if case let .drag(source, _) = transaction {
@@ -440,10 +492,11 @@ enum ActionBuildState {
     case complexActionDragging(Set<PossibleAction>, Set<DragDropSite>)
     case finished(Set<PossibleAction>)
     
-    func advanceState(player: Player, transactions: [ActionBuildTransaction]) -> ActionBuildState {
+    func advanceState(game: Game, player: Player, transactions: [ActionBuildTransaction]) -> ActionBuildState {
         switch (self) {
             case let .idle(possibleActions, dragDropSources):
                 return self.advanceStateIdle(
+                    game: game,
                     player: player,
                     transactions: transactions,
                     possibleActions: possibleActions,
@@ -451,6 +504,7 @@ enum ActionBuildState {
                 )
             case let .simpleActionDragging(possibleActions, dragDropDestinations):
                 return self.advanceStateSimpleActionDragging(
+                    game: game,
                     player: player,
                     transactions: transactions,
                     possibleActions: possibleActions,
@@ -458,6 +512,7 @@ enum ActionBuildState {
                 )
             case let .complexActionIdle(possibleActions, dragDropSources):
                 return self.advanceStateComplexActionIdle(
+                    game: game,
                     player: player,
                     transactions: transactions,
                     possibleActions: possibleActions,
@@ -465,6 +520,7 @@ enum ActionBuildState {
                 )
             case let .complexActionDragging(possibleActions, dragDropDestinations):
                 return self.advanceStateComplexActionDragging(
+                    game: game,
                     player: player,
                     transactions: transactions,
                     possibleActions: possibleActions,
@@ -475,17 +531,17 @@ enum ActionBuildState {
         }
     }
     
-    private func advanceStateIdle(player: Player, transactions: [ActionBuildTransaction], possibleActions: Set<PossibleAction>, dragDropSources: Set<DragDropSite>) -> ActionBuildState {
+    private func advanceStateIdle(game: Game, player: Player, transactions: [ActionBuildTransaction], possibleActions: Set<PossibleAction>, dragDropSources: Set<DragDropSite>) -> ActionBuildState {
         guard case let .drag(source, _) = transactions.last!, dragDropSources.contains(source) else {
             fatalError()
         }
             
-        let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(player: player, transactions: transactions) })
-        let validDestinations = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropDestinations(player: player, transactions: transactions)) })
+        let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(game: game, player: player, transactions: transactions) })
+        let validDestinations = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropDestinations(game: game, player: player, transactions: transactions)) })
         return .simpleActionDragging(remainingActions, validDestinations)
     }
 
-    private func advanceStateSimpleActionDragging(player: Player, transactions: [ActionBuildTransaction], possibleActions: Set<PossibleAction>, dragDropDestinations: Set<DragDropSite>) -> ActionBuildState {
+    private func advanceStateSimpleActionDragging(game: Game, player: Player, transactions: [ActionBuildTransaction], possibleActions: Set<PossibleAction>, dragDropDestinations: Set<DragDropSite>) -> ActionBuildState {
         guard case let .drop(destination) = transactions.last!, dragDropDestinations.contains(destination) else {
             fatalError()
         }
@@ -494,32 +550,32 @@ enum ActionBuildState {
         // action, with the exception of laying down vs laying down with a
         // discard, which is ambiguous if the player is still able to draw from
         // the discard pile and use the card
-        let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(player: player, transactions: transactions) })
+        let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(game: game, player: player, transactions: transactions) })
         guard (remainingActions.count == 1) || (remainingActions.count == 2 && remainingActions.contains(.layDownInitialBooks) && remainingActions.contains(.drawFromDiscardPileAndLayDownInitialBooks)) else {
             fatalError()
         }
     
         if remainingActions.first!.isComplex {
-            let validSources = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropSources(player: player, transactions: transactions)) })
+            let validSources = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropSources(game: game, player: player, transactions: transactions)) })
             return .complexActionIdle(remainingActions, validSources)
         } else {
             return .finished(remainingActions)
         }
     }
 
-    private func advanceStateComplexActionIdle(player: Player, transactions: [ActionBuildTransaction], possibleActions: Set<PossibleAction>, dragDropSources: Set<DragDropSite>) -> ActionBuildState {
+    private func advanceStateComplexActionIdle(game: Game, player: Player, transactions: [ActionBuildTransaction], possibleActions: Set<PossibleAction>, dragDropSources: Set<DragDropSite>) -> ActionBuildState {
         switch (transactions.last!) {
             case let .drag(source, _):
                 guard dragDropSources.contains(source) else {
                     fatalError()
                 }
             
-                let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(player: player, transactions: transactions) })
+                let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(game: game, player: player, transactions: transactions) })
                 guard remainingActions.count > 0 else {
                     fatalError()
                 }
             
-                let validDestinations = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropDestinations(player: player, transactions: transactions)) })
+                let validDestinations = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropDestinations(game: game, player: player, transactions: transactions)) })
                 return .complexActionDragging(remainingActions, validDestinations)
             case .drop:
                 fatalError()
@@ -528,17 +584,17 @@ enum ActionBuildState {
         }
     }
 
-    private func advanceStateComplexActionDragging(player: Player, transactions: [ActionBuildTransaction], possibleActions: Set<PossibleAction>, dragDropDestinations: Set<DragDropSite>) -> ActionBuildState {
+    private func advanceStateComplexActionDragging(game: Game, player: Player, transactions: [ActionBuildTransaction], possibleActions: Set<PossibleAction>, dragDropDestinations: Set<DragDropSite>) -> ActionBuildState {
         guard case let .drop(destination) = transactions.last!, dragDropDestinations.contains(destination) else {
             fatalError()
         }
 
-        let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(player: player, transactions: transactions) })
+        let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(game: game, player: player, transactions: transactions) })
         guard remainingActions.count > 0 else {
             fatalError()
         }
     
-        let validSources = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropSources(player: player, transactions: transactions)) })
+        let validSources = remainingActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropSources(game: game, player: player, transactions: transactions)) })
         return .complexActionIdle(remainingActions, validSources)
     }
 }
@@ -571,7 +627,7 @@ class ActionBuilder {
         self.transactions = []
 
         let possibleActions = self.initialPossibleActions()
-        let dragDropSources = possibleActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropSources(player: self.player, transactions: self.transactions)) })
+        let dragDropSources = possibleActions.reduce(Set<DragDropSite>(), { $0.union($1.dragDropSources(game: self.game, player: self.player, transactions: self.transactions)) })
         self.state = .idle(possibleActions, dragDropSources)
         
         // TODO: Should these things be part of ActionBuildState? They're
@@ -609,7 +665,7 @@ class ActionBuilder {
         }
         
         self.transactions.append(transaction)
-        self.state = self.state.advanceState(player: self.player, transactions: self.transactions)
+        self.state = self.state.advanceState(game: self.game, player: self.player, transactions: self.transactions)
     }
     
     func cancelLastDrag() {
@@ -633,7 +689,7 @@ class ActionBuilder {
         }
 
         var possibleActions = Set<PossibleAction>(PossibleAction.allCases)
-        possibleActions = possibleActions.filter({ !$0.isDisqualifiedBy(player: self.player, transactions: self.transactions) })
+        possibleActions = possibleActions.filter({ !$0.isDisqualifiedBy(game: self.game, player: self.player, transactions: self.transactions) })
         
         return possibleActions
     }
@@ -695,11 +751,11 @@ class ActionBuilder {
                     dragCards = cards
                 } else if case let .drop(destination) = transaction {
                     if case let .book(rank) = destination {
-                        if booksCards[rank!] == nil {
-                            booksCards[rank!] = []
+                        if booksCards[rank] == nil {
+                            booksCards[rank] = []
                         }
                         
-                        booksCards[rank!]?.append(contentsOf: dragCards!)
+                        booksCards[rank]?.append(contentsOf: dragCards!)
                     }
 
                     dragCards = nil
