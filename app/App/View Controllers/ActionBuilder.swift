@@ -55,6 +55,14 @@ enum PossibleAction: Hashable, CaseIterable {
                 validSources.insert(.discardPile)
             case .drawFromDiscardPileAndCreateBook:
                 validSources.insert(.discardPile)
+                validSources.insert(.hand)
+                
+                for transaction in transactions {
+                    if case let .drag(source, _) = transaction, source == .discardPile {
+                        validSources.remove(.discardPile)
+                        break
+                    }
+                }
             case .discardCard:
                 validSources.insert(.hand)
             case .layDownInitialBooks:
@@ -623,11 +631,12 @@ enum ActionBuildState {
         }
     
         // One dragon drop should be able to get down to exactly one possible
-        // action, with the exception of laying down vs laying down with a
-        // discard, which is ambiguous if the player is still able to draw from
-        // the discard pile and use the card
+        // action, with the exception of complex actions that have a
+        // draw-from-discard-pile counterpart (laying down, starting a book)
         let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(game: game, player: player, transactions: transactions) })
-        guard (remainingActions.count == 1) || (remainingActions.count == 2 && remainingActions.contains(.layDownInitialBooks) && remainingActions.contains(.drawFromDiscardPileAndLayDownInitialBooks)) else {
+        guard (remainingActions.count == 1) ||
+              (remainingActions.count == 2 && remainingActions.contains(.layDownInitialBooks) && remainingActions.contains(.drawFromDiscardPileAndLayDownInitialBooks)) ||
+              (remainingActions.count == 2 && remainingActions.contains(.startBook) && remainingActions.contains(.drawFromDiscardPileAndCreateBook)) else {
             fatalError()
         }
     
@@ -791,23 +800,6 @@ class ActionBuilder {
             }
             
             action = .drawFromDiscardPileAndAddToBook(player.name, bookRank!)
-        } else if possibleActions.contains(.drawFromDiscardPileAndCreateBook) {
-            var cards = [Card]()
-            
-            var dragCards: [Card]?
-            for transaction in self.transactions {
-                if case let .drag(_, cards) = transaction {
-                    dragCards = cards
-                } else if case let .drop(destination) = transaction {
-                    if case .book = destination {
-                        cards.append(contentsOf: dragCards!)
-                    }
-
-                    dragCards = nil
-                }
-            }
-
-            action = .drawFromDiscardPileAndCreateBook(player.name, cards)
         } else if possibleActions.contains(.discardCard) {
             var card: Card?
             
@@ -820,43 +812,76 @@ class ActionBuilder {
             action = .discardCard(player.name, card!)
         } else if possibleActions.contains(.layDownInitialBooks) || possibleActions.contains(.drawFromDiscardPileAndLayDownInitialBooks) {
             var booksCards = [CardRank : [Card]]()
-            
+
             var dragCards: [Card]?
+            var discardPileBookRank: CardRank?
+            var lastDragWasFromDiscardPile = false
+            
             for transaction in self.transactions {
-                if case let .drag(_, cards) = transaction {
+                if case let .drag(source, cards) = transaction {
                     dragCards = cards
+                    lastDragWasFromDiscardPile = (source == .discardPile)
                 } else if case let .drop(destination) = transaction {
                     if case let .book(rank) = destination {
-                        if booksCards[rank] == nil {
-                            booksCards[rank] = []
+                        if !lastDragWasFromDiscardPile {
+                            if booksCards[rank] == nil {
+                                booksCards[rank] = []
+                            }
+                            
+                            booksCards[rank]?.append(contentsOf: dragCards!)
+                        } else {
+                            discardPileBookRank = rank
                         }
-                        
-                        booksCards[rank]?.append(contentsOf: dragCards!)
                     }
 
                     dragCards = nil
+                    lastDragWasFromDiscardPile = false
                 }
             }
             
+            var discardPileBook: [Card]?
+            if let discardPileBookRank = discardPileBookRank {
+                discardPileBook = booksCards[discardPileBookRank]!
+                booksCards.removeValue(forKey: discardPileBookRank)
+            }
+            
             let books = Array(booksCards.values)
-            action = .layDownInitialBooks(player.name, books)
-        } else if possibleActions.contains(.startBook) {
+            
+            if let discardPileBook = discardPileBook {
+                action = .drawFromDiscardPileAndLayDownInitialBooks(player.name, discardPileBook, books)
+            } else {
+                action = .layDownInitialBooks(player.name, books)
+            }
+        } else if possibleActions.contains(.startBook) || possibleActions.contains(.drawFromDiscardPileAndCreateBook) {
             var cards = [Card]()
             
             var dragCards: [Card]?
+            var didUseDiscardPile = false
+            var lastDragWasFromDiscardPile = false
+
             for transaction in self.transactions {
-                if case let .drag(_, cards) = transaction {
+                if case let .drag(source, cards) = transaction {
                     dragCards = cards
+                    
+                    lastDragWasFromDiscardPile = (source == .discardPile)
+                    if lastDragWasFromDiscardPile {
+                        didUseDiscardPile = true
+                    }
                 } else if case let .drop(destination) = transaction {
-                    if case .book = destination {
+                    if !lastDragWasFromDiscardPile, case .book = destination {
                         cards.append(contentsOf: dragCards!)
                     }
 
                     dragCards = nil
+                    lastDragWasFromDiscardPile = false
                 }
             }
 
-            action = .startBook(player.name, cards)
+            if didUseDiscardPile {
+                action = .drawFromDiscardPileAndCreateBook(player.name, cards)
+            } else {
+                action = .startBook(player.name, cards)
+            }
         } else if possibleActions.contains(.addCardFromHandToBook) {
             var card: Card?
             var bookRank: CardRank?
