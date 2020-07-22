@@ -393,13 +393,15 @@ enum PossibleAction: Hashable, CaseIterable {
                 // * Drag can only start from the hand
                 // * Drag must only have playable cards (no threes)
                 // * Drop can only go to an existing book
-                //  - TODO: Existing book logic
                 // * There can only be one drag and one drop
+                
+                let existingBooks = player.books[game.round!]!.keys
+                let validDropDestinations = Set<DragDropSite>(existingBooks.map( { DragDropSite.book($0) } ))
                 
                 guard player.hasLaidDownThisRound,
                       self.dragsOnlyStartFrom(transactions, dragSources: [.hand]),
                       self.dragsOnlyContainPlayableCards(transactions),
-                      self.dropsOnlyGoTo(transactions, dropDestinations: DragDropSite.allBookCases),
+                      self.dropsOnlyGoTo(transactions, dropDestinations: validDropDestinations),
                       self.atMostOneDragDropPairIn(transactions) else {
                     return true
                 }
