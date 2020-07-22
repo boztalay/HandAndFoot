@@ -135,6 +135,7 @@ enum PossibleAction: Hashable, CaseIterable {
                 }
                 
                 let lastDragCardsBookRank = self.bookRankOf(lastDragCards)
+                let newBookDestinations = self.newBookDestinations(game: game, player: player)
                 
                 if let partialBookRank = partialBookRank {
                     if let lastDragCardsBookRank = lastDragCardsBookRank, lastDragCardsBookRank == partialBookRank {
@@ -142,15 +143,10 @@ enum PossibleAction: Hashable, CaseIterable {
                     } else if self.cardsAreWild(lastDragCards) {
                         validDestinations.insert(.book(partialBookRank))
                     }
-                } else if let lastDragCardsBookRank = lastDragCardsBookRank {
-                    if player.books[game.round!]![lastDragCardsBookRank] == nil {
-                        validDestinations.formUnion(DragDropSite.allBookCases)
-                    }
+                } else if let lastDragCardsBookRank = lastDragCardsBookRank, newBookDestinations.contains(.book(lastDragCardsBookRank)) {
+                    validDestinations.insert(.book(lastDragCardsBookRank))
                 } else if self.cardsAreWild(lastDragCards) {
-                    let existingBookRanks = player.books[game.round!]!.keys
-                    for bookRank in existingBookRanks {
-                        validDestinations.insert(.book(bookRank))
-                    }
+                    validDestinations.formUnion(newBookDestinations)
                 }
             case .discardCard:
                 guard lastDragCards.count == 1 else {
@@ -226,6 +222,7 @@ enum PossibleAction: Hashable, CaseIterable {
                 }
                 
                 let lastDragCardsBookRank = self.bookRankOf(lastDragCards)
+                let newBookDestinations = self.newBookDestinations(game: game, player: player)
                 
                 if let partialBookRank = partialBookRank {
                     if let lastDragCardsBookRank = lastDragCardsBookRank, lastDragCardsBookRank == partialBookRank {
@@ -233,14 +230,10 @@ enum PossibleAction: Hashable, CaseIterable {
                     } else if self.cardsAreWild(lastDragCards) {
                         validDestinations.insert(.book(partialBookRank))
                     }
-                } else if let lastDragCardsBookRank = lastDragCardsBookRank {
+                } else if let lastDragCardsBookRank = lastDragCardsBookRank, newBookDestinations.contains(.book(lastDragCardsBookRank)) {
                     validDestinations.insert(.book(lastDragCardsBookRank))
                 } else if self.cardsAreWild(lastDragCards) {
-                    let existingBookRanks = player.books[game.round!]!.keys
-                    let newBookRanks = CardRank.bookableCases.filter({ !existingBookRanks.contains($0) })
-                    for bookRank in newBookRanks {
-                        validDestinations.insert(.book(bookRank))
-                    }
+                    validDestinations.formUnion(newBookDestinations)
                 }
             case .addCardFromHandToBook:
                 // Can only be dragging one card (for now, need backend changes

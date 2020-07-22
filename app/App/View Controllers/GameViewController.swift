@@ -183,7 +183,6 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         super.viewWillAppear(animated)
 
         Network.shared.subscribeToSyncEvents(label: "GameViewController") {
-            print("GameViewController sync")
             self.gameModel.loadGame()
             self.actionBuilder.reset(game: self.gameModel.game!, player: self.currentPlayer)
             self.updateViews()
@@ -468,8 +467,6 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     }
     
     private func commitAction(_ action: Action) {
-        print("GameViewController commitAction")
-        
         Network.shared.sendAddActionRequest(game: self.gameModel, action: action) { (success, httpStatusCode, response) in
             guard success else {
                 if let errorMessage = response?["message"] as? String {
@@ -477,6 +474,10 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
                 } else {
                     UIAlertController.presentErrorAlert(on: self, title: "Couldn't Add Action")
                 }
+                
+                // TODO: Is this reset necessary?
+                self.actionBuilder.reset(game: self.gameModel.game!, player: self.currentPlayer)
+                self.updateViews()
                 
                 return
             }
