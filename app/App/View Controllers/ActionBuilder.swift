@@ -217,9 +217,11 @@ enum PossibleAction: Hashable, CaseIterable {
                 
                 let lastDragCardsBookRank = self.bookRankOf(lastDragCards)
                 
-                if let partialBookRank = partialBookRank, let lastDragCardsBookRank = lastDragCardsBookRank {
-                    if lastDragCardsBookRank == partialBookRank {
-                        validDestinations.insert(.book(lastDragCardsBookRank))
+                if let partialBookRank = partialBookRank {
+                    if let lastDragCardsBookRank = lastDragCardsBookRank, lastDragCardsBookRank == partialBookRank {
+                        validDestinations.insert(.book(partialBookRank))
+                    } else if self.cardsAreWild(lastDragCards) {
+                        validDestinations.insert(.book(partialBookRank))
                     }
                 } else if let lastDragCardsBookRank = lastDragCardsBookRank {
                     validDestinations.insert(.book(lastDragCardsBookRank))
