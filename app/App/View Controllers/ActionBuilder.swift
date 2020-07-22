@@ -143,6 +143,10 @@ enum PossibleAction: Hashable, CaseIterable {
                     }
                 }
             case .discardCard:
+                guard lastDragCards.count == 1 else {
+                    break
+                }
+                
                 validDestinations.insert(.discardPile)
             case .layDownInitialBooks:
                 // Need to be dragging at least one card

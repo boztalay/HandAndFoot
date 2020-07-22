@@ -183,7 +183,9 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         super.viewWillAppear(animated)
 
         Network.shared.subscribeToSyncEvents(label: "GameViewController") {
+            print("GameViewController sync")
             self.gameModel.loadGame()
+            self.actionBuilder.reset(game: self.gameModel.game!, player: self.currentPlayer)
             self.updateViews()
         }
     }
@@ -400,6 +402,10 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
                 enabledDragDropDestinations = dragDropDestinations
                 self.setUpComplexActionInterface(possibleActions: possibleActions)
             case let .finished(possibleActions):
+                // TODO: Something about resetting the ActionBuilder here and
+                //       then doing UI things with it below feels weird, but its
+                //       state needs to be reset to avoid double committing
+                //       actions (it can't hang out in the finished state)
                 self.buildAndCommitFinalAction(possibleActions)
                 self.actionBuilder.reset(game: self.gameModel.game!, player: self.currentPlayer)
         }
@@ -426,6 +432,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     
     private func resetComplexActionInterface() {
         self.navigationItem.rightBarButtonItem = nil
+        self.navigationItem.leftBarButtonItem = nil
         self.title = self.gameModel.title
     }
     
@@ -461,6 +468,8 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     }
     
     private func commitAction(_ action: Action) {
+        print("GameViewController commitAction")
+        
         Network.shared.sendAddActionRequest(game: self.gameModel, action: action) { (success, httpStatusCode, response) in
             guard success else {
                 if let errorMessage = response?["message"] as? String {

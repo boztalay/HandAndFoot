@@ -47,7 +47,7 @@ public class GameModel: NSManagedObject, ModelUpdateable {
     
     func loadGame() {
         guard let userGames = DataManager.shared.fetchUserGames(of: self) else {
-            fatalError("AAAHHH")
+            fatalError()
         }
         
         let playerNames = userGames.map() { $0.user!.email! }
@@ -62,7 +62,7 @@ public class GameModel: NSManagedObject, ModelUpdateable {
         ]
 
         guard let actionModels = DataManager.shared.fetchActions(of: self) else {
-            fatalError("OH NOOOO")
+            fatalError()
         }
         
         let actions = actionModels.map() { Action(with: $0.contentJson)! }
