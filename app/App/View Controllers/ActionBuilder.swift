@@ -286,14 +286,13 @@ enum PossibleAction: Hashable, CaseIterable {
                 //     Could disqualify this before the drag by checking what's
                 //     on top of the discard pile
                 // * Drop can only go to an existing book
-                //   - TODO: Existing book logic
                 // * There can only be one drag and one drop
                 
                 guard player.canDrawFromDiscardPile,
                       player.hasLaidDownThisRound,
                       self.dragsOnlyStartFrom(transactions, dragSources: [.discardPile]),
                       self.dragsOnlyContainPlayableCards(transactions),
-                      self.dropsOnlyGoTo(transactions, dropDestinations: DragDropSite.allBookCases),
+                      self.dropsOnlyGoToExistingBooks(transactions, game: game, player: player),
                       self.atMostOneDragDropPairIn(transactions) else {
                     return true
                 }
@@ -310,12 +309,12 @@ enum PossibleAction: Hashable, CaseIterable {
                 //  - Might enforce this in the dragDropSources/Destinations
                 // * Drops can only go to books, and only one book, and it must
                 //   be a book that doesn't already exist
-                //  - TODO: Not-existing book logic
                 
                 guard player.canDrawFromDiscardPile,
                       player.hasLaidDownThisRound,
                       self.dragsOnlyStartFrom(transactions, dragSources: [.discardPile, .hand]),
                       self.dragsOnlyContainPlayableCards(transactions),
+                      self.dropsOnlyGoToNewBooks(transactions, game: game, player: player),
                       self.dropsOnlyGoToOneBook(transactions) else {
                     return true
                 }
@@ -377,11 +376,11 @@ enum PossibleAction: Hashable, CaseIterable {
                 // * Drags must only have playable cards (no threes)
                 // * Drops can only go to books, and only one book, and that book
                 //   must not already exist
-                //  - TODO: Not-existing book logic
                 
                 guard player.hasLaidDownThisRound,
                       self.dragsOnlyStartFrom(transactions, dragSources: [.hand]),
                       self.dragsOnlyContainPlayableCards(transactions),
+                      self.dropsOnlyGoToNewBooks(transactions, game: game, player: player),
                       self.dropsOnlyGoToOneBook(transactions) else {
                     return true
                 }
@@ -395,13 +394,10 @@ enum PossibleAction: Hashable, CaseIterable {
                 // * Drop can only go to an existing book
                 // * There can only be one drag and one drop
                 
-                let existingBooks = player.books[game.round!]!.keys
-                let validDropDestinations = Set<DragDropSite>(existingBooks.map( { DragDropSite.book($0) } ))
-                
                 guard player.hasLaidDownThisRound,
                       self.dragsOnlyStartFrom(transactions, dragSources: [.hand]),
                       self.dragsOnlyContainPlayableCards(transactions),
-                      self.dropsOnlyGoTo(transactions, dropDestinations: validDropDestinations),
+                      self.dropsOnlyGoToExistingBooks(transactions, game: game, player: player),
                       self.atMostOneDragDropPairIn(transactions) else {
                     return true
                 }
@@ -462,6 +458,21 @@ enum PossibleAction: Hashable, CaseIterable {
         return (cards.filter({ !$0.isWild }).count == 0)
     }
     
+    private func existingBookDestinations(game: Game, player: Player) -> Set<DragDropSite> {
+        let existingBooks = player.books[game.round!]!.keys
+        let destinations = Set<DragDropSite>(existingBooks.map( { DragDropSite.book($0) } ))
+        
+        return destinations
+    }
+    
+    private func newBookDestinations(game: Game, player: Player) -> Set<DragDropSite> {
+        let existingBooks = player.books[game.round!]!.keys
+        let newBooks = CardRank.bookableCases.filter({ !existingBooks.contains($0 )})
+        let destinations = Set<DragDropSite>(newBooks.map( { DragDropSite.book($0) } ))
+        
+        return destinations
+    }
+    
     private func dragsOnlyStartFrom(_ transactions: [ActionBuildTransaction], dragSources: Set<DragDropSite>) -> Bool {
         for transaction in transactions {
             if case let .drag(source, _) = transaction {
@@ -498,6 +509,14 @@ enum PossibleAction: Hashable, CaseIterable {
         }
         
         return true
+    }
+    
+    private func dropsOnlyGoToExistingBooks(_ transactions: [ActionBuildTransaction], game: Game, player: Player) -> Bool {
+        return self.dropsOnlyGoTo(transactions, dropDestinations: self.existingBookDestinations(game: game, player: player))
+    }
+    
+    private func dropsOnlyGoToNewBooks(_ transactions: [ActionBuildTransaction], game: Game, player: Player) -> Bool {
+        return self.dropsOnlyGoTo(transactions, dropDestinations: self.newBookDestinations(game: game, player: player))
     }
     
     private func dropsOnlyGoToOneBook(_ transactions: [ActionBuildTransaction]) -> Bool {
