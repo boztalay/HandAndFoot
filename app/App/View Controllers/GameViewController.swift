@@ -439,10 +439,16 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
         }
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(GameViewController.complexActionDoneButtonTapped))
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Cancel", style: .plain, target: self, action: #selector(GameViewController.complexActionCancelButtonTapped))
     }
     
     @objc private func complexActionDoneButtonTapped(_ sender: Any) {
         self.actionBuilder.addTransaction(.done)
+        self.updateViews()
+    }
+    
+    @objc private func complexActionCancelButtonTapped(_ sender: Any) {
+        self.actionBuilder.reset(game: self.gameModel.game!, player: self.currentPlayer)
         self.updateViews()
     }
 
