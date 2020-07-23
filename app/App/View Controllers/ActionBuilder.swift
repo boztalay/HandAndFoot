@@ -96,31 +96,12 @@ enum PossibleAction: Hashable, CaseIterable {
         switch (self) {
             case .drawFromDeck:
                 validDestinations.insert(.hand)
-            case .drawFromDiscardPileAndAddToBook:
+            case .discardCard:
                 guard lastDragCards.count == 1 else {
                     break
                 }
                 
-                let card = lastDragCards.first!
-
-                if let cardRank = card.bookRank {
-                    let existingBookRanks = player.books[game.round!]!.keys
-                    if existingBookRanks.contains(cardRank) {
-                        validDestinations.insert(.book(cardRank))
-                    }
-                } else if card.isWild {
-                    let existingBooks = player.books[game.round!]!.values
-                    let existingBooksWithRoomForWild = existingBooks.filter({ $0.canAcceptWild })
-                    let validBookRanks = existingBooksWithRoomForWild.map({ $0.rank })
-                    
-                    for bookRank in validBookRanks {
-                        validDestinations.insert(.book(bookRank))
-                    }
-                }
-            case .discardCard:
-                // TODO: Check that the player can go out if it's their last card
-                
-                guard lastDragCards.count == 1 else {
+                if player.hand.count == 1 && !player.canGoOut(in: game.round!) {
                     break
                 }
                 
@@ -186,7 +167,7 @@ enum PossibleAction: Hashable, CaseIterable {
                 } else if self.cardsAreWild(lastDragCards) {
                     validDestinations.formUnion(newBookDestinations)
                 }
-            case .addCardsFromHandToBook:
+            case .addCardsFromHandToBook, .drawFromDiscardPileAndAddToBook:
                 // Need to be dragging at least one card
                 // If the cards aren't playable together, skip
                 // If the cards are wild, insert all existing books
