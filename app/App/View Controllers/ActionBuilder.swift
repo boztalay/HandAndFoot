@@ -879,7 +879,7 @@ class ActionBuilder {
             var bookRank: CardRank?
             
             for transaction in self.transactions {
-                if case let .drag(_, cards) = transaction, cards.count == 1 {
+                if case let .drag(_, cards) = transaction, cards.count > 0 {
                     dragCards = cards
                 } else if case let .drop(destination) = transaction {
                     if case let .book(rank) = destination {

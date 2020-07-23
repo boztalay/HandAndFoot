@@ -253,7 +253,7 @@ enum Action: JSONCodable {
                 ]
             case let .addCardsFromHandToBook(playerName, cards, bookRank):
                 return [
-                    "type": "add_card_from_hand_to_book",
+                    "type": "add_cards_from_hand_to_book",
                     "player": playerName,
                     "cards": cards.map({ $0.toJSON() }),
                     "book_rank": bookRank.rawValue
