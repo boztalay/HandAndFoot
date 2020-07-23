@@ -22,7 +22,7 @@ enum PossibleAction: Hashable, CaseIterable {
     case layDownInitialBooks
     case drawFromDiscardPileAndLayDownInitialBooks
     case startBook
-    case addCardFromHandToBook
+    case addCardsFromHandToBook
     
     var isComplex: Bool {
         switch (self) {
@@ -40,7 +40,7 @@ enum PossibleAction: Hashable, CaseIterable {
                 return true
             case .startBook:
                 return true
-            case .addCardFromHandToBook:
+            case .addCardsFromHandToBook:
                 return false
         }
     }
@@ -79,7 +79,7 @@ enum PossibleAction: Hashable, CaseIterable {
                 }
             case .startBook:
                 validSources.insert(.hand)
-            case .addCardFromHandToBook:
+            case .addCardsFromHandToBook:
                 validSources.insert(.hand)
         }
         
@@ -235,15 +235,14 @@ enum PossibleAction: Hashable, CaseIterable {
                 } else if self.cardsAreWild(lastDragCards) {
                     validDestinations.formUnion(newBookDestinations)
                 }
-            case .addCardFromHandToBook:
-                // Can only be dragging one card (for now, need backend changes
-                //   to support multiple)
-                // If the card isn't playable, skip
-                // If the card is wild, insert all existing books
-                // Otherwise, insert the card's book rank if the book exists
+            case .addCardsFromHandToBook:
+                // Need to be dragging at least one card
+                // If the cards aren't playable together, skip
+                // If the cards are wild, insert all existing books
+                // Otherwise, insert the cards' book rank if the book exists
                 // TODO: Fancy logic to prevent building invalid books (too many wild cards)
                 
-                guard lastDragCards.count == 1 else {
+                guard lastDragCards.count > 0 else {
                     break
                 }
                 
@@ -395,7 +394,7 @@ enum PossibleAction: Hashable, CaseIterable {
                 }
                 
                 return false
-            case .addCardFromHandToBook:
+            case .addCardsFromHandToBook:
                 // * Need to have laid down already
                 // * All good if there aren't any transactions
                 // * Drag can only start from the hand
@@ -875,13 +874,13 @@ class ActionBuilder {
             } else {
                 action = .startBook(player.name, cards)
             }
-        } else if possibleActions.contains(.addCardFromHandToBook) {
-            var card: Card?
+        } else if possibleActions.contains(.addCardsFromHandToBook) {
+            var dragCards: [Card]?
             var bookRank: CardRank?
             
             for transaction in self.transactions {
                 if case let .drag(_, cards) = transaction, cards.count == 1 {
-                    card = cards.first!
+                    dragCards = cards
                 } else if case let .drop(destination) = transaction {
                     if case let .book(rank) = destination {
                         bookRank = rank
@@ -889,7 +888,7 @@ class ActionBuilder {
                 }
             }
             
-            action = .addCardFromHandToBook(player.name, card!, bookRank!)
+            action = .addCardsFromHandToBook(player.name, dragCards!, bookRank!)
         }
         
         return action

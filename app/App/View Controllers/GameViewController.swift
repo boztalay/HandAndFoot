@@ -440,8 +440,6 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
             self.title = "Laying Down"
         } else if possibleActions.contains(.drawFromDiscardPileAndCreateBook) || possibleActions.contains(.startBook) {
             self.title = "Starting Book"
-        } else if possibleActions.contains(.drawFromDiscardPileAndAddToBook) || possibleActions.contains(.addCardFromHandToBook) {
-            self.title = "Adding to Book"
         }
         
         self.navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Done", style: .done, target: self, action: #selector(GameViewController.complexActionDoneButtonTapped))

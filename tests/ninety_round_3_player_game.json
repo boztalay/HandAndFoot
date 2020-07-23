@@ -1529,11 +1529,13 @@
             "player": "player_1"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "diamonds",
-                "rank": "six"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "diamonds",
+                    "rank": "six"
+                }
+            ],
             "book_rank": "six",
             "player": "player_1"
         },
@@ -1620,11 +1622,13 @@
             "player": "player_1"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "diamonds",
-                "rank": "four"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "diamonds",
+                    "rank": "four"
+                }
+            ],
             "book_rank": "four",
             "player": "player_1"
         },
@@ -1695,11 +1699,13 @@
             "player": "player_1"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "clubs",
-                "rank": "six"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "clubs",
+                    "rank": "six"
+                }
+            ],
             "book_rank": "six",
             "player": "player_1"
         },
@@ -1801,20 +1807,17 @@
             "player": "player_2"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "hearts",
-                "rank": "king"
-            },
-            "book_rank": "king",
-            "player": "player_2"
-        },
-        {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "hearts",
-                "rank": "king"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "hearts",
+                    "rank": "king"
+                },
+                {
+                    "suit": "hearts",
+                    "rank": "king"
+                }
+            ],
             "book_rank": "king",
             "player": "player_2"
         },
@@ -1852,20 +1855,24 @@
             "player": "player_1"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "clubs",
-                "rank": "four"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "clubs",
+                    "rank": "four"
+                }
+            ],
             "book_rank": "four",
             "player": "player_1"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "diamonds",
-                "rank": "ace"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "diamonds",
+                    "rank": "ace"
+                }
+            ],
             "book_rank": "ace",
             "player": "player_1"
         },
@@ -1886,11 +1893,13 @@
             "player": "player_2"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "spades",
-                "rank": "king"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "spades",
+                    "rank": "king"
+                }
+            ],
             "book_rank": "king",
             "player": "player_2"
         },
@@ -2005,65 +2014,58 @@
             "player": "player_3"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "clubs",
-                "rank": "two"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "clubs",
+                    "rank": "two"
+                }
+            ],
             "book_rank": "seven",
             "player": "player_3"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "clubs",
-                "rank": "seven"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "clubs",
+                    "rank": "seven"
+                },
+                {
+                    "suit": "spades",
+                    "rank": "seven"
+                },
+                {
+                    "suit": "hearts",
+                    "rank": "seven"
+                }
+            ],
             "book_rank": "seven",
             "player": "player_3"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "spades",
-                "rank": "seven"
-            },
-            "book_rank": "seven",
-            "player": "player_3"
-        },
-        {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "hearts",
-                "rank": "seven"
-            },
-            "book_rank": "seven",
-            "player": "player_3"
-        },
-        {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "spades",
-                "rank": "jack"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "spades",
+                    "rank": "jack"
+                },
+                {
+                    "suit": "clubs",
+                    "rank": "jack"
+                }
+            ],
             "book_rank": "jack",
             "player": "player_3"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "clubs",
-                "rank": "jack"
-            },
-            "book_rank": "jack",
-            "player": "player_3"
-        },
-        {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "hearts",
-                "rank": "queen"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "hearts",
+                    "rank": "queen"
+                }
+            ],
             "book_rank": "queen",
             "player": "player_3"
         },
@@ -2118,20 +2120,24 @@
             "player": "player_2"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "diamonds",
-                "rank": "jack"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "diamonds",
+                    "rank": "jack"
+                }
+            ],
             "book_rank": "jack",
             "player": "player_2"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "clubs",
-                "rank": "ace"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "clubs",
+                    "rank": "ace"
+                }
+            ],
             "book_rank": "ace",
             "player": "player_2"
         },
@@ -2168,11 +2174,13 @@
             "player": "player_1"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "diamonds",
-                "rank": "four"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "diamonds",
+                    "rank": "four"
+                }
+            ],
             "book_rank": "four",
             "player": "player_1"
         },
@@ -2193,11 +2201,13 @@
             "player": "player_2"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "hearts",
-                "rank": "eight"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "hearts",
+                    "rank": "eight"
+                }
+            ],
             "book_rank": "eight",
             "player": "player_2"
         },
@@ -2214,11 +2224,13 @@
             "player": "player_3"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "hearts",
-                "rank": "queen"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "hearts",
+                    "rank": "queen"
+                }
+            ],
             "book_rank": "queen",
             "player": "player_3"
         },
@@ -2270,11 +2282,13 @@
             "player": "player_2"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "hearts",
-                "rank": "eight"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "hearts",
+                    "rank": "eight"
+                }
+            ],
             "book_rank": "eight",
             "player": "player_2"
         },
@@ -2380,11 +2394,13 @@
             "player": "player_3"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "clubs",
-                "rank": "seven"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "clubs",
+                    "rank": "seven"
+                }
+            ],
             "book_rank": "seven",
             "player": "player_3"
         },
@@ -2422,29 +2438,35 @@
             "player": "player_2"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "diamonds",
-                "rank": "king"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "diamonds",
+                    "rank": "king"
+                }
+            ],
             "book_rank": "king",
             "player": "player_2"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "clubs",
-                "rank": "queen"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "clubs",
+                    "rank": "queen"
+                }
+            ],
             "book_rank": "queen",
             "player": "player_2"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "diamonds",
-                "rank": "eight"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "diamonds",
+                    "rank": "eight"
+                }
+            ],
             "book_rank": "eight",
             "player": "player_2"
         },
@@ -2540,47 +2562,36 @@
             "player": "player_1"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "hearts",
-                "rank": "two"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "hearts",
+                    "rank": "two"
+                },
+                {
+                    "suit": "diamonds",
+                    "rank": "two"
+                },
+                {
+                    "suit": "spades",
+                    "rank": "two"
+                }
+            ],
             "book_rank": "ace",
             "player": "player_1"
         },
         {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "diamonds",
-                "rank": "two"
-            },
-            "book_rank": "ace",
-            "player": "player_1"
-        },
-        {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "spades",
-                "rank": "two"
-            },
-            "book_rank": "ace",
-            "player": "player_1"
-        },
-        {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "clubs",
-                "rank": "two"
-            },
-            "book_rank": "nine",
-            "player": "player_1"
-        },
-        {
-            "type": "add_card_from_hand_to_book",
-            "card": {
-                "suit": "spades",
-                "rank": "joker"
-            },
+            "type": "add_cards_from_hand_to_book",
+            "cards": [
+                {
+                    "suit": "clubs",
+                    "rank": "two"
+                },
+                {
+                    "suit": "spades",
+                    "rank": "joker"
+                }
+            ],
             "book_rank": "nine",
             "player": "player_1"
         },

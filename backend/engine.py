@@ -85,6 +85,9 @@ class Card(object):
     def __eq__(self, other):
         return ((self.suit == other.suit) and (self.rank == other.rank))
 
+    def __str__(self):
+        return "<Card (%s, %s)>" % (self.rank, self.suit)
+
     def to_json(self):
         return {
             "suit": self.suit.value,
@@ -358,12 +361,13 @@ class Player(object):
         except ValueError:
             raise IllegalActionError("Card not in hand")
 
-    def add_card_from_hand_to_book(self, card, book_rank, current_round):
+    def add_cards_from_hand_to_book(self, cards, book_rank, current_round):
         if book_rank not in self.books[current_round]:
             raise IllegalActionError("Player doesn't have a book for the given card")
 
-        self.remove_card_from_hand(card)
-        self.books[current_round][book_rank].add_card(card)
+        for card in cards:
+            self.remove_card_from_hand(card)
+            self.books[current_round][book_rank].add_card(card)
 
     def add_card_from_discard_pile_to_book(self, card, book_rank, current_round):
         if book_rank not in self.books[current_round]:
@@ -457,10 +461,10 @@ class Action(abc.ABC):
         elif action_type == "start_book":
             cards = [Card.from_json(card_json) for card_json in action_json["cards"]]
             return StartBookAction(action_json["player"], cards)
-        elif action_type == "add_card_from_hand_to_book":
-            card = Card.from_json(action_json["card"])
+        elif action_type == "add_cards_from_hand_to_book":
+            cards = [Card.from_json(card_json) for card_json in action_json["cards"]]
             book_rank = CardRank(action_json["book_rank"])
-            return AddCardFromHandToBookAction(action_json["player"], card, book_rank)
+            return AddCardsFromHandToBookAction(action_json["player"], cards, book_rank)
         else:
             raise ValueError("Unknown action type: " + action_type)
 
@@ -502,10 +506,10 @@ class StartBookAction(Action):
         super().__init__(player_name)
         self.cards = cards
 
-class AddCardFromHandToBookAction(Action):
-    def __init__(self, player_name, card, book_rank):
+class AddCardsFromHandToBookAction(Action):
+    def __init__(self, player_name, cards, book_rank):
         super().__init__(player_name)
-        self.card = card
+        self.cards = cards
         self.book_rank = book_rank
 
 #
@@ -593,8 +597,8 @@ class Game(object):
             self.apply_draw_from_discard_pile_and_lay_down_initial_books_action(player, action.partial_book, action.books)
         elif type(action) is StartBookAction:
             self.apply_start_book_action(player, action.cards)
-        elif type(action) is AddCardFromHandToBookAction:
-            self.apply_add_card_from_hand_to_book_action(player, action.card, action.book_rank)
+        elif type(action) is AddCardsFromHandToBookAction:
+            self.apply_add_cards_from_hand_to_book_action(player, action.cards, action.book_rank)
         else:
             raise ValueError("Unknown action type")
 
@@ -718,8 +722,8 @@ class Game(object):
         if player.is_hand_empty and not player.is_in_foot:
             player.pick_up_foot()
 
-    def apply_add_card_from_hand_to_book_action(self, player, card, book_rank):
-        player.add_card_from_hand_to_book(card, book_rank, self.round)
+    def apply_add_cards_from_hand_to_book_action(self, player, cards, book_rank):
+        player.add_cards_from_hand_to_book(cards, book_rank, self.round)
 
         if player.is_hand_empty and not player.is_in_foot:
             player.pick_up_foot()

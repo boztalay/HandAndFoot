@@ -168,8 +168,8 @@ class Game: JSONEncodable {
                 try self.applyDrawFromDiscardPileAndLayDownInitialBooksAction(player: player, partialBookCards: partialBookCards, cards: cards)
             case let .startBook(_, cards):
                 try self.applyStartBookAction(player: player, cards: cards)
-            case let .addCardFromHandToBook(_, card, bookRank):
-                try self.applyAddCardFromHandToBookAction(player: player, card: card, bookRank: bookRank)
+            case let .addCardsFromHandToBook(_, cards, bookRank):
+                try self.applyAddCardsFromHandToBookAction(player: player, cards: cards, bookRank: bookRank)
         }
         
         player.calculatePoints(in: self.round!)
@@ -342,8 +342,8 @@ class Game: JSONEncodable {
     
     // Adding to an existing book
     
-    func applyAddCardFromHandToBookAction(player: Player, card: Card, bookRank: CardRank) throws {
-        try player.addCardFromHandToBook(card, bookRank: bookRank, in: self.round!)
+    func applyAddCardsFromHandToBookAction(player: Player, cards: [Card], bookRank: CardRank) throws {
+        try player.addCardsFromHandToBook(cards, bookRank: bookRank, in: self.round!)
         
         if player.isHandEmpty && !player.isInFoot {
             player.pickUpFoot()

@@ -17,7 +17,7 @@ enum Action: JSONCodable {
     case layDownInitialBooks(String, [[Card]])
     case drawFromDiscardPileAndLayDownInitialBooks(String, [Card], [[Card]])
     case startBook(String, [Card])
-    case addCardFromHandToBook(String, Card, CardRank)
+    case addCardsFromHandToBook(String, [Card], CardRank)
     
     // MARK: Computed properties
     
@@ -37,7 +37,7 @@ enum Action: JSONCodable {
                 return playerName
             case let .startBook(playerName, _):
                 return playerName
-            case let .addCardFromHandToBook(playerName, _, _):
+            case let .addCardsFromHandToBook(playerName, _, _):
                 return playerName
         }
     }
@@ -58,8 +58,8 @@ enum Action: JSONCodable {
                 return "Lay down with discard"
             case .startBook:
                 return "Start book"
-            case .addCardFromHandToBook:
-                return "Add card to book"
+            case .addCardsFromHandToBook:
+                return "Add cards to book"
         }
     }
     
@@ -120,11 +120,11 @@ enum Action: JSONCodable {
                 }
                 self = .startBook(playerName, cards)
             
-            case "add_card_from_hand_to_book":
-                guard let card = card, let bookRank = bookRank else {
+            case "add_cards_from_hand_to_book":
+                guard let cards = cards, let bookRank = bookRank else {
                     return nil
                 }
-                self = .addCardFromHandToBook(playerName, card, bookRank)
+                self = .addCardsFromHandToBook(playerName, cards, bookRank)
             
             default:
                 return nil
@@ -251,11 +251,11 @@ enum Action: JSONCodable {
                     "player": playerName,
                     "cards" : cards.map({ $0.toJSON() })
                 ]
-            case let .addCardFromHandToBook(playerName, card, bookRank):
+            case let .addCardsFromHandToBook(playerName, cards, bookRank):
                 return [
                     "type": "add_card_from_hand_to_book",
                     "player": playerName,
-                    "card": card.toJSON(),
+                    "cards": cards.map({ $0.toJSON() }),
                     "book_rank": bookRank.rawValue
                 ]
         }
