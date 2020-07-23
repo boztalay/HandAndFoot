@@ -158,8 +158,8 @@ class Game: JSONEncodable {
                 try self.applyDrawFromDeckAction(player: player)
             case let .drawFromDiscardPileAndAddToBook(_, bookRank):
                 try self.applyDrawFromDiscardPileAndAddToBookAction(player: player, bookRank: bookRank)
-            case let .drawFromDiscardPileAndCreateBook(_, cards):
-                try self.applyDrawFromDiscardPileAndCreateBookAction(player: player, cards: cards)
+            case let .drawFromDiscardPileAndStartBook(_, cards):
+                try self.applyDrawFromDiscardPileAndStartBookAction(player: player, cards: cards)
             case let .discardCard(_, card):
                 try self.applyDiscardCardAction(player: player, card: card)
             case let .layDownInitialBooks(_, cards):
@@ -221,7 +221,7 @@ class Game: JSONEncodable {
     
     // Drawing from the discard pile to create a new book
     
-    func applyDrawFromDiscardPileAndCreateBookAction(player: Player, cards: [Card]) throws {
+    func applyDrawFromDiscardPileAndStartBookAction(player: Player, cards: [Card]) throws {
         guard player.canDrawFromDiscardPile else {
             throw IllegalActionError.cannotDrawFromTheDiscardPile
         }

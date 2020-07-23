@@ -17,7 +17,7 @@ enum ActionBuildTransaction {
 enum PossibleAction: Hashable, CaseIterable {
     case drawFromDeck
     case drawFromDiscardPileAndAddToBook
-    case drawFromDiscardPileAndCreateBook
+    case drawFromDiscardPileAndStartBook
     case discardCard
     case layDownInitialBooks
     case drawFromDiscardPileAndLayDownInitialBooks
@@ -30,7 +30,7 @@ enum PossibleAction: Hashable, CaseIterable {
                 return false
             case .drawFromDiscardPileAndAddToBook:
                 return false
-            case .drawFromDiscardPileAndCreateBook:
+            case .drawFromDiscardPileAndStartBook:
                 return true
             case .discardCard:
                 return false
@@ -53,7 +53,7 @@ enum PossibleAction: Hashable, CaseIterable {
                 validSources.insert(.deck)
             case .drawFromDiscardPileAndAddToBook:
                 validSources.insert(.discardPile)
-            case .drawFromDiscardPileAndCreateBook:
+            case .drawFromDiscardPileAndStartBook:
                 validSources.insert(.discardPile)
                 validSources.insert(.hand)
                 
@@ -102,14 +102,18 @@ enum PossibleAction: Hashable, CaseIterable {
                 guard lastDragCards.count == 1 else {
                     break
                 }
+                
+                let card = lastDragCards.first!
 
-                if let cardRank = lastDragCards.first!.bookRank {
+                if let cardRank = card.bookRank {
                     let existingBookRanks = player.books[game.round!]!.keys
                     if existingBookRanks.contains(cardRank) {
                         validDestinations.insert(.book(cardRank))
                     }
+                } else if card.isWild {
+                    validDestinations.formUnion(self.existingBookDestinations(game: game, player: player))
                 }
-            case .drawFromDiscardPileAndCreateBook:
+            case .drawFromDiscardPileAndStartBook:
                 // Need to be dragging at least one card
                 // If the cards aren't playable together, skip
                 // If there's already been a drop on a book destination and the
@@ -306,7 +310,7 @@ enum PossibleAction: Hashable, CaseIterable {
                 }
                 
                 return false
-            case .drawFromDiscardPileAndCreateBook:
+            case .drawFromDiscardPileAndStartBook:
                 // * Need to be able to draw from the discard pile
                 // * Need to have already laid down
                 // * All good if there aren't any transactions
@@ -628,7 +632,7 @@ enum ActionBuildState {
         let remainingActions = possibleActions.filter({ !$0.isDisqualifiedBy(game: game, player: player, transactions: transactions) })
         guard (remainingActions.count == 1) ||
               (remainingActions.count == 2 && remainingActions.contains(.layDownInitialBooks) && remainingActions.contains(.drawFromDiscardPileAndLayDownInitialBooks)) ||
-              (remainingActions.count == 2 && remainingActions.contains(.startBook) && remainingActions.contains(.drawFromDiscardPileAndCreateBook)) else {
+              (remainingActions.count == 2 && remainingActions.contains(.startBook) && remainingActions.contains(.drawFromDiscardPileAndStartBook)) else {
             fatalError()
         }
     
@@ -844,7 +848,7 @@ class ActionBuilder {
             } else {
                 action = .layDownInitialBooks(player.name, books)
             }
-        } else if possibleActions.contains(.startBook) || possibleActions.contains(.drawFromDiscardPileAndCreateBook) {
+        } else if possibleActions.contains(.startBook) || possibleActions.contains(.drawFromDiscardPileAndStartBook) {
             var cards = [Card]()
             
             var dragCards: [Card]?
@@ -870,7 +874,7 @@ class ActionBuilder {
             }
 
             if didUseDiscardPile {
-                action = .drawFromDiscardPileAndCreateBook(player.name, cards)
+                action = .drawFromDiscardPileAndStartBook(player.name, cards)
             } else {
                 action = .startBook(player.name, cards)
             }

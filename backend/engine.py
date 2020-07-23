@@ -445,9 +445,9 @@ class Action(abc.ABC):
         elif action_type == "draw_from_discard_pile_and_add_to_book":
             book_rank = CardRank(action_json["book_rank"])
             return DrawFromDiscardPileAndAddToBookAction(action_json["player"], book_rank)
-        elif action_type == "draw_from_discard_pile_and_create_book":
+        elif action_type == "draw_from_discard_pile_and_start_book":
             cards = [Card.from_json(card_json) for card_json in action_json["cards"]]
-            return DrawFromDiscardPileAndCreateBookAction(action_json["player"], cards)
+            return DrawFromDiscardPileAndStartBookAction(action_json["player"], cards)
         elif action_type == "discard_card":
             card = Card.from_json(action_json["card"])
             return DiscardCardAction(action_json["player"], card)
@@ -480,7 +480,7 @@ class DrawFromDiscardPileAndAddToBookAction(Action):
         super().__init__(player_name)
         self.book_rank = book_rank
 
-class DrawFromDiscardPileAndCreateBookAction(Action):
+class DrawFromDiscardPileAndStartBookAction(Action):
     def __init__(self, player_name, cards):
         super().__init__(player_name)
         self.cards = cards
@@ -587,8 +587,8 @@ class Game(object):
             self.apply_draw_from_deck_action(player)
         elif type(action) is DrawFromDiscardPileAndAddToBookAction:
             self.apply_draw_from_discard_pile_and_add_to_book_action(player, action.book_rank)
-        elif type(action) is DrawFromDiscardPileAndCreateBookAction:
-            self.apply_draw_from_discard_pile_and_create_book_action(player, action.cards)
+        elif type(action) is DrawFromDiscardPileAndStartBookAction:
+            self.apply_draw_from_discard_pile_and_start_book_action(player, action.cards)
         elif type(action) is DiscardCardAction:
             self.apply_discard_card_action(player, action.card)
         elif type(action) is LayDownInitialBooksAction:
@@ -634,7 +634,7 @@ class Game(object):
         card = self.discard_pile.pop()
         player.add_card_from_discard_pile_to_book(card, book_rank, self.round)
 
-    def apply_draw_from_discard_pile_and_create_book_action(self, player, cards):
+    def apply_draw_from_discard_pile_and_start_book_action(self, player, cards):
         if not player.can_draw_from_discard_pile:
             raise IllegalActionError("Cannot draw from the discard pile")
 

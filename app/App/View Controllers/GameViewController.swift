@@ -438,7 +438,7 @@ class GameViewController: UIViewController, OpponentPreviewViewDelegate, DragDel
     private func setUpComplexActionInterface(possibleActions: Set<PossibleAction>) {
         if possibleActions.contains(.layDownInitialBooks) || possibleActions.contains(.drawFromDiscardPileAndLayDownInitialBooks) {
             self.title = "Laying Down"
-        } else if possibleActions.contains(.drawFromDiscardPileAndCreateBook) || possibleActions.contains(.startBook) {
+        } else if possibleActions.contains(.drawFromDiscardPileAndStartBook) || possibleActions.contains(.startBook) {
             self.title = "Starting Book"
         }
         

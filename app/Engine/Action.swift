@@ -12,7 +12,7 @@ enum Action: JSONCodable {
 
     case drawFromDeck(String)
     case drawFromDiscardPileAndAddToBook(String, CardRank)
-    case drawFromDiscardPileAndCreateBook(String, [Card])
+    case drawFromDiscardPileAndStartBook(String, [Card])
     case discardCard(String, Card)
     case layDownInitialBooks(String, [[Card]])
     case drawFromDiscardPileAndLayDownInitialBooks(String, [Card], [[Card]])
@@ -27,7 +27,7 @@ enum Action: JSONCodable {
                 return playerName
             case let .drawFromDiscardPileAndAddToBook(playerName, _):
                 return playerName
-            case let .drawFromDiscardPileAndCreateBook(playerName, _):
+            case let .drawFromDiscardPileAndStartBook(playerName, _):
                 return playerName
             case let .discardCard(playerName, _):
                 return playerName
@@ -48,7 +48,7 @@ enum Action: JSONCodable {
                 return "Draw from deck"
             case .drawFromDiscardPileAndAddToBook:
                 return "Add discard to book"
-            case .drawFromDiscardPileAndCreateBook:
+            case .drawFromDiscardPileAndStartBook:
                 return "Start book with discard"
             case .discardCard:
                 return "Discard"
@@ -90,11 +90,11 @@ enum Action: JSONCodable {
                 }
                 self = .drawFromDiscardPileAndAddToBook(playerName, bookRank)
 
-            case "draw_from_discard_pile_and_create_book":
+            case "draw_from_discard_pile_and_start_book":
                 guard let cards = cards else {
                     return nil
                 }
-                self = .drawFromDiscardPileAndCreateBook(playerName, cards)
+                self = .drawFromDiscardPileAndStartBook(playerName, cards)
 
             case "discard_card":
                 guard let card = card else {
@@ -220,9 +220,9 @@ enum Action: JSONCodable {
                     "player": playerName,
                     "book_rank": bookRank.rawValue
                 ]
-            case let .drawFromDiscardPileAndCreateBook(playerName, cards):
+            case let .drawFromDiscardPileAndStartBook(playerName, cards):
                 return [
-                    "type": "draw_from_discard_pile_and_create_book",
+                    "type": "draw_from_discard_pile_and_start_book",
                     "player": playerName,
                     "cards" : cards.map({ $0.toJSON() })
                 ]
