@@ -69,6 +69,10 @@ class Book: JSONEncodable {
         return (self.cards.count >= 7)
     }
     
+    var canAcceptWild: Bool {
+        return (self.wildCount < (naturalCount - 1))
+    }
+    
     // Points
     
     var cardsValue: Int {

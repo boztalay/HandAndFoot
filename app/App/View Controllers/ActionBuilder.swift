@@ -97,8 +97,6 @@ enum PossibleAction: Hashable, CaseIterable {
             case .drawFromDeck:
                 validDestinations.insert(.hand)
             case .drawFromDiscardPileAndAddToBook:
-                // TODO: Fancy logic to prevent building invalid books (too many wild cards)
-
                 guard lastDragCards.count == 1 else {
                     break
                 }
@@ -111,54 +109,23 @@ enum PossibleAction: Hashable, CaseIterable {
                         validDestinations.insert(.book(cardRank))
                     }
                 } else if card.isWild {
-                    validDestinations.formUnion(self.existingBookDestinations(game: game, player: player))
-                }
-            case .drawFromDiscardPileAndStartBook:
-                // Need to be dragging at least one card
-                // If the cards aren't playable together, skip
-                // If there's already been a drop on a book destination and the
-                //   book rank of the dragged cards matches, insert that destination
-                // If the book rank of the dragged cards is one that the player
-                //   doesn't already have, insert that destination
-                // TODO: Fancy logic to prevent building invalid books (too many wild cards)
-                
-                guard lastDragCards.count > 0 else {
-                    break
-                }
-                
-                guard self.cardsArePlayableTogether(lastDragCards) else {
-                    break
-                }
-                
-                var partialBookRank: CardRank?
-                for transaction in transactions {
-                    if case let .drop(destination) = transaction, case let .book(bookRank) = destination {
-                        partialBookRank = bookRank
-                        break
+                    let existingBooks = player.books[game.round!]!.values
+                    let existingBooksWithRoomForWild = existingBooks.filter({ $0.canAcceptWild })
+                    let validBookRanks = existingBooksWithRoomForWild.map({ $0.rank })
+                    
+                    for bookRank in validBookRanks {
+                        validDestinations.insert(.book(bookRank))
                     }
-                }
-                
-                let lastDragCardsBookRank = self.bookRankOf(lastDragCards)
-                let newBookDestinations = self.newBookDestinations(game: game, player: player)
-                
-                if let partialBookRank = partialBookRank {
-                    if let lastDragCardsBookRank = lastDragCardsBookRank, lastDragCardsBookRank == partialBookRank {
-                        validDestinations.insert(.book(partialBookRank))
-                    } else if self.cardsAreWild(lastDragCards) {
-                        validDestinations.insert(.book(partialBookRank))
-                    }
-                } else if let lastDragCardsBookRank = lastDragCardsBookRank, newBookDestinations.contains(.book(lastDragCardsBookRank)) {
-                    validDestinations.insert(.book(lastDragCardsBookRank))
-                } else if self.cardsAreWild(lastDragCards) {
-                    validDestinations.formUnion(newBookDestinations)
                 }
             case .discardCard:
+                // TODO: Check that the player can go out if it's their last card
+                
                 guard lastDragCards.count == 1 else {
                     break
                 }
                 
                 validDestinations.insert(.discardPile)
-            case .layDownInitialBooks:
+            case .layDownInitialBooks, .drawFromDiscardPileAndLayDownInitialBooks:
                 // Need to be dragging at least one card
                 // If the cards being dragged aren't playable together, skip
                 // If the cards being dragged are wild, insert all book destinations
@@ -178,27 +145,7 @@ enum PossibleAction: Hashable, CaseIterable {
                 } else {
                     validDestinations.insert(.book(self.bookRankOf(lastDragCards)!))
                 }
-            case .drawFromDiscardPileAndLayDownInitialBooks:
-                // Need to be dragging at least one card
-                // If the cards being dragged aren't playable together, skip
-                // If the cards being dragged are wild, insert all book destinations
-                // Otherwise, insert the book rank of the cards being dragged
-                // TODO: Fancy logic to prevent building invalid books (too many wild cards)
-                
-                guard lastDragCards.count > 0 else {
-                    break
-                }
-                
-                guard self.cardsArePlayableTogether(lastDragCards) else {
-                    break
-                }
-
-                if self.cardsAreWild(lastDragCards) {
-                    validDestinations.formUnion(DragDropSite.allBookCases)
-                } else {
-                    validDestinations.insert(.book(self.bookRankOf(lastDragCards)!))
-                }
-            case .startBook:
+            case .startBook, .drawFromDiscardPileAndStartBook:
                 // Need to be dragging at least one card
                 // If the cards aren't playable together, skip
                 // If there's already been a drop on a book destination and the
