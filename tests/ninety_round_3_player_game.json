@@ -1722,7 +1722,7 @@
             "player": "player_2"
         },
         {
-            "type": "draw_from_discard_pile_and_create_book",
+            "type": "draw_from_discard_pile_and_start_book",
             "cards": [
                 {
                     "suit": "diamonds",
@@ -2235,7 +2235,7 @@
             "player": "player_3"
         },
         {
-            "type": "draw_from_discard_pile_and_create_book",
+            "type": "draw_from_discard_pile_and_start_book",
             "cards": [
                 {
                     "suit": "clubs",
