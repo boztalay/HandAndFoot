@@ -48,13 +48,20 @@ enum PossibleAction: Hashable, CaseIterable {
     func dragDropSources(game: Game, player: Player, transactions: [ActionBuildTransaction]) -> Set<DragDropSite> {
         var validSources = Set<DragDropSite>()
         
+        let discardIsPlayable = (game.discardPile.count > 0) && (game.discardPile.last!.isPlayable)
+        
         switch (self) {
             case .drawFromDeck:
                 validSources.insert(.deck)
             case .drawFromDiscardPileAndAddToBook:
-                validSources.insert(.discardPile)
-            case .drawFromDiscardPileAndStartBook:
-                validSources.insert(.discardPile)
+                if (discardIsPlayable) {
+                    validSources.insert(.discardPile)
+                }
+            case .drawFromDiscardPileAndStartBook, .drawFromDiscardPileAndLayDownInitialBooks:
+                if (discardIsPlayable) {
+                    validSources.insert(.discardPile)
+                }
+
                 validSources.insert(.hand)
                 
                 for transaction in transactions {
@@ -63,23 +70,7 @@ enum PossibleAction: Hashable, CaseIterable {
                         break
                     }
                 }
-            case .discardCard:
-                validSources.insert(.hand)
-            case .layDownInitialBooks:
-                validSources.insert(.hand)
-            case .drawFromDiscardPileAndLayDownInitialBooks:
-                validSources.insert(.discardPile)
-                validSources.insert(.hand)
-                
-                for transaction in transactions {
-                    if case let .drag(source, _) = transaction, source == .discardPile {
-                        validSources.remove(.discardPile)
-                        break
-                    }
-                }
-            case .startBook:
-                validSources.insert(.hand)
-            case .addCardsFromHandToBook:
+            case .discardCard, .layDownInitialBooks, .startBook, .addCardsFromHandToBook:
                 validSources.insert(.hand)
         }
         
