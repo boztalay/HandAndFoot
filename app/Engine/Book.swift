@@ -61,16 +61,21 @@ class Book: JSONEncodable {
         return self.cards.filter({ !$0.isWild }).count
     }
     
+    var potentialWildCardCount: UInt {
+        var count = (self.naturalCount - self.wildCount - 1)
+        if count < 0 {
+            count = 0
+        }
+        
+        return UInt(count)
+    }
+    
     var isNatural: Bool {
         return (self.wildCount == 0)
     }
     
     var isComplete: Bool {
         return (self.cards.count >= 7)
-    }
-    
-    var canAcceptWild: Bool {
-        return (self.wildCount < (naturalCount - 1))
     }
     
     // Points

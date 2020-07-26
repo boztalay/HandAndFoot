@@ -111,7 +111,6 @@ enum PossibleAction: Hashable, CaseIterable {
                 // If the cards being dragged aren't playable together, skip
                 // If the cards being dragged are wild, insert all book destinations
                 // Otherwise, insert the book rank of the cards being dragged
-                // TODO: Fancy logic to prevent building invalid books (too many wild cards)
                 
                 guard lastDragCards.count > 0 else {
                     break
@@ -133,9 +132,6 @@ enum PossibleAction: Hashable, CaseIterable {
                 //   book rank of the dragged cards matches, insert that destination
                 // If the book rank of the dragged cards is one that the player
                 //   doesn't already have, insert that destination
-                // TODO: If the cards being dragged are only wild, insert all
-                //   book destiations that player doesn't already have
-                // TODO: Fancy logic to prevent building invalid books (too many wild cards)
                 
                 guard lastDragCards.count > 0 else {
                     break
@@ -172,7 +168,6 @@ enum PossibleAction: Hashable, CaseIterable {
                 // If the cards aren't playable together, skip
                 // If the cards are wild, insert all existing books
                 // Otherwise, insert the cards' book rank if the book exists
-                // TODO: Fancy logic to prevent building invalid books (too many wild cards)
                 
                 guard lastDragCards.count > 0 else {
                     break
@@ -182,16 +177,23 @@ enum PossibleAction: Hashable, CaseIterable {
                     break
                 }
                 
-                let existingBookRanks = player.books[game.round!]!.keys
+                let existingBookRanks = Set<CardRank>(player.books[game.round!]!.keys)
+                var validDestinationBookRanks = Set<CardRank>()
                 
                 if self.cardsAreWild(lastDragCards) {
-                    for bookRank in existingBookRanks {
-                        validDestinations.insert(.book(bookRank))
-                    }
+                    validDestinationBookRanks.formUnion(existingBookRanks)
                 } else {
                     let lastDragCardsBookRank = self.bookRankOf(lastDragCards)!
                     if existingBookRanks.contains(lastDragCardsBookRank) {
-                        validDestinations.insert(.book(lastDragCardsBookRank))
+                        validDestinationBookRanks.insert(lastDragCardsBookRank)
+                    }
+                }
+                
+                let excessWildCardCount = self.excessWildCardCount(of: lastDragCards)
+                for bookRank in validDestinationBookRanks {
+                    let book = player.books[game.round!]![bookRank]!
+                    if book.potentialWildCardCount >= excessWildCardCount {
+                        validDestinations.insert(.book(bookRank))
                     }
                 }
         }
@@ -221,17 +223,12 @@ enum PossibleAction: Hashable, CaseIterable {
                 // * Need to have already laid down
                 // * All good if there aren't any transactions
                 // * Drag can only start from the discard pile
-                // * Drags must only have playable cards (no threes)
-                //   - Does this mean this function needs the game state too?
-                //     Could disqualify this before the drag by checking what's
-                //     on top of the discard pile
                 // * Drop can only go to an existing book
                 // * There can only be one drag and one drop
                 
                 guard player.canDrawFromDiscardPile,
                       player.hasLaidDownThisRound,
                       self.dragsOnlyStartFrom(transactions, dragSources: [.discardPile]),
-                      self.dragsOnlyContainPlayableCards(transactions),
                       self.dropsOnlyGoToExistingBooks(transactions, game: game, player: player),
                       self.atMostOneDragDropPairIn(transactions) else {
                     return true
@@ -243,8 +240,6 @@ enum PossibleAction: Hashable, CaseIterable {
                 // * Need to have already laid down
                 // * All good if there aren't any transactions
                 // * Drags can only be from the discard pile or the hand
-                // * Drags must only have playable cards (no threes)
-                //  - Same note as above with checking what's on the discard pile
                 // * There can only be drag from the discard pile
                 //  - Might enforce this in the dragDropSources/Destinations
                 // * Drops can only go to books, and only one book, and it must
@@ -253,7 +248,6 @@ enum PossibleAction: Hashable, CaseIterable {
                 guard player.canDrawFromDiscardPile,
                       player.hasLaidDownThisRound,
                       self.dragsOnlyStartFrom(transactions, dragSources: [.discardPile, .hand]),
-                      self.dragsOnlyContainPlayableCards(transactions),
                       self.dropsOnlyGoToNewBooks(transactions, game: game, player: player),
                       self.dropsOnlyGoToOneBook(transactions) else {
                     return true
@@ -279,12 +273,10 @@ enum PossibleAction: Hashable, CaseIterable {
                 // * Need to have not laid down yet
                 // * All good if there aren't any transactions
                 // * Drags can only start from the hand
-                // * Drags must only have playable cards (no threes)
                 // * Drops can only go to books
                 
                 guard !player.hasLaidDownThisRound,
                       self.dragsOnlyStartFrom(transactions, dragSources: [.hand]),
-                      self.dragsOnlyContainPlayableCards(transactions),
                       self.dropsOnlyGoTo(transactions, dropDestinations: DragDropSite.allBookCases) else {
                     return true
                 }
@@ -297,13 +289,11 @@ enum PossibleAction: Hashable, CaseIterable {
                 // * Drags can only start from the discard pile or the hand
                 // * There can only be one drag from the discard pile
                 //   - Might enforce this in dragDropSources/Destinations
-                // * Drags must only have playable cards (no threes)
                 // * Drops can only go to books
                 
                 guard player.canDrawFromDiscardPile,
                       !player.hasLaidDownThisRound,
                       self.dragsOnlyStartFrom(transactions, dragSources: [.discardPile, .hand]),
-                      self.dragsOnlyContainPlayableCards(transactions),
                       self.dropsOnlyGoTo(transactions, dropDestinations: DragDropSite.allBookCases) else {
                     return true
                 }
@@ -313,13 +303,11 @@ enum PossibleAction: Hashable, CaseIterable {
                 // * Need to have laid down already
                 // * All good if there aren't any transactions
                 // * Drags can only start from the hand
-                // * Drags must only have playable cards (no threes)
                 // * Drops can only go to books, and only one book, and that book
                 //   must not already exist
                 
                 guard player.hasLaidDownThisRound,
                       self.dragsOnlyStartFrom(transactions, dragSources: [.hand]),
-                      self.dragsOnlyContainPlayableCards(transactions),
                       self.dropsOnlyGoToNewBooks(transactions, game: game, player: player),
                       self.dropsOnlyGoToOneBook(transactions) else {
                     return true
@@ -330,13 +318,11 @@ enum PossibleAction: Hashable, CaseIterable {
                 // * Need to have laid down already
                 // * All good if there aren't any transactions
                 // * Drag can only start from the hand
-                // * Drag must only have playable cards (no threes)
                 // * Drop can only go to an existing book
                 // * There can only be one drag and one drop
                 
                 guard player.hasLaidDownThisRound,
                       self.dragsOnlyStartFrom(transactions, dragSources: [.hand]),
-                      self.dragsOnlyContainPlayableCards(transactions),
                       self.dropsOnlyGoToExistingBooks(transactions, game: game, player: player),
                       self.atMostOneDragDropPairIn(transactions) else {
                     return true
@@ -398,6 +384,17 @@ enum PossibleAction: Hashable, CaseIterable {
         return (cards.filter({ !$0.isWild }).count == 0)
     }
     
+    private func excessWildCardCount(of cards: [Card]) -> UInt {
+        let wildCount = cards.filter({ $0.isWild }).count
+        let naturalCount = cards.count - wildCount
+        
+        if wildCount > naturalCount {
+            return UInt(wildCount - naturalCount)
+        } else {
+            return 0
+        }
+    }
+    
     private func existingBookDestinations(game: Game, player: Player) -> Set<DragDropSite> {
         let existingBooks = player.books[game.round!]!.keys
         let destinations = Set<DragDropSite>(existingBooks.map( { DragDropSite.book($0) } ))
@@ -418,20 +415,6 @@ enum PossibleAction: Hashable, CaseIterable {
             if case let .drag(source, _) = transaction {
                 if !dragSources.contains(source) {
                     return false
-                }
-            }
-        }
-        
-        return true
-    }
-    
-    private func dragsOnlyContainPlayableCards(_ transactions: [ActionBuildTransaction]) -> Bool {
-        for transaction in transactions {
-            if case let .drag(_, cards) = transaction {
-                for card in cards {
-                    if !card.isPlayable {
-                        return false
-                    }
                 }
             }
         }
